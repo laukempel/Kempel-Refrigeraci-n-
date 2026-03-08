@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Kempel Refrigeración – Servicio técnico de aires acondicionados, heladeras y freezers en Rosario. A domicilio, rápido y confiable." />
+  <title>Kempel Refrigeración | Servicio Técnico</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet" />
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ─── CURSOR PERSONALIZADO ─────────────────────────────────────── -->
+  <div class="cursor-dot" id="cursorDot"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <!-- ─── HEADER ───────────────────────────────────────────────────── -->
+  <header class="header" id="header">
+    <div class="container header-inner">
+
+      <!-- Logo -->
+      <a href="#inicio" class="logo">
+        <div class="logo-icon">
+          <svg viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <clipPath id="topLeft">
+                <polygon points="0,0 60,0 0,60"/>
+              </clipPath>
+              <clipPath id="bottomRight">
+                <polygon points="60,0 60,60 0,60"/>
+              </clipPath>
+            </defs>
+            <!-- Cold half -->
+            <circle cx="30" cy="30" r="29" fill="#0e2a47" clip-path="url(#topLeft)"/>
+            <!-- Warm half -->
+            <circle cx="30" cy="30" r="29" fill="#ff6b35" clip-path="url(#bottomRight)"/>
+            <!-- Dividing line -->
+            <line x1="60" y1="0" x2="0" y2="60" stroke="white" stroke-width="2"/>
+            <!-- Snowflake -->
+            <g clip-path="url(#topLeft)" fill="white">
+              <line x1="20" y1="22" x2="30" y2="22" stroke="white" stroke-width="2" stroke-linecap="round"/>
+              <line x1="25" y1="17" x2="25" y2="27" stroke="white" stroke-width="2" stroke-linecap="round"/>
+              <line x1="22" y1="19" x2="28" y2="25" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+              <line x1="28" y1="19" x2="22" y2="25" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+              <circle cx="25" cy="22" r="1.5" fill="white"/>
+            </g>
+            <!-- Sun rays -->
+            <g clip-path="url(#bottomRight)">
+              <circle cx="37" cy="40" r="5" fill="white" opacity="0.95"/>
+              <line x1="37" y1="32" x2="37" y2="30" stroke="white" stroke-width="2" stroke-linecap="round"/>
+              <line x1="37" y1="50" x2="37" y2="48" stroke="white" stroke-width="2" stroke-linecap="round"/>
+              <line x1="29" y1="40" x2="27" y2="40" stroke="white" stroke-width="2" stroke-linecap="round"/>
+              <line x1="47" y1="40" x2="45" y2="40" stroke="white" stroke-width="2" stroke-linecap="round"/>
+              <line x1="31.3" y1="34.3" x2="29.9" y2="32.9" stroke="white" stroke-width="2" stroke-linecap="round"/>
+              <line x1="42.7" y1="45.7" x2="44.1" y2="47.1" stroke="white" stroke-width="2" stroke-linecap="round"/>
+              <line x1="42.7" y1="34.3" x2="44.1" y2="32.9" stroke="white" stroke-width="2" stroke-linecap="round"/>
+              <line x1="31.3" y1="45.7" x2="29.9" y2="47.1" stroke="white" stroke-width="2" stroke-linecap="round"/>
+            </g>
+            <!-- Border -->
+            <circle cx="30" cy="30" r="29" stroke="white" stroke-width="1.5" fill="none"/>
+          </svg>
+        </div>
+        <div class="logo-text">
+          <span class="logo-name">Kempel</span>
+          <span class="logo-sub">Refrigeración</span>
+        </div>
+      </a>
+
+      <!-- Nav -->
+      <nav class="nav" id="nav">
+        <a href="#inicio" class="nav-link">Inicio</a>
+        <a href="#servicios" class="nav-link">Servicios</a>
+        <a href="#contacto" class="nav-link">Contacto</a>
+      </nav>
+
+      <!-- CTA + Hamburger -->
+      <div class="header-actions">
+        <a href="https://wa.me/5493415964079" target="_blank" class="btn btn-wa btn-sm">
+          <i class="fab fa-whatsapp"></i> WhatsApp
+        </a>
+        <button class="hamburger" id="hamburger" aria-label="Menú">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- ─── HERO ──────────────────────────────────────────────────────── -->
+  <section class="hero" id="inicio">
+    <!-- Background layers -->
+    <div class="hero-bg">
+      <div class="hero-gradient"></div>
+      <div class="hero-particles" id="particles"></div>
+      <div class="hero-grid"></div>
+    </div>
+
+    <div class="container hero-inner">
+      <div class="hero-content" data-animate>
+        <div class="hero-badge">
+          <i class="fas fa-circle-check"></i>
+          <span>Servicio a domicilio · Rosario y alrededores</span>
+        </div>
+
+        <h1 class="hero-title">
+          Soluciones de
+          <span class="gradient-text">refrigeración</span>
+          que funcionan.
+        </h1>
+
+        <p class="hero-desc">
+          Reparación y mantenimiento de aires acondicionados, heladeras y freezers.
+          Técnicos certificados, respuesta rápida y garantía en cada trabajo.
+        </p>
+
+        <div class="hero-actions">
+          <a href="#contacto" class="btn btn-primary">
+            <i class="fab fa-whatsapp"></i> Solicitar servicio
+          </a>
+          <a href="#servicios" class="btn btn-ghost">
+            Ver servicios <i class="fas fa-arrow-down"></i>
+          </a>
+        </div>
+
+        <div class="hero-stats">
+          <div class="stat">
+            <span class="stat-num" data-count="500">0</span>
+            <span class="stat-label">Clientes atendidos</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat">
+            <span class="stat-num">24hs</span>
+            <span class="stat-label">Tiempo de respuesta</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat">
+            <span class="stat-num">100%</span>
+            <span class="stat-label">Satisfacción garantizada</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-visual" data-animate data-delay="200">
+        <div class="hero-card-float card-a">
+          <i class="fas fa-snowflake"></i>
+          <span>Reparación express</span>
+        </div>
+        <div class="hero-orb hero-orb-cold"></div>
+        <div class="hero-orb hero-orb-warm"></div>
+        <div class="hero-device">
+          <svg viewBox="0 0 220 320" fill="none" xmlns="http://www.w3.org/2000/svg" class="ac-svg">
+            <!-- Wall unit -->
+            <rect x="20" y="30" width="180" height="90" rx="14" fill="#0e2a47" opacity="0.9"/>
+            <rect x="20" y="30" width="180" height="90" rx="14" stroke="#64c8e8" stroke-width="1.5" fill="none"/>
+            <!-- Vents -->
+            <line x1="40" y1="90" x2="180" y2="90" stroke="#64c8e8" stroke-width="1.5" opacity="0.6"/>
+            <line x1="40" y1="100" x2="180" y2="100" stroke="#64c8e8" stroke-width="1" opacity="0.3"/>
+            <!-- Panel lights -->
+            <circle cx="160" cy="55" r="5" fill="#64c8e8" opacity="0.8"/>
+            <circle cx="148" cy="55" r="3" fill="#f5a623" opacity="0.7"/>
+            <!-- Brand strip -->
+            <rect x="30" y="40" width="100" height="20" rx="4" fill="white" opacity="0.05"/>
+            <text x="45" y="54" font-size="9" fill="#64c8e8" font-family="sans-serif" opacity="0.8">KEMPEL</text>
+            <!-- Air flow lines -->
+            <path d="M50 115 Q80 145 50 175" stroke="#64c8e8" stroke-width="1" stroke-dasharray="4 4" opacity="0.5"/>
+            <path d="M90 115 Q120 150 90 185" stroke="#64c8e8" stroke-width="1" stroke-dasharray="4 4" opacity="0.4"/>
+            <path d="M130 115 Q160 145 130 175" stroke="#64c8e8" stroke-width="1" stroke-dasharray="4 4" opacity="0.3"/>
+            <!-- Temp badge -->
+            <rect x="140" y="180" width="60" height="32" rx="8" fill="#0e2a47" opacity="0.9"/>
+            <rect x="140" y="180" width="60" height="32" rx="8" stroke="#64c8e8" stroke-width="1" fill="none"/>
+            <text x="148" y="196" font-size="8" fill="#64c8e8" font-family="sans-serif">TEMP</text>
+            <text x="148" y="207" font-size="11" fill="white" font-family="sans-serif" font-weight="bold">18°C</text>
+            <!-- Remote -->
+            <rect x="30" y="230" width="50" height="80" rx="12" fill="#0e2a47" opacity="0.8"/>
+            <rect x="30" y="230" width="50" height="80" rx="12" stroke="#64c8e8" stroke-width="1" fill="none"/>
+            <circle cx="55" cy="253" r="10" fill="#64c8e8" opacity="0.2"/>
+            <circle cx="55" cy="253" r="5" fill="#64c8e8" opacity="0.8"/>
+            <rect x="40" y="270" width="30" height="4" rx="2" fill="#64c8e8" opacity="0.4"/>
+            <rect x="40" y="280" width="30" height="4" rx="2" fill="#64c8e8" opacity="0.3"/>
+            <rect x="40" y="290" width="30" height="4" rx="2" fill="#64c8e8" opacity="0.2"/>
+          </svg>
+        </div>
+        <div class="hero-card-float card-b">
+          <div class="card-b-inner">
+            <i class="fas fa-star" style="color:#f5a623"></i>
+            <i class="fas fa-star" style="color:#f5a623"></i>
+            <i class="fas fa-star" style="color:#f5a623"></i>
+            <i class="fas fa-star" style="color:#f5a623"></i>
+            <i class="fas fa-star" style="color:#f5a623"></i>
+          </div>
+          <small>+500 trabajos realizados</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Wave divider -->
+    <div class="hero-wave">
+      <svg viewBox="0 0 1440 80" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <path d="M0,40 C240,80 480,0 720,40 C960,80 1200,0 1440,40 L1440,80 L0,80 Z" fill="#f0f6ff"/>
+      </svg>
+    </div>
+  </section>
+
+  <!-- ─── FEATURES STRIP ────────────────────────────────────────────── -->
+  <section class="features-strip">
+    <div class="container features-grid">
+      <div class="feature-item" data-animate>
+        <i class="fas fa-house-chimney"></i>
+        <span>Servicio a domicilio</span>
+      </div>
+      <div class="feature-item" data-animate data-delay="100">
+        <i class="fas fa-bolt"></i>
+        <span>Respuesta en 24hs</span>
+      </div>
+      <div class="feature-item" data-animate data-delay="200">
+        <i class="fas fa-shield-halved"></i>
+        <span>Garantía en repuestos</span>
+      </div>
+      <div class="feature-item" data-animate data-delay="300">
+        <i class="fas fa-user-check"></i>
+        <span>Técnicos certificados</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── SERVICIOS ─────────────────────────────────────────────────── -->
+  <section class="section servicios" id="servicios">
+    <div class="container">
+      <div class="section-header" data-animate>
+        <span class="section-tag">Nuestros servicios</span>
+        <h2 class="section-title">Todo lo que necesitás,<br/><em>resuelto en una visita</em></h2>
+        <p class="section-desc">Brindamos soluciones técnicas completas para tu hogar o negocio.</p>
+      </div>
+
+      <div class="services-grid">
+
+        <div class="service-card" data-animate>
+          <div class="service-icon service-icon-blue">
+            <i class="fas fa-wind"></i>
+          </div>
+          <div class="service-content">
+            <h3>Reparación de Aire Acondicionado</h3>
+            <p>Diagnóstico completo y reparación de cualquier falla. Solucionamos filtraciones, ruidos, falta de frío y mucho más.</p>
+          </div>
+          <a href="#contacto" class="service-link">Consultar <i class="fas fa-arrow-right"></i></a>
+        </div>
+
+        <div class="service-card service-card-featured" data-animate data-delay="100">
+          <div class="service-badge">Más solicitado</div>
+          <div class="service-icon service-icon-cyan">
+            <i class="fas fa-screwdriver-wrench"></i>
+          </div>
+          <div class="service-content">
+            <h3>Mantenimiento de Aire Acondicionado</h3>
+            <p>Limpieza profunda, carga de gas y revisión general para que tu equipo funcione al máximo de eficiencia.</p>
+          </div>
+          <a href="#contacto" class="service-link">Consultar <i class="fas fa-arrow-right"></i></a>
+        </div>
+
+        <div class="service-card" data-animate data-delay="200">
+          <div class="service-icon service-icon-blue">
+            <i class="fas fa-plug-circle-plus"></i>
+          </div>
+          <div class="service-content">
+            <h3>Instalación de Aire Acondicionado</h3>
+            <p>Instalación profesional split y multi-split. Colocación de soporte, cañería y puesta en marcha garantizada.</p>
+          </div>
+          <a href="#contacto" class="service-link">Consultar <i class="fas fa-arrow-right"></i></a>
+        </div>
+
+        <div class="service-card" data-animate data-delay="100">
+          <div class="service-icon service-icon-orange">
+            <i class="fas fa-temperature-low"></i>
+          </div>
+          <div class="service-content">
+            <h3>Reparación de Heladeras</h3>
+            <p>Reparamos heladeras de todas las marcas. No enfría, hace hielo, pierde agua o hace ruido: lo solucionamos.</p>
+          </div>
+          <a href="#contacto" class="service-link">Consultar <i class="fas fa-arrow-right"></i></a>
+        </div>
+
+        <div class="service-card" data-animate data-delay="200">
+          <div class="service-icon service-icon-orange">
+            <i class="fas fa-box"></i>
+          </div>
+          <div class="service-content">
+            <h3>Reparación de Freezers</h3>
+            <p>Servicio especializado en freezers verticales, horizontales y cofres. Recuperamos la cadena de frío de tu equipo.</p>
+          </div>
+          <a href="#contacto" class="service-link">Consultar <i class="fas fa-arrow-right"></i></a>
+        </div>
+
+        <div class="service-card service-card-cta" data-animate data-delay="300">
+          <i class="fas fa-circle-question"></i>
+          <h3>¿Otro problema?</h3>
+          <p>Contactanos y te asesoramos sin cargo.</p>
+          <a href="https://wa.me/5493415964079" target="_blank" class="btn btn-primary btn-sm">
+            <i class="fab fa-whatsapp"></i> Consultar gratis
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── WHY US ─────────────────────────────────────────────────────── -->
+  <section class="section why-us">
+    <div class="container why-inner">
+      <div class="why-image" data-animate>
+        <div class="why-blob"></div>
+        <div class="why-icon-grid">
+          <div class="why-icon-item"><i class="fas fa-snowflake"></i></div>
+          <div class="why-icon-item"><i class="fas fa-sun"></i></div>
+          <div class="why-icon-item"><i class="fas fa-tools"></i></div>
+          <div class="why-icon-item"><i class="fab fa-whatsapp"></i></div>
+        </div>
+      </div>
+      <div class="why-content" data-animate data-delay="150">
+        <span class="section-tag">¿Por qué elegirnos?</span>
+        <h2 class="section-title">Experiencia y confianza en cada visita</h2>
+        <ul class="why-list">
+          <li>
+            <span class="why-check"><i class="fas fa-check"></i></span>
+            <div>
+              <strong>Técnicos con experiencia comprobada</strong>
+              <p>Años de trabajo en refrigeración comercial y doméstica nos respaldan.</p>
+            </div>
+          </li>
+          <li>
+            <span class="why-check"><i class="fas fa-check"></i></span>
+            <div>
+              <strong>Diagnóstico inicial sin cargo</strong>
+              <p>Evaluamos el problema antes de presupuestar, sin letra chica.</p>
+            </div>
+          </li>
+          <li>
+            <span class="why-check"><i class="fas fa-check"></i></span>
+            <div>
+              <strong>Repuestos originales y garantizados</strong>
+              <p>Usamos insumos de calidad para que la reparación dure en el tiempo.</p>
+            </div>
+          </li>
+          <li>
+            <span class="why-check"><i class="fas fa-check"></i></span>
+            <div>
+              <strong>Atención directa por WhatsApp</strong>
+              <p>Sin intermediarios, hablás directo con el técnico que va a tu casa.</p>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── CONTACTO / WHATSAPP ───────────────────────────────────────── -->
+  <section class="section contacto" id="contacto">
+    <div class="container">
+      <div class="section-header" data-animate>
+        <span class="section-tag">Contacto rápido</span>
+        <h2 class="section-title">Escribinos por WhatsApp<br/><em>en menos de 1 minuto</em></h2>
+        <p class="section-desc">Elegí tu consulta y al técnico. Te generamos el mensaje automáticamente.</p>
+      </div>
+
+      <div class="contact-layout">
+
+        <!-- Form card -->
+        <div class="contact-form-card" data-animate>
+          <div class="form-step" id="step1">
+            <p class="form-label">Paso 1 — ¿Qué equipo necesitás revisar?</p>
+            <div class="option-grid">
+              <label class="option-card" data-value="aire">
+                <input type="radio" name="equipo" value="aire" hidden/>
+                <div class="option-icon"><i class="fas fa-wind"></i></div>
+                <span>Aire Acondicionado</span>
+              </label>
+              <label class="option-card" data-value="heladera">
+                <input type="radio" name="equipo" value="heladera" hidden/>
+                <div class="option-icon"><i class="fas fa-temperature-low"></i></div>
+                <span>Heladera / Freezer</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-divider"><span></span><i class="fas fa-arrow-down"></i><span></span></div>
+
+          <div class="form-step" id="step2">
+            <p class="form-label">Paso 2 — ¿Con qué técnico querés hablar?</p>
+            <div class="option-grid">
+              <label class="option-card" data-value="franco">
+                <input type="radio" name="tecnico" value="franco" hidden/>
+                <div class="option-avatar">FK</div>
+                <div class="option-info">
+                  <strong>Franco Kempel</strong>
+                  <small>+54 9 3415 96-4079</small>
+                </div>
+              </label>
+              <label class="option-card" data-value="agustin">
+                <input type="radio" name="tecnico" value="agustin" hidden/>
+                <div class="option-avatar">AK</div>
+                <div class="option-info">
+                  <strong>Agustín Kempel</strong>
+                  <small>+54 9 3413 27-8981</small>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-divider"><span></span><i class="fas fa-arrow-down"></i><span></span></div>
+
+          <button class="btn btn-wa btn-wa-big btn-disabled" id="btnWa" disabled>
+            <i class="fab fa-whatsapp"></i>
+            <span>Enviar consulta por WhatsApp</span>
+          </button>
+
+          <p class="form-hint">* Completá ambos pasos para habilitar el botón</p>
+        </div>
+
+        <!-- Info lateral -->
+        <div class="contact-info" data-animate data-delay="150">
+          <div class="tech-card">
+            <div class="tech-avatar">FK</div>
+            <div>
+              <strong>Franco Kempel</strong>
+              <p>Técnico especialista en A/C</p>
+              <a href="https://wa.me/5493415964079" target="_blank" class="btn btn-wa btn-sm">
+                <i class="fab fa-whatsapp"></i> +54 9 3415 96-4079
+              </a>
+            </div>
+          </div>
+          <div class="tech-card">
+            <div class="tech-avatar">AK</div>
+            <div>
+              <strong>Agustín Kempel</strong>
+              <p>Técnico especialista en refrigeración</p>
+              <a href="https://wa.me/5493413278981" target="_blank" class="btn btn-wa btn-sm">
+                <i class="fab fa-whatsapp"></i> +54 9 3413 27-8981
+              </a>
+            </div>
+          </div>
+          <div class="contact-note">
+            <i class="fas fa-clock"></i>
+            <div>
+              <strong>Horario de atención</strong>
+              <p>Lunes a Sábado · 8:00 a 20:00hs</p>
+            </div>
+          </div>
+          <div class="contact-note">
+            <i class="fas fa-location-dot"></i>
+            <div>
+              <strong>Zona de cobertura</strong>
+              <p>Rosario y Gran Rosario</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── FOOTER ────────────────────────────────────────────────────── -->
+  <footer class="footer">
+    <div class="footer-top">
+      <div class="container footer-top-inner">
+
+        <div class="footer-brand">
+          <a href="#inicio" class="logo">
+            <div class="logo-icon logo-icon-sm">
+              <svg viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <clipPath id="topLeft2"><polygon points="0,0 60,0 0,60"/></clipPath>
+                  <clipPath id="bottomRight2"><polygon points="60,0 60,60 0,60"/></clipPath>
+                </defs>
+                <circle cx="30" cy="30" r="29" fill="#0e2a47" clip-path="url(#topLeft2)"/>
+                <circle cx="30" cy="30" r="29" fill="#ff6b35" clip-path="url(#bottomRight2)"/>
+                <line x1="60" y1="0" x2="0" y2="60" stroke="white" stroke-width="2"/>
+                <g clip-path="url(#topLeft2)" fill="white">
+                  <line x1="20" y1="22" x2="30" y2="22" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                  <line x1="25" y1="17" x2="25" y2="27" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                  <line x1="22" y1="19" x2="28" y2="25" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+                  <line x1="28" y1="19" x2="22" y2="25" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+                </g>
+                <g clip-path="url(#bottomRight2)">
+                  <circle cx="37" cy="40" r="5" fill="white"/>
+                  <line x1="37" y1="32" x2="37" y2="30" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                  <line x1="37" y1="50" x2="37" y2="48" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                  <line x1="29" y1="40" x2="27" y2="40" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                  <line x1="47" y1="40" x2="45" y2="40" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                </g>
+                <circle cx="30" cy="30" r="29" stroke="white" stroke-width="1.5" fill="none"/>
+              </svg>
+            </div>
+            <div class="logo-text">
+              <span class="logo-name">Kempel</span>
+              <span class="logo-sub">Refrigeración</span>
+            </div>
+          </a>
+          <p>Servicio técnico de refrigeración doméstica y comercial. Rosario, Santa Fe.</p>
+        </div>
+
+        <div class="footer-links">
+          <h4>Servicios</h4>
+          <ul>
+            <li><a href="#servicios">Reparación de A/C</a></li>
+            <li><a href="#servicios">Mantenimiento de A/C</a></li>
+            <li><a href="#servicios">Instalación de A/C</a></li>
+            <li><a href="#servicios">Reparación de Heladeras</a></li>
+            <li><a href="#servicios">Reparación de Freezers</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-contact">
+          <h4>Contacto directo</h4>
+          <a href="https://wa.me/5493415964079" target="_blank" class="footer-wa-btn">
+            <i class="fab fa-whatsapp"></i>
+            <div>
+              <strong>Franco Kempel</strong>
+              <small>+54 9 3415 96-4079</small>
+            </div>
+          </a>
+          <a href="https://wa.me/5493413278981" target="_blank" class="footer-wa-btn">
+            <i class="fab fa-whatsapp"></i>
+            <div>
+              <strong>Agustín Kempel</strong>
+              <small>+54 9 3413 27-8981</small>
+            </div>
+          </a>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div class="container">
+        <span>© 2025 Kempel Refrigeración · Todos los derechos reservados</span>
+        <span>Hecho con <i class="fas fa-heart" style="color:#f5a623"></i> en Rosario</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ─── FAB WHATSAPP ──────────────────────────────────────────────── -->
+  <a href="https://wa.me/5493415964079" target="_blank" class="fab-wa" aria-label="WhatsApp">
+    <i class="fab fa-whatsapp"></i>
+    <span class="fab-wa-pulse"></span>
+  </a>
+
+  <script src="script.js"></script>
+</body>
+</html>
