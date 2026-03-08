@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es" data-theme="dark">
+<html lang="es-AR" data-theme="dark">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
@@ -32,7 +32,41 @@
   <title>Kempel Refrigeración | Servicio Técnico A/C Heladeras Freezers</title>
   <link rel="stylesheet" href="style.css"/>
 
-  <!-- SEO 20: JSON-LD FAQPage Schema.org -->
+  <!-- SEO: JSON-LD LocalBusiness -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": "Kempel Refrigeración",
+    "description": "Servicio técnico de aires acondicionados, heladeras y freezers. Reparación, mantenimiento e instalación.",
+    "telephone": "+5493415964079",
+    "url": "https://kempelrefrigeracion.com.ar",
+    "image": "Franco.jpg",
+    "priceRange": "$$",
+    "areaServed": [
+      {"@type": "City", "name": "Fray Luis Beltrán"},
+      {"@type": "City", "name": "San Lorenzo"},
+      {"@type": "City", "name": "Capitán Bermúdez"},
+      {"@type": "City", "name": "Puerto General San Martín"},
+      {"@type": "City", "name": "Rosario"},
+      {"@type": "City", "name": "Granadero Baigorria"}
+    ],
+    "openingHours": "Mo-Sa 08:00-20:00",
+    "hasOfferCatalog": {
+      "@type": "OfferCatalog",
+      "name": "Servicios de refrigeración",
+      "itemListElement": [
+        {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Reparación de Aire Acondicionado"}},
+        {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Mantenimiento de Aire Acondicionado"}},
+        {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Instalación de Aire Acondicionado"}},
+        {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Reparación de Heladeras"}},
+        {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Reparación de Freezers"}}
+      ]
+    }
+  }
+  </script>
+
+  <!-- SEO: JSON-LD FAQPage -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -43,7 +77,7 @@
         "name": "¿Cuánto tarda en llegar un técnico?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Normalmente respondemos el mismo día o al siguiente. En urgencias intentamos llegar en el menor tiempo posible."
+          "text": "Depende de la disponibilidad, pero en general demora de 2 a 3 días aproximadamente."
         }
       },
       {
@@ -196,7 +230,7 @@
     </nav>
 
     <div class="header-actions">
-      <a href="https://wa.me/5493415964079" target="_blank" rel="noopener" class="btn btn-wa btn-sm magnetic" id="headerWaBtn">
+      <a href="https://wa.me/5493415964079" target="_blank" rel="noopener noreferrer" class="btn btn-wa btn-sm magnetic" id="headerWaBtn">
         <i class="fab fa-whatsapp"></i> WhatsApp
       </a>
       <button class="hamburger" id="hamburger" aria-label="Menú" aria-expanded="false">
@@ -226,11 +260,11 @@
         <span>Cap. Bermúdez → Pto. Gral. San Martín</span>
       </div>
 
-      <!-- ANIM 1: Scramble title -->
+      <!-- Hero title — stable fade-in (no layout-shift scramble) -->
       <h1 class="hero-title" id="heroTitle">
-        <span class="line-wrap"><span class="line-inner">Soluciones de</span></span>
-        <span class="line-wrap"><span class="line-inner gradient-text" id="scrambleTarget">refrigeración</span></span>
-        <span class="line-wrap"><span class="line-inner">que funcionan.</span></span>
+        <span class="hero-line hero-line-1">Soluciones de</span>
+        <span class="hero-line hero-line-2 gradient-text">refrigeración</span>
+        <span class="hero-line hero-line-3">que funcionan.</span>
       </h1>
 
       <p class="hero-desc" id="heroDesc">
@@ -497,7 +531,7 @@
         <i class="fas fa-headset"></i>
         <h3>¿Otro problema?</h3>
         <p>Consultanos sin cargo, te asesoramos.</p>
-        <a href="https://wa.me/5493415964079" target="_blank" rel="noopener" class="btn btn-wa-cta magnetic ripple">
+        <a href="https://wa.me/5493415964079" target="_blank" rel="noopener noreferrer" class="btn btn-wa-cta magnetic ripple">
           <i class="fab fa-whatsapp"></i> Consultar gratis
         </a>
       </div>
@@ -647,6 +681,7 @@
           </button>
           <div class="diag-input-wrap">
             <textarea id="diagInput" class="diag-textarea" placeholder="Describí el síntoma... (Enter para enviar)" rows="2" maxlength="300" aria-label="Síntoma del equipo"></textarea>
+            <div class="char-counter" id="charCounter" aria-live="polite">0/300</div>
           </div>
           <button class="btn btn-diagnose magnetic ripple" id="btnDiagnose" aria-label="Analizar con IA">
             <i class="fas fa-paper-plane"></i>
@@ -666,7 +701,7 @@
         <div class="drp-header">
           <i class="fas fa-circle-check"></i>
           <strong>Diagnóstico Kempel IA</strong>
-          <button class="drp-close" id="drpClose" aria-label="Cerrar"><i class="fas fa-xmark"></i></button>
+          <button class="drp-close" id="drpClose" aria-label="Cerrar diagnóstico" title="Cerrar diagnóstico"><i class="fas fa-xmark"></i></button>
         </div>
         <div class="drp-body" id="drpBody"></div>
         <div class="drp-service" id="drpService"></div>
@@ -713,7 +748,9 @@
         <div class="tech-profile-inner">
           <div class="tech-profile-top">
             <div class="tech-big-avatar tech-avatar-img">
-              <img src="Franco.jpg" loading="lazy" alt="Franco Kempel" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+              <img src="Franco.jpg" loading="lazy" alt="Franco Kempel"
+                   onload="this.nextElementSibling.style.display='none'"
+                   onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
               <span style="display:none">FK</span>
               <div class="tech-online-ring"></div>
             </div>
@@ -729,7 +766,7 @@
               <div class="tech-stat"><i class="fas fa-phone"></i><span>+54 9 3415 96-4079</span></div>
             </div>
           </div>
-          <a href="https://wa.me/5493415964079?text=Hola%20Franco%2C%20me%20contacto%20desde%20la%20p%C3%A1gina%20de%20Kempel%20Refrigeraci%C3%B3n." target="_blank" rel="noopener" class="btn btn-wa btn-tech-wa magnetic ripple">
+          <a href="https://wa.me/5493415964079?text=Hola%20Franco%2C%20me%20contacto%20desde%20la%20p%C3%A1gina%20de%20Kempel%20Refrigeraci%C3%B3n." target="_blank" rel="noopener noreferrer" class="btn btn-wa btn-tech-wa magnetic ripple">
             <i class="fab fa-whatsapp"></i> Escribir a Franco
           </a>
         </div>
@@ -740,7 +777,9 @@
         <div class="tech-profile-inner">
           <div class="tech-profile-top">
             <div class="tech-big-avatar tech-avatar-img">
-              <img src="Agustin.jpg" loading="lazy" alt="Agustín Kempel" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+              <img src="Agustin.jpg" loading="lazy" alt="Agustín Kempel"
+                   onload="this.nextElementSibling.style.display='none'"
+                   onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
               <span style="display:none">AK</span>
               <div class="tech-online-ring"></div>
             </div>
@@ -756,7 +795,7 @@
               <div class="tech-stat"><i class="fas fa-phone"></i><span>+54 9 3413 27-8981</span></div>
             </div>
           </div>
-          <a href="https://wa.me/5493413278981?text=Hola%20Agust%C3%ADn%2C%20me%20contacto%20desde%20la%20p%C3%A1gina%20de%20Kempel%20Refrigeraci%C3%B3n." target="_blank" rel="noopener" class="btn btn-wa btn-tech-wa magnetic ripple">
+          <a href="https://wa.me/5493413278981?text=Hola%20Agust%C3%ADn%2C%20me%20contacto%20desde%20la%20p%C3%A1gina%20de%20Kempel%20Refrigeraci%C3%B3n." target="_blank" rel="noopener noreferrer" class="btn btn-wa btn-tech-wa magnetic ripple">
             <i class="fab fa-whatsapp"></i> Escribir a Agustín
           </a>
         </div>
@@ -880,12 +919,14 @@
       </div>
 
       <!-- Sidebar -->
-      <div class="contact-sidebar scroll-reveal" style="--d:120ms">
+      <aside class="contact-sidebar scroll-reveal" style="--d:120ms" aria-label="Contacto directo con técnicos">
         <!-- Franco card -->
         <div class="sidebar-tech-card">
           <div class="stc-left">
             <div class="stc-avatar stc-blue stc-avatar-img">
-              <img src="Franco.jpg" loading="lazy" alt="Franco Kempel" onerror="this.style.display='none'"/>
+              <img src="Franco.jpg" loading="lazy" alt="Franco Kempel"
+                   onload="this.nextElementSibling.style.display='none'"
+                   onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
               <span class="stc-initials">FK</span>
             </div>
             <div class="stc-online"></div>
@@ -895,7 +936,7 @@
             <span>Técnico especialista</span>
             <span class="stc-phone">+54 9 3415 96-4079</span>
           </div>
-          <a href="https://wa.me/5493415964079" target="_blank" rel="noopener" class="stc-wa magnetic">
+          <a href="https://wa.me/5493415964079" target="_blank" rel="noopener noreferrer" class="stc-wa magnetic">
             <i class="fab fa-whatsapp"></i>
           </a>
         </div>
@@ -904,7 +945,9 @@
         <div class="sidebar-tech-card">
           <div class="stc-left">
             <div class="stc-avatar stc-orange stc-avatar-img">
-              <img src="Agustin.jpg" loading="lazy" alt="Agustín Kempel" onerror="this.style.display='none'"/>
+              <img src="Agustin.jpg" loading="lazy" alt="Agustín Kempel"
+                   onload="this.nextElementSibling.style.display='none'"
+                   onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
               <span class="stc-initials">AK</span>
             </div>
             <div class="stc-online"></div>
@@ -914,7 +957,7 @@
             <span>Técnico especialista</span>
             <span class="stc-phone">+54 9 3413 27-8981</span>
           </div>
-          <a href="https://wa.me/5493413278981" target="_blank" rel="noopener" class="stc-wa magnetic">
+          <a href="https://wa.me/5493413278981" target="_blank" rel="noopener noreferrer" class="stc-wa magnetic">
             <i class="fab fa-whatsapp"></i>
           </a>
         </div>
@@ -944,7 +987,7 @@
             <span>Repuestos y mano de obra</span>
           </div>
         </div>
-      </div>
+      </aside>
     </div>
   </div>
 </section>
@@ -962,7 +1005,7 @@
           <span>¿Cuánto tarda en llegar un técnico?</span>
           <i class="fas fa-plus faq-icon"></i>
         </button>
-        <div class="faq-a">Normalmente respondemos el mismo día o al siguiente. En urgencias intentamos llegar en el menor tiempo posible.</div>
+        <div class="faq-a">Depende de la disponibilidad, pero en general demora de 2 a 3 días aproximadamente.</div>
       </div>
       <div class="faq-item">
         <button class="faq-q" aria-expanded="false">
@@ -1027,7 +1070,7 @@
         </a>
         <p>Servicio técnico de refrigeración doméstica y comercial. Corredor norte de Rosario.</p>
         <div class="footer-socials">
-          <a href="https://wa.me/5493415964079" target="_blank" rel="noopener" class="social-btn" aria-label="WhatsApp Franco">
+          <a href="https://wa.me/5493415964079" target="_blank" rel="noopener noreferrer" class="social-btn" aria-label="WhatsApp Franco">
             <i class="fab fa-whatsapp"></i>
           </a>
           <a href="#diagnostico" class="social-btn" aria-label="IA Diagnóstico">
@@ -1059,7 +1102,7 @@
 
       <div class="footer-col">
         <h4>Técnicos directos</h4>
-        <a href="https://wa.me/5493415964079" target="_blank" rel="noopener" class="footer-tech-btn">
+        <a href="https://wa.me/5493415964079" target="_blank" rel="noopener noreferrer" class="footer-tech-btn">
           <div class="ftb-av ftb-blue ftb-av-img">
             <img src="Franco.jpg" loading="lazy" alt="Franco Kempel" onerror="this.style.display='none'"/>
             <span class="ftb-initials">FK</span>
@@ -1071,7 +1114,7 @@
           </div>
           <i class="fab fa-whatsapp"></i>
         </a>
-        <a href="https://wa.me/5493413278981" target="_blank" rel="noopener" class="footer-tech-btn">
+        <a href="https://wa.me/5493413278981" target="_blank" rel="noopener noreferrer" class="footer-tech-btn">
           <div class="ftb-av ftb-orange ftb-av-img">
             <img src="Agustin.jpg" loading="lazy" alt="Agustín Kempel" onerror="this.style.display='none'"/>
             <span class="ftb-initials">AK</span>
@@ -1096,7 +1139,7 @@
 </footer>
 
 <!-- FAB WhatsApp -->
-<a href="https://wa.me/5493415964079" target="_blank" rel="noopener" class="fab-wa" id="fabWa" aria-label="Contactar por WhatsApp">
+<a href="https://wa.me/5493415964079" target="_blank" rel="noopener noreferrer" class="fab-wa" id="fabWa" aria-label="Contactar por WhatsApp">
   <i class="fab fa-whatsapp"></i>
   <span class="fab-pulse"></span>
   <span class="fab-pulse fab-pulse2"></span>
