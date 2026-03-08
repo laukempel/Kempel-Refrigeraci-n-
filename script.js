@@ -71,19 +71,20 @@ function makeObserver(cb, opts = {}) {
   });
 })();
 
-/* ════════════ ANIM 4: CANVAS SNOWFLAKES ════════════ */
+/* ════════════ ANIM 4: CANVAS SNOWFLAKES — pauses when off-screen ════════════ */
 (function initCanvas() {
   const canvas = $('heroCanvas');
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
+  let paused = false; // OPT 15: pause rAF when hero not visible
 
-  /* OPT 6: throttled resize */
-  let rAF;
-  function resize() {
-    canvas.width  = canvas.offsetWidth;
-    canvas.height = canvas.offsetHeight;
-  }
+  /* OPT 15: IntersectionObserver to pause canvas */
+  new IntersectionObserver(entries => {
+    paused = !entries[0].isIntersecting;
+  }, { threshold: 0 }).observe(canvas);
+
   let resizeTimer;
+  function resize() { canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight; }
   window.addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(resize, 150); });
   resize();
 
@@ -108,10 +109,11 @@ function makeObserver(cb, opts = {}) {
     ctx.restore();
   }
 
-  /* OPT 7: dirty rect — only clear once per frame */
   let last = 0;
   function animate(ts) {
-    if (ts - last < 16) { requestAnimationFrame(animate); return; } // cap ~60fps
+    requestAnimationFrame(animate);
+    if (paused) return; // OPT 15: skip frame when off-screen
+    if (ts - last < 16) return;
     last = ts;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     flakes.forEach(f => {
@@ -122,7 +124,6 @@ function makeObserver(cb, opts = {}) {
       if (f.type === 'flake') drawFlake(f.x, f.y, f.r, f.spin, f.opacity);
       else { ctx.save(); ctx.globalAlpha = f.opacity; ctx.fillStyle = '#64c8e8'; ctx.beginPath(); ctx.arc(f.x, f.y, f.r, 0, Math.PI*2); ctx.fill(); ctx.restore(); }
     });
-    requestAnimationFrame(animate);
   }
   requestAnimationFrame(animate);
 })();
@@ -148,6 +149,10 @@ const revealObs = makeObserver(entries => {
   entries.forEach(e => {
     if (e.isIntersecting) {
       e.target.classList.add('visible');
+      /* OPT 13: trigger FAQ child stagger when parent becomes visible */
+      if (e.target.id === 'faqList') {
+        e.target.querySelectorAll('.faq-item').forEach(item => item.classList.add('visible'));
+      }
       revealObs.unobserve(e.target);
     }
   });
@@ -182,6 +187,9 @@ $$('.scroll-reveal,.card-stagger').forEach(el => revealObs.observe(el));
   if (!el) return;
   const chars = 'abcdefghijklmnopqrstuvwxyz';
   const original = el.textContent;
+  /* OPT 1: Lock width before scrambling to prevent layout shift */
+  el.style.display = 'inline-block';
+  el.style.minWidth = el.offsetWidth + 'px';
   let running = false;
   function scramble() {
     if (running) return; running = true;
@@ -195,7 +203,6 @@ $$('.scroll-reveal,.card-stagger').forEach(el => revealObs.observe(el));
       if (iter >= original.length) { clearInterval(iv); el.textContent = original; running = false; }
     }, 35);
   }
-  /* Scramble on load after reveal, then every 6s */
   setTimeout(() => { scramble(); setInterval(scramble, 7000); }, 1400);
 })();
 
@@ -292,16 +299,25 @@ document.querySelectorAll('.magnetic').forEach(btn => {
   textEls.forEach(el => cObs.observe(el));
 })();
 
-/* ════════════ ANIM 14: SERVICE CARD TILT ════════════ */
+/* ════════════ ANIM 14: SERVICE CARD TILT + MOUSE GLOW ════════════ */
 (function initTilt() {
-  /* OPT 13: will-change only during hover */
   $$('.service-card:not(.service-card-cta)').forEach(card => {
+    /* OPT 13: Add mouse-glow element */
+    const glow = document.createElement('div');
+    glow.className = 'svc-mouse-glow';
+    card.prepend(glow);
+
     card.addEventListener('mouseenter', () => card.style.willChange = 'transform');
     card.addEventListener('mousemove', e => {
-      const r = card.getBoundingClientRect();
-      const x = (e.clientX - r.left) / r.width  - .5;
-      const y = (e.clientY - r.top)  / r.height - .5;
+      const r  = card.getBoundingClientRect();
+      const x  = (e.clientX - r.left) / r.width  - .5;
+      const y  = (e.clientY - r.top)  / r.height - .5;
       card.style.transform = `translateY(-7px) perspective(700px) rotateX(${-y * 5}deg) rotateY(${x * 5}deg)`;
+      /* Radial glow follows cursor */
+      const mx = ((e.clientX - r.left) / r.width  * 100).toFixed(1) + '%';
+      const my = ((e.clientY - r.top)  / r.height * 100).toFixed(1) + '%';
+      glow.style.setProperty('--mx', mx);
+      glow.style.setProperty('--my', my);
     });
     card.addEventListener('mouseleave', () => {
       card.style.transform = '';
@@ -351,17 +367,23 @@ document.addEventListener('click', e => {
   setTimeout(() => window.scrollBy(0, -80), 300);
 });
 
-/* ════════════ ANIM 18: THEME TOGGLE ════════════ */
+/* ════════════ ANIM 18: THEME TOGGLE — localStorage persistence ════════════ */
 (function initTheme() {
   const btn  = $('themeToggle');
   const icon = $('themeIcon');
   if (!btn) return;
-  let dark = true;
+  /* OPT 18: restore saved theme */
+  let dark = localStorage.getItem('kempel-theme') !== 'light';
+  function applyTheme(isDark) {
+    document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+    document.body.style.background = isDark ? '' : 'var(--bg)';
+    if (icon) icon.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
+  }
+  applyTheme(dark);
   btn.addEventListener('click', () => {
     dark = !dark;
-    document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
-    if (icon) { icon.className = dark ? 'fas fa-sun' : 'fas fa-moon'; }
-    document.body.style.background = dark ? '' : 'var(--bg)';
+    localStorage.setItem('kempel-theme', dark ? 'dark' : 'light');
+    applyTheme(dark);
   });
 })();
 
@@ -401,7 +423,7 @@ function showToast(msg, type = 'info', dur = 3200) {
 
 /* ════════════ WHATSAPP FORM ════════════ */
 (function initForm() {
-  let selEquipo = null, selTecnico = null;
+  /* OPT 18: Centralized phone map */
   const phones   = { franco: '5493415964079', agustin: '5493413278981' };
   const messages = {
     aire:     'Hola, estoy consultando por un servicio de aire acondicionado. Me contacto desde la página de Kempel Refrigeración.',
@@ -411,6 +433,20 @@ function showToast(msg, type = 'info', dur = 3200) {
   const bar   = $('formProgBar');
   const hint  = $('formHint');
 
+  /* OPT 18: Restore from localStorage */
+  let selEquipo  = localStorage.getItem('kempel-equipo')  || null;
+  let selTecnico = localStorage.getItem('kempel-tecnico') || null;
+
+  /* Restore UI state on load */
+  if (selEquipo) {
+    const card = document.querySelector(`.opt-card input[name="equipo"][value="${selEquipo}"]`)?.closest('.opt-card');
+    if (card) { card.classList.add('selected'); card.querySelector('input').checked = true; }
+  }
+  if (selTecnico) {
+    const card = document.querySelector(`.opt-card input[name="tecnico"][value="${selTecnico}"]`)?.closest('.opt-card');
+    if (card) { card.classList.add('selected'); card.querySelector('input').checked = true; }
+  }
+
   /* OPT 16: delegate option card clicks */
   document.querySelectorAll('.opt-card').forEach(card => {
     const inp = card.querySelector('input[type=radio]');
@@ -419,8 +455,8 @@ function showToast(msg, type = 'info', dur = 3200) {
       $$(`.opt-card input[name="${inp.name}"]`).forEach(i => i.closest('.opt-card').classList.remove('selected'));
       inp.checked = true;
       card.classList.add('selected');
-      if (inp.name === 'equipo')  selEquipo  = inp.value;
-      if (inp.name === 'tecnico') selTecnico = inp.value;
+      if (inp.name === 'equipo')  { selEquipo  = inp.value; localStorage.setItem('kempel-equipo',  selEquipo); }
+      if (inp.name === 'tecnico') { selTecnico = inp.value; localStorage.setItem('kempel-tecnico', selTecnico); }
       updateForm();
     });
   });
@@ -443,6 +479,7 @@ function showToast(msg, type = 'info', dur = 3200) {
       hint.textContent = hintMap[(selEquipo ? '1' : '0') + (selTecnico ? '1' : '0')];
     }
   }
+  updateForm(); // apply on load if restored
 
   btnWa?.addEventListener('click', () => {
     if (!selEquipo || !selTecnico) return;
@@ -455,15 +492,15 @@ function showToast(msg, type = 'info', dur = 3200) {
   });
 })();
 
-/* ════════════ IA DIAGNÓSTICO — WIZARD FLOW ════════════ */
+/* ════════════ IA DIAGNÓSTICO — WIZARD + TRIAJE ════════════ */
 (function initAI() {
   /* ── State ── */
   const aiState = {
-    location: null,       // selected location string
-    locationCustom: '',   // typed when "otra"
-    acType: null,         // 'Split' | 'Ventana' | 'Piso techo' | 'Portátil'
-    step: 1,              // 1=location, 2=acType, 3=maintenance/diagnosis, 4=wa
-    maintAnswer: null,    // 'si' | 'no' | 'no_se'
+    location: null,
+    locationCustom: '',
+    acType: null,
+    step: 1,
+    maintAnswer: null,
   };
 
   /* ── DOM ── */
@@ -474,7 +511,6 @@ function showToast(msg, type = 'info', dur = 3200) {
   const drpBody       = $('drpBody');
   const drpService    = $('drpService');
   const drpEstimate   = $('drpEstimate');
-  const drpEstText    = $('drpEstimateText');
   const btnDiagWa     = $('btnDiagWa');
   const drpClose      = $('drpClose');
   const confRow       = $('confidenceRow');
@@ -485,8 +521,6 @@ function showToast(msg, type = 'info', dur = 3200) {
   const chatEl        = $('diagChat');
   const chipsRow      = $('chipsRow');
   const diagInputRow  = $('diagInputRow');
-
-  // Wizard panels
   const panelLocation    = $('panelLocation');
   const panelACType      = $('panelACType');
   const panelMaintenance = $('panelMaintenance');
@@ -497,265 +531,213 @@ function showToast(msg, type = 'info', dur = 3200) {
   const maintWaMsg       = $('maintWaMsg');
   const btnMaintWa       = $('btnMaintWa');
   const customLocInput   = $('customLocationInput');
-
-  // Step dots and connectors
   const wSteps   = [null, $('wStep1'), $('wStep2'), $('wStep3'), $('wStep4')];
   const wConns   = [null, $('wConn1'), $('wConn2'), $('wConn3')];
 
-  let history = [];
-  let currentWaMsg = '', currentPhone = '5493415964079';
+  /* OPT 18: Phone map — single source of truth */
+  const PHONES = { franco: '5493415964079', agustin: '5493413278981' };
 
-  /* ─────────────────────────────────────────────────────
-     HELPER: getLocationLabel
-  ───────────────────────────────────────────────────── */
+  /* OPT 8: Session history stored in sessionStorage */
+  let history = (() => {
+    try { return JSON.parse(sessionStorage.getItem('kempel-chat') || '[]'); } catch { return []; }
+  })();
+  function saveHistory() {
+    try { sessionStorage.setItem('kempel-chat', JSON.stringify(history.slice(-10))); } catch {}
+  }
+
+  let currentWaMsg = '', currentPhone = PHONES.franco;
+
+  /* ── Geo validation ── */
+  /* OPT 6: Known valid localities */
+  const VALID_ZONES = [
+    'rosario','funes','roldán','roldan','granadero baigorria','baigorria',
+    'cap. bermúdez','capitan bermudez','bermudez','bermúdez',
+    'fray luis beltrán','beltran','beltrán','san lorenzo',
+    'pto. gral. san martín','puerto gral san martin','puerto general san martín',
+    'san martin','villa gobernador gálvez','galvez',
+  ];
+  function isValidZone(loc) {
+    const lc = loc.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+    return VALID_ZONES.some(z => {
+      const zn = z.normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+      return lc.includes(zn) || zn.includes(lc);
+    });
+  }
+
+  /* ── Helpers ── */
   function getLocationLabel() {
-    if (aiState.location === 'otra') {
-      return aiState.locationCustom.trim() || 'otra localidad';
-    }
+    if (aiState.location === 'otra') return aiState.locationCustom.trim() || 'otra localidad';
     return aiState.location || '';
   }
 
-  /* ─────────────────────────────────────────────────────
-     HELPER: updateStepIndicator
-  ───────────────────────────────────────────────────── */
   function updateStepIndicator(currentStep) {
     for (let i = 1; i <= 4; i++) {
-      const dot = wSteps[i];
-      if (!dot) continue;
-      dot.classList.remove('active', 'done');
+      const dot = wSteps[i]; if (!dot) continue;
+      dot.classList.remove('active','done');
       if (i < currentStep)  dot.classList.add('done');
       if (i === currentStep) dot.classList.add('active');
     }
     for (let i = 1; i <= 3; i++) {
-      const conn = wConns[i];
-      if (!conn) continue;
-      conn.classList.toggle('done', i < currentStep);
+      wConns[i]?.classList.toggle('done', i < currentStep);
     }
-    const labels = ['', 'Paso 1 de 4', 'Paso 2 de 4', 'Paso 3 de 4', '¡Listo!'];
+    const labels = ['','Paso 1 de 4','Paso 2 de 4','Paso 3 de 4','¡Listo!'];
     if (diagStatus) diagStatus.textContent = labels[currentStep] || '';
   }
 
-  /* ─────────────────────────────────────────────────────
-     HELPER: show / hide panels cleanly
-  ───────────────────────────────────────────────────── */
-  function showPanel(el) {
-    el?.classList.remove('hidden');
-  }
-  function hidePanel(el) {
-    el?.classList.add('hidden');
-  }
+  function showPanel(el) { el?.classList.remove('hidden'); el?.classList.add('slide-in'); }
+  function hidePanel(el) { el?.classList.add('hidden'); el?.classList.remove('slide-in'); }
 
-  /* ─────────────────────────────────────────────────────
-     HELPER: updateSummary
-  ───────────────────────────────────────────────────── */
   function updateSummary() {
     if (summaryLoc) summaryLoc.innerHTML = `<i class="fas fa-map-marker-alt"></i> ${getLocationLabel()}`;
-    if (summaryAC && aiState.acType)  summaryAC.innerHTML = `<i class="fas fa-snowflake"></i> ${aiState.acType}`;
+    if (summaryAC && aiState.acType) summaryAC.innerHTML = `<i class="fas fa-snowflake"></i> ${aiState.acType}`;
   }
 
-  /* ─────────────────────────────────────────────────────
-     STEP 1 → STEP 2: selectLocation
-  ───────────────────────────────────────────────────── */
+  /* ── STEP 1: Location ── */
   function selectLocation(loc) {
     aiState.location = loc;
-    aiState.step = 1;
-
-    // Mark buttons
-    panelLocation?.querySelectorAll('.wizard-opt').forEach(b => {
-      b.classList.toggle('selected', b.dataset.loc === loc);
-    });
-
-    if (loc === 'otra') {
-      customLocInput?.classList.add('visible');
-      customLocInput?.focus();
-      // Wait for user to type then press Enter or click next opt
-      return;
-    }
-
+    panelLocation?.querySelectorAll('.wizard-opt').forEach(b => b.classList.toggle('selected', b.dataset.loc === loc));
+    if (loc === 'otra') { customLocInput?.classList.add('visible'); customLocInput?.focus(); return; }
     customLocInput?.classList.remove('visible');
     aiState.locationCustom = '';
     goToStep2();
   }
 
   function goToStep2() {
-    aiState.step = 2;
-    updateStepIndicator(2);
-    hidePanel(panelLocation);
-    showPanel(panelACType);
+    /* OPT 6: Validate geography if "otra" */
+    if (aiState.location === 'otra' && aiState.locationCustom) {
+      if (!isValidZone(aiState.locationCustom)) {
+        addGeoWarning(aiState.locationCustom);
+        return;
+      }
+    }
+    aiState.step = 2; updateStepIndicator(2);
+    hidePanel(panelLocation); showPanel(panelACType);
   }
 
-  /* Handle "otra localidad" confirm on Enter key */
-  customLocInput?.addEventListener('keydown', e => {
-    if (e.key === 'Enter') {
-      aiState.locationCustom = customLocInput.value.trim();
-      if (!aiState.locationCustom) return;
-      goToStep2();
-    }
-  });
+  function addGeoWarning(loc) {
+    const warn = document.createElement('p');
+    warn.style.cssText = 'color:var(--amber);font-size:.82rem;margin-top:10px;padding:8px 12px;background:rgba(245,166,35,.1);border-radius:8px;border:1px solid rgba(245,166,35,.25)';
+    warn.innerHTML = `<i class="fas fa-triangle-exclamation"></i> <strong>${loc}</strong> está fuera de nuestra zona de cobertura habitual. Podés consultarnos igualmente por WhatsApp.`;
+    const existing = panelLocation?.querySelector('.geo-warning');
+    if (existing) existing.remove();
+    warn.className = 'geo-warning';
+    panelLocation?.appendChild(warn);
+  }
 
-  /* Location buttons click */
+  customLocInput?.addEventListener('keydown', e => {
+    if (e.key === 'Enter') { aiState.locationCustom = customLocInput.value.trim(); if (aiState.locationCustom) goToStep2(); }
+  });
   panelLocation?.querySelectorAll('.wizard-opt[data-loc]').forEach(btn => {
     btn.addEventListener('click', () => selectLocation(btn.dataset.loc));
   });
 
-  /* ─────────────────────────────────────────────────────
-     STEP 2 → STEP 3: selectACType
-  ───────────────────────────────────────────────────── */
+  /* ── STEP 2: AC Type ── */
   function selectACType(type) {
-    aiState.acType = type;
-    aiState.step = 3;
-
-    // Mark buttons
-    panelACType?.querySelectorAll('.wizard-opt').forEach(b => {
-      b.classList.toggle('selected', b.dataset.ac === type);
-    });
-
+    aiState.acType = type; aiState.step = 3;
+    panelACType?.querySelectorAll('.wizard-opt').forEach(b => b.classList.toggle('selected', b.dataset.ac === type));
     updateStepIndicator(3);
-    hidePanel(panelACType);
-    showPanel(panelMaintenance);
-
-    // Reveal summary
-    showPanel(wizardSummary);
-    updateSummary();
+    hidePanel(panelACType); showPanel(panelMaintenance);
+    showPanel(wizardSummary); updateSummary();
   }
-
   panelACType?.querySelectorAll('.wizard-opt[data-ac]').forEach(btn => {
     btn.addEventListener('click', () => selectACType(btn.dataset.ac));
   });
 
-  /* ─────────────────────────────────────────────────────
-     BACK BUTTONS
-  ───────────────────────────────────────────────────── */
+  /* ── Back buttons ── */
   $('backToLocation')?.addEventListener('click', () => {
-    aiState.step = 1;
-    updateStepIndicator(1);
-    hidePanel(panelACType);
-    showPanel(panelLocation);
+    aiState.step = 1; updateStepIndicator(1);
+    hidePanel(panelACType); showPanel(panelLocation);
   });
-
   $('backToACType')?.addEventListener('click', () => {
-    aiState.step = 2;
-    updateStepIndicator(2);
-    hidePanel(panelMaintenance);
-    hidePanel(wizardSummary);
-    hidePanel(maintWaPanel);
+    aiState.step = 2; updateStepIndicator(2);
+    hidePanel(panelMaintenance); hidePanel(wizardSummary); hidePanel(maintWaPanel);
     showPanel(panelACType);
   });
 
-  /* ─────────────────────────────────────────────────────
-     STEP 3: Maintenance answer
-  ───────────────────────────────────────────────────── */
+  /* ── STEP 3: Maintenance ── */
   panelMaintenance?.querySelectorAll('.wizard-opt[data-maint]').forEach(btn => {
     btn.addEventListener('click', () => {
-      const answer = btn.dataset.maint;
-      aiState.maintAnswer = answer;
-
-      // Mark buttons
-      panelMaintenance.querySelectorAll('.wizard-opt').forEach(b => {
-        b.classList.toggle('selected', b === btn);
-      });
-
-      if (answer === 'si') {
-        // Quick maintenance path
-        generateMaintenanceWA();
-      } else {
-        // Continue to full AI diagnosis
-        startDiagnosis();
-      }
+      aiState.maintAnswer = btn.dataset.maint;
+      panelMaintenance.querySelectorAll('.wizard-opt').forEach(b => b.classList.toggle('selected', b === btn));
+      if (aiState.maintAnswer === 'si') generateMaintenanceWA();
+      else startDiagnosis();
     });
   });
 
-  /* ─────────────────────────────────────────────────────
-     generateMaintenanceWA — instant WA for maintenance
-  ───────────────────────────────────────────────────── */
+  /* ── generateMaintenanceWA ── */
   function generateMaintenanceWA() {
-    const loc  = getLocationLabel();
-    const type = aiState.acType;
+    const loc  = getLocationLabel(), type = aiState.acType;
     const msg  = `Hola, necesito un mantenimiento (limpieza) para mi aire acondicionado ${type} en ${loc}.`;
-
-    currentWaMsg  = msg;
-    currentPhone  = '5493415964079';
-
+    currentWaMsg = msg; currentPhone = PHONES.franco;
     if (maintWaMsg) maintWaMsg.textContent = msg;
-
-    showPanel(maintWaPanel);
-    updateStepIndicator(4);
-    aiState.step = 4;
+    showPanel(maintWaPanel); updateStepIndicator(4); aiState.step = 4;
     showToast('✅ Mensaje listo para enviar', 'success');
   }
-
   btnMaintWa?.addEventListener('click', () => {
     window.open(`https://wa.me/${currentPhone}?text=${encodeURIComponent(currentWaMsg)}`, '_blank', 'noopener');
     showToast('Abriendo WhatsApp...', 'success');
   });
 
-  /* ─────────────────────────────────────────────────────
-     startDiagnosis — show AI chat for non-maintenance
-  ───────────────────────────────────────────────────── */
+  /* ── startDiagnosis — open chat ── */
   function startDiagnosis() {
     hidePanel(panelMaintenance);
-
-    // Show chat interface
-    showPanel(chatEl);
-    showPanel(chipsRow);
-    showPanel(diagInputRow);
-    inputEl?.focus();
-
-    updateStepIndicator(3);
+    /* OPT 8: Restore session chat if exists */
+    if (history.length) {
+      history.forEach(m => addBubble(m.content, m.role === 'user'));
+    }
+    showPanel(chatEl); showPanel(chipsRow); showPanel(diagInputRow);
     if (diagStatus) diagStatus.textContent = 'Describí el problema';
+    inputEl?.focus();
+    updateStepIndicator(3);
   }
 
-  /* ─────────────────────────────────────────────────────
-     AI Chat — reused helpers
-  ───────────────────────────────────────────────────── */
-
-  /* AI 5: Add chat bubble */
+  /* ── Chat helpers ── */
   function addBubble(text, isUser) {
     const msg = document.createElement('div');
     msg.className = `chat-msg ${isUser ? 'chat-user' : 'chat-ai'}`;
-    if (!isUser) {
-      msg.innerHTML = `<div class="chat-avatar-sm"><i class="fas fa-robot"></i></div><div class="chat-bubble">${text}</div>`;
-    } else {
-      msg.innerHTML = `<div class="chat-bubble">${text}</div>`;
-    }
+    msg.innerHTML = isUser
+      ? `<div class="chat-bubble">${text}</div>`
+      : `<div class="chat-avatar-sm"><i class="fas fa-robot"></i></div><div class="chat-bubble">${text}</div>`;
     chatEl?.appendChild(msg);
-    chatEl.scrollTop = chatEl.scrollHeight;
+    if (chatEl) chatEl.scrollTop = chatEl.scrollHeight;
     return msg;
   }
 
-  /* AI 6: Typing indicator */
   function addTyping() {
     const msg = document.createElement('div');
     msg.className = 'chat-msg chat-ai'; msg.id = 'typingMsg';
     msg.innerHTML = '<div class="chat-avatar-sm"><i class="fas fa-robot"></i></div><div class="typing-indicator"><span></span><span></span><span></span></div>';
     chatEl?.appendChild(msg);
-    chatEl.scrollTop = chatEl.scrollHeight;
+    if (chatEl) chatEl.scrollTop = chatEl.scrollHeight;
   }
   function removeTyping() { $('typingMsg')?.remove(); }
 
-  /* AI 7: Streaming text */
   async function streamText(container, text, delay = 14) {
     container.innerHTML = '';
     for (let i = 0; i < text.length; i++) {
       container.innerHTML += text[i] === '\n' ? '<br>' : text[i];
       await new Promise(r => setTimeout(r, delay * (text[i] === '.' || text[i] === ',' ? 4 : 1)));
-      chatEl.scrollTop = chatEl.scrollHeight;
+      if (chatEl) chatEl.scrollTop = chatEl.scrollHeight;
     }
   }
 
-  /* AI 8: Detect urgency */
+  /* OPT 9: Extended urgency words with electromechanical terms */
   function detectUrgency(text) {
-    const urgentWords = ['no enciende','no funciona','quemado','roto','chispa','humo','olor','quemadura','urgente','inmediato'];
+    const urgentWords = [
+      'no enciende','no funciona','quemado','roto','chispa','chispas','humo','olor',
+      'quemadura','urgente','inmediato','térmica','cortocircuito','corto circuito',
+      'explosión','explosion','descarga','electrocución','incendio'
+    ];
     const lc = text.toLowerCase();
     return urgentWords.some(w => lc.includes(w));
   }
 
-  /* AI 9: Recommend technician */
+  /* OPT 3: Recommend technician — caller can override via wizard */
   function recommendTech() {
-    return { name: 'Franco Kempel', phone: '5493415964079' };
+    return { name: 'Franco Kempel', phone: PHONES.franco };
   }
 
-  /* Quick chips */
+  /* OPT 8: Chips silently add to context */
   chipsRow?.querySelectorAll('.chip').forEach(chip => {
     chip.addEventListener('click', () => {
       $$('.chip').forEach(c => c.classList.remove('active'));
@@ -765,49 +747,54 @@ function showToast(msg, type = 'info', dur = 3200) {
     });
   });
 
-  /* Voice input */
+  /* Voice */
   const voiceBtn = $('voiceBtn');
   if (voiceBtn && ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window)) {
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-    const recognition = new SR();
-    recognition.lang = 'es-AR';
-    recognition.continuous = false;
-    recognition.onstart = () => voiceBtn.classList.add('recording');
-    recognition.onend   = () => voiceBtn.classList.remove('recording');
-    recognition.onresult = e => {
-      if (inputEl) inputEl.value = e.results[0][0].transcript;
-      showToast('Texto capturado por voz ✓', 'success', 2000);
-    };
-    voiceBtn.addEventListener('click', () => recognition.start());
-  } else if (voiceBtn) {
-    voiceBtn.title = 'Voz no disponible en este navegador';
-    voiceBtn.style.opacity = '.4';
-  }
+    const rec = new SR(); rec.lang = 'es-AR'; rec.continuous = false;
+    rec.onstart = () => voiceBtn.classList.add('recording');
+    rec.onend   = () => voiceBtn.classList.remove('recording');
+    rec.onresult = e => { if (inputEl) inputEl.value = e.results[0][0].transcript; showToast('Texto capturado ✓', 'success', 2000); };
+    voiceBtn.addEventListener('click', () => rec.start());
+  } else if (voiceBtn) { voiceBtn.title = 'Voz no disponible'; voiceBtn.style.opacity = '.4'; }
 
   inputEl?.addEventListener('keydown', e => {
     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); btnDiagnose?.click(); }
   });
 
-  /* ─────────────────────────────────────────────────────
-     generateWhatsAppMessage — builds the final WA link
-  ───────────────────────────────────────────────────── */
+  /* ── generateWhatsAppMessage ── */
   function generateWhatsAppMessage(symptom, aiSuggestedMsg) {
-    const loc  = getLocationLabel();
-    const type = aiState.acType;
-
+    const loc  = getLocationLabel(), type = aiState.acType;
     let base = aiSuggestedMsg ||
-      `Hola, tengo un aire acondicionado ${type} en ${loc}. El problema es: ${symptom}. ¿Podrían revisarlo?`;
-
-    // Inject location + ac type if not already present
+      `Hola, tengo un ${type} en ${loc}. El técnico de triaje registró: "${symptom}". ¿Podrían contactarme?`;
     if (!base.includes(type)  && type) base += ` (Equipo: ${type})`;
     if (!base.includes(loc)   && loc)  base += ` (Localidad: ${loc})`;
-
     return base;
   }
 
-  /* ─────────────────────────────────────────────────────
-     AI diagnose — main API call
-  ───────────────────────────────────────────────────── */
+  /* ── addRetryUI — shows after API error ── */
+  function addRetryUI(onRetry) {
+    const msg = document.createElement('div');
+    msg.className = 'chat-msg chat-ai'; msg.id = 'retryMsg';
+    msg.innerHTML = `
+      <div class="chat-avatar-sm"><i class="fas fa-robot"></i></div>
+      <div class="chat-bubble" style="display:flex;flex-direction:column;gap:10px">
+        <span>⚠️ Sin conexión con el servidor. Podés reintentar o contactarnos directamente.</span>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-sm" id="btnRetry" style="padding:7px 14px;font-size:.8rem;background:rgba(100,200,232,.15);border:1px solid var(--ice);color:white;border-radius:8px;cursor:pointer">
+            <i class="fas fa-rotate-right"></i> Reintentar
+          </button>
+          <a href="https://wa.me/${PHONES.franco}" target="_blank" rel="noopener" class="btn btn-wa" style="padding:7px 14px;font-size:.8rem;border-radius:8px">
+            <i class="fab fa-whatsapp"></i> WhatsApp directo
+          </a>
+        </div>
+      </div>`;
+    chatEl?.appendChild(msg);
+    if (chatEl) chatEl.scrollTop = chatEl.scrollHeight;
+    document.getElementById('btnRetry')?.addEventListener('click', () => { msg.remove(); onRetry(); });
+  }
+
+  /* ── diagnose — main API call with triage prompt ── */
   async function diagnose() {
     const symptom = inputEl?.value.trim();
     if (!symptom) {
@@ -822,7 +809,7 @@ function showToast(msg, type = 'info', dur = 3200) {
     if (detectUrgency(symptom)) {
       if (urgBadge) urgBadge.style.display = 'flex';
       if (urgText)  urgText.textContent = '¡Urgente!';
-      showToast('Caso urgente detectado — Te conectamos rápido', 'success');
+      showToast('Caso urgente — Te conectamos rápido', 'success');
     } else {
       if (urgBadge) urgBadge.style.display = 'none';
     }
@@ -832,64 +819,75 @@ function showToast(msg, type = 'info', dur = 3200) {
     if (btnDiagnose) btnDiagnose.disabled = true;
 
     history.push({ role: 'user', content: symptom });
+    saveHistory();
 
-    // Build context-rich system prompt
-    const loc  = getLocationLabel();
-    const type = aiState.acType || 'aire acondicionado';
-    const systemPrompt = `Sos el asistente técnico de Kempel Refrigeración, empresa de servicio técnico de refrigeración en el norte de Rosario (Cap. Bermúdez, Fray Luis Beltrán, San Lorenzo, Puerto General San Martín; consultar para Baigorria y Rosario).
+    const loc  = getLocationLabel(), type = aiState.acType || 'aire acondicionado';
 
-Técnicos: Franco Kempel (especialista, +54 9 3415 96-4079) y Agustín Kempel (especialista, +54 9 3413 27-8981).
-Servicios: Reparación/Mantenimiento/Instalación de A/C, Reparación de Heladeras, Reparación de Freezers.
+    /* ── OPT 5: TRIAJE SYSTEM PROMPT — NO diagnóstico, NO precios ── */
+    const systemPrompt = `Sos el asistente de triaje técnico de Kempel Refrigeración (norte de Rosario, Argentina).
 
 DATOS DEL CLIENTE:
 - Equipo: ${type}
 - Localidad: ${loc}
 
-FALLAS COMUNES A CONSIDERAR: no enfría, no enciende, pierde agua, hace ruido, baja presión de gas, filtro sucio, problema eléctrico, capacitor dañado, ventilador, sensor temperatura defectuoso.
+TU ROL ES ESTRICTAMENTE DE TRIAJE. REGLAS ABSOLUTAS:
+1. NUNCA digas cuál es el problema ni el diagnóstico. Eso lo hace el técnico presencialmente.
+2. NUNCA cotices ni menciones precios. Cero pesos, cero estimaciones.
+3. Tu único trabajo: hacer 1 o 2 preguntas técnicas de descarte para ayudar al técnico humano a prepararse mejor.
+4. Preguntas útiles ejemplos: "¿Escuchás arrancar el compresor?", "¿Saltó la térmica o disyuntor?", "¿El equipo enciende y apaga solo?", "¿Notaste pérdida de agua o hielo?", "¿Midió la tensión en bornes?".
+5. Luego de 1-2 preguntas, armá un resumen estructurado para WhatsApp con el formato:
+   → WhatsApp: Hola, tengo un [equipo] en [localidad]. [Resumen breve de síntomas y respuestas del cliente]. ¿Pueden coordinar una visita?
 
-Cuando el cliente describe un síntoma, respondé con:
-1. Diagnóstico probable (2-3 oraciones simples, sin tecnicismos). Priorizá diagnósticos simples primero.
-2. Servicio recomendado: escríbilo textualmente precedido de "→ Servicio: ".
-3. Mensaje WhatsApp estructurado precedido de "→ WhatsApp: " con el formato: "Hola, tengo un [tipo] en [localidad]. El problema es que [descripción]. ¿Podrían revisarlo?"
-4. Si el problema requiere urgencia, empezá con "🚨 URGENTE:".
+Respondé en español argentino, tono cálido y profesional. Máximo 120 palabras.`;
 
-Respondé siempre en español argentino, tono amigable y directo. Máximo 180 palabras. No repitas preguntas ya respondidas.`;
+    /* OPT 7: 15s timeout cancels typing indicator */
+    let timeoutId;
+    const timeoutPromise = new Promise(resolve => {
+      timeoutId = setTimeout(() => { removeTyping(); resolve(null); }, 15000);
+    });
 
-    let attempts = 0, data;
-    while (attempts < 2) {
-      try {
-        const res = await fetch('https://api.anthropic.com/v1/messages', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            model: 'claude-sonnet-4-20250514',
-            max_tokens: 1000,
-            system: systemPrompt,
-            messages: history,
-          }),
-        });
-        if (!res.ok) throw new Error(`${res.status}`);
-        data = await res.json();
-        break;
-      } catch (err) {
-        attempts++;
-        if (attempts >= 2) data = null;
-        else await new Promise(r => setTimeout(r, 800));
-      }
-    }
+    /* OPT 2: Apunta a /api/chat para evitar CORS — fallback directo para dev */
+    let data;
+    try {
+      const apiCall = fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: history, system: systemPrompt }),
+      }).then(async r => {
+        /* Fallback: if /api/chat 404, try Anthropic direct (dev only) */
+        if (r.status === 404) {
+          return fetch('https://api.anthropic.com/v1/messages', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 300, system: systemPrompt, messages: history }),
+          }).then(r2 => r2.ok ? r2.json() : null);
+        }
+        return r.ok ? r.json() : null;
+      }).catch(() => null);
 
+      data = await Promise.race([apiCall, timeoutPromise]);
+    } catch { data = null; }
+
+    clearTimeout(timeoutId);
     removeTyping();
 
+    if (!data) {
+      if (btnDiagnose) btnDiagnose.disabled = false;
+      addRetryUI(() => diagnose());
+      if (diagStatus) diagStatus.textContent = 'Error de conexión';
+      return;
+    }
+
     let rawText = data?.content?.map(b => b.text || '').join('') || '';
-    if (!rawText) rawText = 'Hubo un inconveniente con la conexión. Por favor contactanos directamente por WhatsApp y contanos el problema.';
+    if (!rawText) { addRetryUI(() => diagnose()); return; }
 
     history.push({ role: 'assistant', content: rawText });
+    saveHistory();
 
     const serviceMatch = rawText.match(/→ Servicio:\s*(.+)/);
     const waMatch      = rawText.match(/→ WhatsApp:\s*(.+)/);
     const tech         = recommendTech();
 
-    // Confidence score
     const wordCount  = symptom.split(' ').length;
     const confidence = Math.min(60 + wordCount * 3, 97);
     if (confRow && confFill && confPct) {
@@ -897,63 +895,48 @@ Respondé siempre en español argentino, tono amigable y directo. Máximo 180 pa
       setTimeout(() => { confFill.style.width = confidence + '%'; confPct.textContent = confidence + '%'; }, 300);
     }
 
-    // Clean bubble text
     const bubbleText = rawText
-      .replace(/→ WhatsApp:.+/g, '')
-      .replace(/→ Servicio:.+/g, '')
-      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-      .replace(/\n\n/g, '<br><br>').replace(/\n/g, '<br>').trim();
+      .replace(/→ WhatsApp:.+/g,'').replace(/→ Servicio:.+/g,'')
+      .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+      .replace(/\n\n/g,'<br><br>').replace(/\n/g,'<br>').trim();
 
-    const aiMsg = addBubble('', false);
+    const aiMsg  = addBubble('', false);
     const bubble = aiMsg.querySelector('.chat-bubble');
-    await streamText(bubble, bubbleText.replace(/<[^>]+>/g, ''), 12);
+    await streamText(bubble, bubbleText.replace(/<[^>]+>/g,''), 12);
     bubble.innerHTML = bubbleText;
 
-    // Fill result panel
-    if (drpBody)    drpBody.innerHTML = `<p>${bubbleText}</p>`;
-    if (drpService && serviceMatch) {
-      drpService.innerHTML = `<i class="fas fa-wrench"></i> ${serviceMatch[1].trim()}`;
-      drpService.style.display = 'inline-flex';
-    }
-    if (drpEstimate) drpEstimate.style.display = 'none'; // removed pricing per brief
-
+    if (drpBody) drpBody.innerHTML = `<p>${bubbleText}</p>`;
+    if (drpService && serviceMatch) { drpService.innerHTML = `<i class="fas fa-wrench"></i> ${serviceMatch[1].trim()}`; drpService.style.display = 'inline-flex'; }
+    if (drpEstimate) drpEstimate.style.display = 'none'; // No price estimates
     if ($('drpTechName')) $('drpTechName').textContent = tech.name;
 
-    // Build final WA message using generateWhatsAppMessage
-    const waBase     = waMatch ? waMatch[1].trim() : null;
-    currentWaMsg     = generateWhatsAppMessage(symptom, waBase);
-    currentPhone     = tech.phone;
+    currentWaMsg  = generateWhatsAppMessage(symptom, waMatch ? waMatch[1].trim() : null);
+    currentPhone  = tech.phone;
 
-    updateStepIndicator(4);
-    aiState.step = 4;
-
+    updateStepIndicator(4); aiState.step = 4;
     if (resultPanel) resultPanel.style.display = 'block';
-    if (diagStatus)  diagStatus.textContent = '✓ Diagnóstico listo';
+    if (diagStatus)  diagStatus.textContent = '✓ Triaje completo';
     if (btnDiagnose) btnDiagnose.disabled = false;
-    showToast('Diagnóstico completado', 'success');
+    showToast('Triaje completado', 'success');
   }
 
   btnDiagnose?.addEventListener('click', diagnose);
 
-  /* Send WA from result panel */
   btnDiagWa?.addEventListener('click', () => {
     window.open(`https://wa.me/${currentPhone}?text=${encodeURIComponent(currentWaMsg)}`, '_blank', 'noopener');
     showToast('Abriendo WhatsApp...', 'success');
   });
 
-  /* Close / reset result panel */
   drpClose?.addEventListener('click', () => {
     if (resultPanel) resultPanel.style.display = 'none';
     if (urgBadge) urgBadge.style.display = 'none';
     if (confRow)  confRow.style.display  = 'none';
     if (diagStatus) diagStatus.textContent = 'Describí el problema';
-    updateStepIndicator(3);
-    aiState.step = 3;
-    history = [];
-    showToast('Diagnóstico reiniciado', 'info', 2000);
+    /* OPT 8: keep session history on close, only reset on full wizard reset */
+    updateStepIndicator(3); aiState.step = 3;
+    showToast('Podés seguir consultando', 'info', 2000);
   });
 
-  // Init
   updateStepIndicator(1);
 })();
 

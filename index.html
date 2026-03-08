@@ -5,16 +5,82 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <meta name="description" content="Kempel Refrigeración – Servicio técnico de aires acondicionados, heladeras y freezers. Cap. Bermúdez → Pto. Gral. San Martín. A domicilio, rápido y confiable."/>
   <meta name="theme-color" content="#06152b"/>
-  <!-- OPT 1: Preconnect -->
+
+  <!-- SEO 21: Open Graph para previsualización en WhatsApp y redes -->
+  <meta property="og:title" content="Kempel Refrigeración | Servicio Técnico A/C y Heladeras"/>
+  <meta property="og:description" content="Reparación e instalación de aires acondicionados, heladeras y freezers. Técnicos certificados. Diagnóstico sin cargo. Corredor norte de Rosario."/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:image" content="Franco.jpg"/>
+  <meta property="og:locale" content="es_AR"/>
+
+  <!-- OPT: Preconnects -->
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link rel="preconnect" href="https://cdnjs.cloudflare.com"/>
-  <!-- OPT 2: Preload critical font -->
+
+  <!-- OPT: Preload DM Sans (body font) — reduces FOUT -->
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap" onload="this.rel='stylesheet'"/>
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&display=swap" as="style" onload="this.rel='stylesheet'"/>
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
-  <title>Kempel Refrigeración | Servicio Técnico</title>
+  <noscript>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet"/>
+  </noscript>
+
+  <!-- OPT 17: FontAwesome non-bloqueante -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" media="print" onload="this.media='all'"/>
+  <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/></noscript>
+
+  <title>Kempel Refrigeración | Servicio Técnico A/C Heladeras Freezers</title>
   <link rel="stylesheet" href="style.css"/>
+
+  <!-- SEO 20: JSON-LD FAQPage Schema.org -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "¿Cuánto tarda en llegar un técnico?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Normalmente respondemos el mismo día o al siguiente. En urgencias intentamos llegar en el menor tiempo posible."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "¿El diagnóstico tiene costo?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No. El diagnóstico inicial es completamente sin cargo. Sólo pagás si decidís hacer la reparación."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "¿Qué marcas atienden?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Trabajamos con todas las marcas del mercado: Samsung, LG, Carrier, Gree, Whirlpool, Electrolux, Drean, Peabody y más."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "¿Llegan a Rosario o Baigorria?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Podemos llegar a Baigorria y Rosario según disponibilidad. Consultanos por WhatsApp y coordinamos."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "¿Los repuestos tienen garantía?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Sí. Usamos repuestos originales y garantizamos tanto los materiales como la mano de obra. Cualquier inconveniente, volvemos sin costo adicional."
+        }
+      }
+    ]
+  }
+  </script>
 </head>
 <body>
 
@@ -553,7 +619,7 @@
         </div>
 
         <!-- AI: Chat history (shown after wizard steps) -->
-        <div class="diag-chat hidden" id="diagChat">
+        <div class="diag-chat hidden" id="diagChat" aria-live="polite" aria-label="Conversación de diagnóstico">
           <div class="chat-msg chat-ai">
             <div class="chat-avatar-sm"><i class="fas fa-robot"></i></div>
             <div class="chat-bubble">
@@ -580,7 +646,7 @@
             <i class="fas fa-microphone"></i>
           </button>
           <div class="diag-input-wrap">
-            <textarea id="diagInput" class="diag-textarea" placeholder="Describí el síntoma... (Enter para enviar)" rows="2" aria-label="Síntoma del equipo"></textarea>
+            <textarea id="diagInput" class="diag-textarea" placeholder="Describí el síntoma... (Enter para enviar)" rows="2" maxlength="300" aria-label="Síntoma del equipo"></textarea>
           </div>
           <button class="btn btn-diagnose magnetic ripple" id="btnDiagnose" aria-label="Analizar con IA">
             <i class="fas fa-paper-plane"></i>
@@ -646,8 +712,9 @@
         <div class="tech-profile-bg tech-bg-blue"></div>
         <div class="tech-profile-inner">
           <div class="tech-profile-top">
-            <div class="tech-big-avatar">
-              <span>FK</span>
+            <div class="tech-big-avatar tech-avatar-img">
+              <img src="Franco.jpg" loading="lazy" alt="Franco Kempel" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+              <span style="display:none">FK</span>
               <div class="tech-online-ring"></div>
             </div>
             <div class="tech-profile-badge">
@@ -672,8 +739,9 @@
         <div class="tech-profile-bg tech-bg-orange"></div>
         <div class="tech-profile-inner">
           <div class="tech-profile-top">
-            <div class="tech-big-avatar">
-              <span>AK</span>
+            <div class="tech-big-avatar tech-avatar-img">
+              <img src="Agustin.jpg" loading="lazy" alt="Agustín Kempel" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+              <span style="display:none">AK</span>
               <div class="tech-online-ring"></div>
             </div>
             <div class="tech-profile-badge">
@@ -816,7 +884,10 @@
         <!-- Franco card -->
         <div class="sidebar-tech-card">
           <div class="stc-left">
-            <div class="stc-avatar stc-blue">FK</div>
+            <div class="stc-avatar stc-blue stc-avatar-img">
+              <img src="Franco.jpg" loading="lazy" alt="Franco Kempel" onerror="this.style.display='none'"/>
+              <span class="stc-initials">FK</span>
+            </div>
             <div class="stc-online"></div>
           </div>
           <div class="stc-info">
@@ -832,7 +903,10 @@
         <!-- Agustín card -->
         <div class="sidebar-tech-card">
           <div class="stc-left">
-            <div class="stc-avatar stc-orange">AK</div>
+            <div class="stc-avatar stc-orange stc-avatar-img">
+              <img src="Agustin.jpg" loading="lazy" alt="Agustín Kempel" onerror="this.style.display='none'"/>
+              <span class="stc-initials">AK</span>
+            </div>
             <div class="stc-online"></div>
           </div>
           <div class="stc-info">
@@ -986,7 +1060,10 @@
       <div class="footer-col">
         <h4>Técnicos directos</h4>
         <a href="https://wa.me/5493415964079" target="_blank" rel="noopener" class="footer-tech-btn">
-          <div class="ftb-av ftb-blue">FK</div>
+          <div class="ftb-av ftb-blue ftb-av-img">
+            <img src="Franco.jpg" loading="lazy" alt="Franco Kempel" onerror="this.style.display='none'"/>
+            <span class="ftb-initials">FK</span>
+          </div>
           <div>
             <strong>Franco Kempel</strong>
             <small>Técnico especialista</small>
@@ -995,7 +1072,10 @@
           <i class="fab fa-whatsapp"></i>
         </a>
         <a href="https://wa.me/5493413278981" target="_blank" rel="noopener" class="footer-tech-btn">
-          <div class="ftb-av ftb-orange">AK</div>
+          <div class="ftb-av ftb-orange ftb-av-img">
+            <img src="Agustin.jpg" loading="lazy" alt="Agustín Kempel" onerror="this.style.display='none'"/>
+            <span class="ftb-initials">AK</span>
+          </div>
           <div>
             <strong>Agustín Kempel</strong>
             <small>Técnico especialista</small>
