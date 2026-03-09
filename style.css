@@ -2967,3 +2967,173 @@ input::placeholder, textarea::placeholder { color: var(--text-muted) !important;
 .payment-title  { color: var(--navy) !important; }
 .payment-desc   { color: #1d3f60 !important; }
 .payment-box    { max-width: 560px; }
+
+/* ═══════════════════════════════════════════════════════════
+   CORRECCIONES UI v4 — PALETA, PANELES Y LIMPIEZA FAB
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Eliminar botones flotantes defectuosos ─────────────── */
+.fab-wa,
+.fab-call,
+#fabWa,
+#fabCall { display: none !important; }
+
+/* ── Variables de paleta para paneles claros ────────────── */
+:root {
+  --panel-light-bg: #e8f4fb;
+  --panel-light-border: rgba(100,200,232,.22);
+  --panel-dark-text: #06152b;
+  --panel-mid-text: #1d3f60;
+  --panel-sub-text: #2a5275;
+}
+
+/* ── Tarjetas de técnicos ───────────────────────────────── */
+.tech-profile-inner {
+  background: var(--panel-light-bg) !important;
+  border-radius: 0 0 var(--radius) var(--radius);
+  padding: 28px 28px 32px !important;
+}
+.tech-profile-info h3 {
+  color: var(--panel-dark-text) !important;
+}
+.tech-profile-info .tech-role {
+  color: var(--panel-mid-text) !important;
+}
+.tech-profile-info .tech-stat span {
+  color: var(--panel-sub-text) !important;
+}
+.tech-profile-info .tech-stat i {
+  color: var(--navy-mid) !important;
+}
+
+/* ── Panel "¿Por qué elegirnos?" ────────────────────────── */
+.tech-why {
+  background: var(--panel-light-bg) !important;
+  border-color: var(--panel-light-border) !important;
+  padding: 32px 30px !important;
+}
+.tech-why h3 {
+  color: var(--panel-dark-text) !important;
+}
+.tech-why h3 i {
+  color: var(--navy-mid) !important;
+}
+.why-list li {
+  color: var(--panel-mid-text) !important;
+}
+.why-dot {
+  background: var(--navy-mid) !important;
+}
+.why-coverage strong {
+  color: var(--panel-dark-text) !important;
+}
+.why-coverage small {
+  color: var(--panel-sub-text) !important;
+}
+.cov-tags span,
+.cov-tags-sm span {
+  color: var(--panel-dark-text) !important;
+  background: rgba(14,42,71,.1) !important;
+  border-color: rgba(14,42,71,.2) !important;
+}
+.cov-tags .cov-consult,
+.cov-tags-sm .cov-c {
+  color: var(--navy-mid) !important;
+  background: rgba(245,166,35,.15) !important;
+  border-color: rgba(245,166,35,.3) !important;
+}
+
+/* ── Sidebar de contacto (tarjetas técnicos) ────────────── */
+.sidebar-tech-card {
+  background: var(--panel-light-bg) !important;
+  border-color: var(--panel-light-border) !important;
+  padding: 18px 20px !important;
+}
+.stc-info strong {
+  color: var(--panel-dark-text) !important;
+}
+.stc-info span,
+.stc-phone {
+  color: var(--panel-mid-text) !important;
+}
+
+/* ── Sidebar notas (horario, dirección, zona) ───────────── */
+.sidebar-note {
+  background: var(--panel-light-bg) !important;
+  border-color: var(--panel-light-border) !important;
+  padding: 18px 20px !important;
+}
+.sidebar-note strong {
+  color: var(--panel-dark-text) !important;
+}
+.sidebar-note span,
+.sidebar-note small,
+.sidebar-offhours {
+  color: var(--panel-mid-text) !important;
+}
+.sidebar-note > i {
+  color: var(--navy-mid) !important;
+}
+
+/* ── Cards de selección del formulario de contacto ───────── */
+.opt-card {
+  background: var(--panel-light-bg) !important;
+  border-color: var(--panel-light-border) !important;
+  color: var(--panel-dark-text) !important;
+  padding: 18px 16px !important;
+}
+.opt-card span:not(.opt-check) {
+  color: var(--panel-dark-text) !important;
+}
+.opt-card.selected {
+  background: rgba(100,200,232,.18) !important;
+  border-color: var(--ice) !important;
+  color: var(--panel-dark-text) !important;
+}
+.opt-tech-info strong,
+.opt-tech-info small,
+.opt-phone {
+  color: var(--panel-dark-text) !important;
+}
+.opt-tech-info small,
+.opt-phone {
+  color: var(--panel-mid-text) !important;
+}
+
+/* ── Formulario de contacto (card principal) ────────────── */
+.contact-form-card {
+  background: var(--panel-light-bg) !important;
+  border-color: var(--panel-light-border) !important;
+}
+.form-step-label {
+  color: var(--panel-dark-text) !important;
+}
+.opt-label {
+  color: var(--panel-mid-text) !important;
+}
+.contact-textarea {
+  color: var(--panel-dark-text) !important;
+  background: rgba(255,255,255,.85) !important;
+  border-color: rgba(14,42,71,.2) !important;
+}
+.contact-textarea::placeholder {
+  color: var(--panel-sub-text) !important;
+  opacity: .7 !important;
+}
+.form-hint {
+  color: var(--panel-mid-text) !important;
+}
+
+/* ── Trust badge y payment badge ─────────────────────────── */
+.trust-badge {
+  background: var(--panel-light-bg) !important;
+  border-color: var(--panel-light-border) !important;
+}
+.trust-badge strong { color: var(--panel-dark-text) !important; }
+.trust-badge span   { color: var(--panel-mid-text) !important; }
+.trust-badge i      { color: var(--navy-mid) !important; }
+
+/* ── Respiro extra en paneles ─────────────────────────────── */
+.tech-profile-inner .tech-stats-row { margin-top: 12px; }
+.sidebar-note > div { gap: 6px; }
+.contact-form-card .form-body { padding: 28px 28px !important; }

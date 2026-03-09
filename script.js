@@ -424,10 +424,53 @@ function showToast(msg, type = 'info', dur = 3200) {
       inp.checked = true;
       card.classList.add('selected');
       if (inp.name === 'equipo')  { selEquipo  = inp.value; localStorage.setItem('kempel-equipo',  selEquipo); }
-      if (inp.name === 'tecnico') { selTecnico = inp.value; localStorage.setItem('kempel-tecnico', selTecnico); }
+      if (inp.name === 'tecnico') {
+        selTecnico = inp.value;
+        localStorage.setItem('kempel-tecnico', selTecnico);
+        // Mostrar foto del técnico seleccionado como confirmación visual
+        showSelectedTechPhoto(inp.value);
+      }
       updateForm();
     });
   });
+
+  /* Muestra la foto del técnico seleccionado en el formulario */
+  function showSelectedTechPhoto(tech) {
+    let preview = document.getElementById('selectedTechPreview');
+    if (!preview) {
+      preview = document.createElement('div');
+      preview.id = 'selectedTechPreview';
+      preview.style.cssText = `
+        display:flex;align-items:center;gap:12px;
+        background:rgba(100,200,232,.12);
+        border:1.5px solid rgba(100,200,232,.3);
+        border-radius:12px;padding:12px 16px;
+        margin-top:12px;animation:techPreviewIn .3s cubic-bezier(.4,0,.2,1) both;
+      `;
+      const styleEl = document.createElement('style');
+      styleEl.textContent = `@keyframes techPreviewIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}`;
+      document.head.appendChild(styleEl);
+      const formStep = document.querySelector('.form-step-block:nth-child(3)');
+      if (formStep) formStep.insertAdjacentElement('beforebegin', preview);
+    }
+    const techData = {
+      franco:  { name: 'Franco Kempel',  img: 'Franco.jpg',  phone: '+54 9 3415 96-4079' },
+      agustin: { name: 'Agustín Kempel', img: 'Agustin.jpg', phone: '+54 9 3413 27-8981' },
+    };
+    const t = techData[tech];
+    if (!t) return;
+    preview.innerHTML = `
+      <img src="${t.img}" alt="${t.name}" style="width:48px;height:48px;border-radius:50%;object-fit:cover;border:2px solid var(--ice);flex-shrink:0;">
+      <div>
+        <strong style="display:block;font-size:.9rem;color:#06152b;">${t.name}</strong>
+        <span style="font-size:.78rem;color:#1d3f60;">Técnico especialista · ${t.phone}</span>
+        <span style="display:block;font-size:.75rem;color:var(--wa-green);margin-top:2px;"><i class="fas fa-circle-check"></i> Técnico seleccionado</span>
+      </div>
+    `;
+  }
+
+  // Restaurar foto si hay técnico guardado
+  if (selTecnico) showSelectedTechPhoto(selTecnico);
 
   function updateForm() {
     const done = (selEquipo ? 50 : 0) + (selTecnico ? 50 : 0);
@@ -877,26 +920,6 @@ ${mapsLink}`;
   }, { passive: true });
 })();
 
-/* ════════════ FAB HIDE/SHOW ON SCROLL ════════════ */
-(function initFabScroll() {
-  const fabWa = document.getElementById('fabWa');
-  const fabCall = document.getElementById('fabCall');
-  let lastScrollY = window.scrollY;
-  window.addEventListener('scroll', () => {
-    const currentScroll = window.scrollY;
-    if (currentScroll > lastScrollY && currentScroll > 300) {
-      // scrollear abajo -> ocultar
-      if (fabWa) fabWa.style.transform = 'translateY(120%)';
-      if (fabCall) fabCall.style.transform = 'translateY(120%)';
-    } else {
-      // scrollear arriba -> mostrar
-      if (fabWa) fabWa.style.transform = 'translateY(0)';
-      if (fabCall) fabCall.style.transform = 'translateY(0)';
-    }
-    lastScrollY = currentScroll;
-  }, { passive: true });
-})();
-
 /* ════════════ BACK TOP PROGRESS ════════════ */
 (function initBackTopProgress() {
   const backTop = document.getElementById('backTop');
@@ -1155,7 +1178,7 @@ document.querySelectorAll('.card-stagger').forEach((card, i) => {
   if (hr >= 12 && hr < 20) greeting = '¡Buenas tardes!';
   if (hr >= 20 || hr < 6 ) greeting = '¡Buenas noches!';
 
-  // Guardar para uso posterior (sin inyectar en wizard para no cortar el texto)
+  // Guardar para uso posterior (no inyectar en wizard para no cortar el texto)
   window._kempelGreeting = greeting;
 })();
 
@@ -1316,3 +1339,4 @@ document.addEventListener('click', e => {
   }, { threshold: 0 });
   obs.observe(canvas);
 })();
+
