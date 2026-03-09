@@ -82,9 +82,8 @@ document.addEventListener('visibilitychange', () => {
   const canvas = $('heroCanvas');
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
-  let paused = false; // OPT 15: pause rAF when hero not visible
+  let paused = false;
 
-  /* OPT 15: IntersectionObserver to pause canvas */
   new IntersectionObserver(entries => {
     paused = !entries[0].isIntersecting;
   }, { threshold: 0 }).observe(canvas);
@@ -118,7 +117,7 @@ document.addEventListener('visibilitychange', () => {
   let last = 0;
   function animate(ts) {
     requestAnimationFrame(animate);
-    if (paused || _tabHidden) return; // 6.1: pause on tab hidden too
+    if (paused || _tabHidden) return;
     if (ts - last < 16) return;
     last = ts;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -137,7 +136,6 @@ document.addEventListener('visibilitychange', () => {
 /* ════════════ ANIM 5: HERO LINE REVEAL ════════════ */
 window.addEventListener('load', () => {
   setTimeout(() => {
-    /* Reveal hero title lines */
     $$('.hero-line').forEach((el, i) => {
       setTimeout(() => el.classList.add('revealed'), i * 130);
     });
@@ -150,12 +148,10 @@ window.addEventListener('load', () => {
   }, 200);
 });
 
-/* 6.3: Passive touch/wheel events for better scroll performance */
 window.addEventListener('touchstart', () => {}, { passive: true });
 window.addEventListener('wheel',      () => {}, { passive: true });
 
-/* ════════════ ANIM 6: SCROLL REVEAL + COUNTERS (consolidated observer) ════════════ */
-/* 6.2: Single observer handles scroll-reveal, card-stagger, counters, and FAQ stagger */
+/* ════════════ ANIM 6: SCROLL REVEAL + COUNTERS ════════════ */
 function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
 function countUp(el, target, dur = 1800) {
   const start = performance.now();
@@ -170,19 +166,12 @@ const revealObs = makeObserver(entries => {
   entries.forEach(e => {
     if (!e.isIntersecting) return;
     const el = e.target;
-
-    /* Reveal animation */
     el.classList.add('visible');
-
-    /* FAQ children stagger */
     if (el.id === 'faqList') {
       el.querySelectorAll('.faq-item').forEach(item => item.classList.add('visible'));
     }
-
-    /* Counter animation (6.2: consolidated) */
     if (el.dataset.count) countUp(el, +el.dataset.count);
     if (el.dataset.text)  setTimeout(() => el.textContent = el.dataset.text, 1200);
-
     revealObs.unobserve(el);
   });
 }, { threshold: 0.12 });
@@ -191,7 +180,6 @@ $$('.scroll-reveal,.card-stagger,[data-count],[data-text]').forEach(el => reveal
 
 /* ════════════ ANIM 7: PARALLAX HERO ════════════ */
 (function initParallax() {
-  /* OPT 9: only on desktop */
   if (window.matchMedia('(max-width:768px)').matches) return;
   const heroInner = $('heroInner');
   if (!heroInner) return;
@@ -211,10 +199,7 @@ $$('.scroll-reveal,.card-stagger,[data-count],[data-text]').forEach(el => reveal
   }, { passive: true });
 })();
 
-/* ════════════ ANIM 8: SCRAMBLE — removed (replaced by CSS hero-line fade-in) ════════════ */
-
 /* ════════════ ANIM 9: MAGNETIC BUTTONS ════════════ */
-/* OPT 10: Event delegation */
 document.addEventListener('mousemove', e => {
   const btn = e.target.closest('.magnetic');
   if (!btn) return;
@@ -235,7 +220,6 @@ document.querySelectorAll('.magnetic').forEach(btn => {
 (function initHeader() {
   const header = document.getElementById('header');
   const backTop = $('backTop');
-  /* OPT 11: passive scroll */
   window.addEventListener('scroll', () => {
     const y = window.scrollY;
     header?.classList.toggle('scrolled', y > 60);
@@ -255,7 +239,6 @@ document.querySelectorAll('.magnetic').forEach(btn => {
     hb.setAttribute('aria-expanded', open);
     document.body.style.overflow = open ? 'hidden' : '';
   });
-  /* OPT 12: delegate nav link clicks */
   nav.addEventListener('click', e => {
     if (e.target.classList.contains('nav-link')) {
       nav.classList.remove('open'); hb.classList.remove('open');
@@ -280,12 +263,9 @@ document.querySelectorAll('.magnetic').forEach(btn => {
   secs.forEach(s => obs.observe(s));
 })();
 
-/* ════════════ ANIM 13: STAT COUNTERS — consolidated into revealObs above ════════════ */
-
 /* ════════════ ANIM 14: SERVICE CARD TILT + MOUSE GLOW ════════════ */
 (function initTilt() {
   $$('.service-card:not(.service-card-cta)').forEach(card => {
-    /* OPT 13: Add mouse-glow element */
     const glow = document.createElement('div');
     glow.className = 'svc-mouse-glow';
     card.prepend(glow);
@@ -296,7 +276,6 @@ document.querySelectorAll('.magnetic').forEach(btn => {
       const x  = (e.clientX - r.left) / r.width  - .5;
       const y  = (e.clientY - r.top)  / r.height - .5;
       card.style.transform = `translateY(-7px) perspective(700px) rotateX(${-y * 5}deg) rotateY(${x * 5}deg)`;
-      /* Radial glow follows cursor */
       const mx = ((e.clientX - r.left) / r.width  * 100).toFixed(1) + '%';
       const my = ((e.clientY - r.top)  / r.height * 100).toFixed(1) + '%';
       glow.style.setProperty('--mx', mx);
@@ -320,7 +299,6 @@ document.querySelectorAll('.magnetic').forEach(btn => {
       const f = tab.dataset.filter;
       cards.forEach(c => {
         const show = f === 'all' || c.dataset.category === f || c.dataset.category === 'all';
-        /* OPT 14: toggle display via class, avoid reflow cascade */
         c.classList.toggle('hidden', !show);
       });
     });
@@ -339,7 +317,6 @@ document.querySelectorAll('.magnetic').forEach(btn => {
 })();
 
 /* ════════════ ANIM 17: SMOOTH SCROLL ════════════ */
-/* OPT 15: single delegated listener */
 document.addEventListener('click', e => {
   const a = e.target.closest('a[href^="#"]');
   if (!a) return;
@@ -350,16 +327,16 @@ document.addEventListener('click', e => {
   setTimeout(() => window.scrollBy(0, -80), 300);
 });
 
-/* ════════════ ANIM 18: THEME TOGGLE — localStorage persistence ════════════ */
+/* ════════════ ANIM 18: THEME TOGGLE — mejorado con transiciones suaves ════════════ */
 (function initTheme() {
   const btn  = $('themeToggle');
   const icon = $('themeIcon');
   if (!btn) return;
-  /* OPT 18: restore saved theme */
   let dark = localStorage.getItem('kempel-theme') !== 'light';
   function applyTheme(isDark) {
     document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
-    document.body.style.background = isDark ? '' : 'var(--bg)';
+    // Forzar reflow para transiciones suaves
+    document.body.style.backgroundColor = 'transparent';
     if (icon) icon.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
   }
   applyTheme(dark);
@@ -383,7 +360,6 @@ document.addEventListener('click', e => {
     html += `<svg style="position:absolute;left:${x}px;top:${y}px;opacity:${op};animation:hexPulse 4s ${delay}s ease-in-out infinite" width="${SIZE*1.16}" height="${SIZE*1.33}" viewBox="0 0 100 115"><polygon points="50,0 100,25 100,75 50,100 0,75 0,25" fill="none" stroke="#64c8e8" stroke-width="1"/></svg>`;
   }
   grid.innerHTML = html;
-  /* Add keyframe */
   const style = document.createElement('style');
   style.textContent = '@keyframes hexPulse{0%,100%{opacity:.03}50%{opacity:.09}}';
   document.head.appendChild(style);
@@ -406,7 +382,6 @@ function showToast(msg, type = 'info', dur = 3200) {
 
 /* ════════════ WHATSAPP FORM ════════════ */
 (function initForm() {
-  /* OPT 18: Centralized phone map */
   const phones   = { franco: '5493415964079', agustin: '5493413278981' };
   const messages = {
     aire:     'Hola, estoy consultando por un servicio de aire acondicionado. Me contacto desde la página de Kempel Refrigeración.',
@@ -416,11 +391,9 @@ function showToast(msg, type = 'info', dur = 3200) {
   const bar   = $('formProgBar');
   const hint  = $('formHint');
 
-  /* OPT 18: Restore from localStorage */
   let selEquipo  = localStorage.getItem('kempel-equipo')  || null;
   let selTecnico = localStorage.getItem('kempel-tecnico') || null;
 
-  /* Restore UI state on load */
   if (selEquipo) {
     const card = document.querySelector(`.opt-card input[name="equipo"][value="${selEquipo}"]`)?.closest('.opt-card');
     if (card) { card.classList.add('selected'); card.querySelector('input').checked = true; }
@@ -430,7 +403,6 @@ function showToast(msg, type = 'info', dur = 3200) {
     if (card) { card.classList.add('selected'); card.querySelector('input').checked = true; }
   }
 
-  /* OPT 16: delegate option card clicks */
   document.querySelectorAll('.opt-card').forEach(card => {
     const inp = card.querySelector('input[type=radio]');
     if (!inp) return;
@@ -462,7 +434,7 @@ function showToast(msg, type = 'info', dur = 3200) {
       hint.textContent = hintMap[(selEquipo ? '1' : '0') + (selTecnico ? '1' : '0')];
     }
   }
-  updateForm(); // apply on load if restored
+  updateForm();
 
   btnWa?.addEventListener('click', () => {
     if (!selEquipo || !selTecnico) return;
@@ -475,101 +447,114 @@ function showToast(msg, type = 'info', dur = 3200) {
   });
 })();
 
-/* ════════════ IA DIAGNÓSTICO — WIZARD + TRIAJE (v5 con técnico) ════════════ */
+/* ========== NUEVO ASISTENTE IA — 7 PASOS CON ESPECIFICACIONES ========== */
 (function initAI() {
+  // Estado del asistente
   const aiState = {
     location: null,
     locationCustom: '',
-    acType: null,
-    technician: null,
-    technicianPhone: null,
-    step: 1,
-    maintAnswer: null
+    name: '',
+    lastName: '',
+    street: '',
+    number: '',
+    equipment: null,
+    equipmentCustom: '',
+    specs: null,
+    specsCustom: '',
+    diagnosis: '',
+    step: 1
   };
-  let currentWaMsg = '', currentPhone = '';
-  let abortCtrl = null, busy = false;
 
+  // Mapa de especificaciones por tipo de equipo
+  const specsMap = {
+    'Aire acondicionado split': ['2250 frigorías', '3000 frigorías', '3500 frigorías', '4500 frigorías', '5500 frigorías', '6000 frigorías', '7500 frigorías', '9000 frigorías'],
+    'Aire de ventana': ['2250 frigorías', '3000 frigorías', '3500 frigorías', '4500 frigorías', '6000 frigorías'],
+    'Aire industrial': ['9000 frigorías', '12000 frigorías', '18000 frigorías'],
+    'Heladera': ['Cíclica', 'No Frost'],
+    'Freezer': ['Horizontal (pozo)', 'Vertical'],
+    'otro': []
+  };
+
+  // Teléfonos de técnicos
   const PHONES = { franco: '5493415964079', agustin: '5493413278981' };
 
-  // DOM references
+  // Referencias DOM
   const diagStatus    = $('diagStatus');
   const urgBadge      = $('urgencyBadge');
   const urgText       = $('urgencyText');
-  const resultPanel   = $('diagResultPanel');
-  const drpBody       = $('drpBody');
-  const drpService    = $('drpService');
-  const drpEstimate   = $('drpEstimate');
-  const btnDiagWa     = $('btnDiagWa');
-  const drpClose      = $('drpClose');
-  const confRow       = $('confidenceRow');
-  const confFill      = $('confFill');
-  const confPct       = $('confPct');
-  const inputEl       = $('diagInput');
-  const charCounter   = $('charCounter');
-  const btnDiagnose   = $('btnDiagnose');
-  const chatEl        = $('diagChat');
-  const chipsRow      = $('chipsRow');
-  const diagInputRow  = $('diagInputRow');
+
+  // Paneles
   const panelLocation    = $('panelLocation');
-  const panelACType      = $('panelACType');
-  const panelMaintenance = $('panelMaintenance');
-  const wizardSummary    = $('wizardSummary');
-  const summaryLoc       = $('summaryLoc');
-  const summaryAC        = $('summaryAC');
-  const maintWaPanel     = $('maintWaPanel');
-  const maintWaMsg       = $('maintWaMsg');
-  const btnMaintWa       = $('btnMaintWa');
-  const customLocInput   = $('customLocationInput');
-  // Nuevos elementos para el técnico
-  const panelTechnician  = $('panelTechnician');
-  const backToTechnician = $('backToTechnician');
-  const summaryTech      = $('summaryTech');
+  const panelCustomer    = $('panelCustomerData');
+  const panelEquipment   = $('panelEquipment');
+  const panelSpecs       = $('panelSpecs');
+  const panelDiagnosis   = $('panelDiagnosis');
+  const panelConfirm     = $('panelConfirm');
+  const panelSend        = $('panelSend');
+
+  // Botones de navegación
+  const nextToCustomer   = $('nextToCustomerData');
+  const nextToEquipment  = $('nextToEquipment');
+  const nextToSpecs      = $('nextToSpecs');
+  const nextToDiagnosis  = $('nextToDiagnosis');
+  const nextToConfirm    = $('nextToConfirm');
+  const confirmSend      = $('confirmSend');
+  const editData         = $('editData');
+  const restartWizard    = $('restartWizard');
+
+  // Botones "back"
+  const backToLocation    = $('backToLocation');
+  const backToCustomer    = $('backToCustomerData');
+  const backToEquipment   = $('backToEquipment');
+  const backToSpecs       = $('backToSpecs');
+  const backToDiagnosis   = $('backToDiagnosis');
+
+  // Campos de entrada
+  const customLocInput    = $('customLocationInput');
+  const custName          = $('custName');
+  const custLastName      = $('custLastName');
+  const custStreet        = $('custStreet');
+  const custNumber        = $('custNumber');
+  const customEquipmentInput = $('customEquipmentInput');
+  const specsOptions      = $('specsOptions');
+  const specsQuestion     = $('specsQuestion');
+  const customSpecsInput  = $('customSpecsInput');
+  const diagChips         = document.querySelectorAll('#diagChips .chip');
+  const diagFreeText      = $('diagFreeText');
+
+  // Elementos de resumen
+  const wizardSummary     = $('wizardSummary');
+  const summaryLoc        = $('summaryLoc');
+  const summaryName       = $('summaryName');
+  const summaryEq         = $('summaryEq');
+  const summarySpecs      = $('summarySpecs');
+  const confirmSummary    = $('confirmSummary');
+
+  // Step indicators
   const wStep1 = $('wStep1');
   const wStep2 = $('wStep2');
   const wStep3 = $('wStep3');
   const wStep4 = $('wStep4');
   const wStep5 = $('wStep5');
+  const wStep6 = $('wStep6');
+  const wStep7 = $('wStep7');
   const wConn1 = $('wConn1');
   const wConn2 = $('wConn2');
   const wConn3 = $('wConn3');
   const wConn4 = $('wConn4');
+  const wConn5 = $('wConn5');
+  const wConn6 = $('wConn6');
 
-  /* ── 4.8: Markdown → HTML (safe list items) ── */
-  function mdToHtml(text) {
-    return text
-      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-      .replace(/^[-•]\s+(.+)$/gm, '<li>$1</li>')
-      .replace(/(<li>[\s\S]+?<\/li>)/g, '<ul>$1</ul>')
-      .replace(/<\/ul>\s*<ul>/g, '')
-      .replace(/\n\n/g, '</p><p>')
-      .replace(/\n/g, '<br>');
-  }
+  // Utilidades
+  function haptic() { if (navigator.vibrate) navigator.vibrate(50); }
 
-  /* ── 4.4: Sliding window history (sessionStorage, max 6) ── */
-  let history = (() => {
-    try { return JSON.parse(sessionStorage.getItem('kempel-chat') || '[]'); } catch { return []; }
-  })();
-  function saveHistory() {
-    try { sessionStorage.setItem('kempel-chat', JSON.stringify(history.slice(-6))); } catch {}
-  }
-
-  /* ── 4.3: XSS sanitization ── */
   function sanitize(str) { return str.trim().replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
 
-  /* ── Geo validation ── */
-  const VALID_ZONES = [
-    'rosario','funes','roldán','roldan','granadero baigorria','baigorria',
-    'cap. bermúdez','capitan bermudez','bermudez','bermúdez',
-    'fray luis beltrán','beltran','beltrán','san lorenzo',
-    'pto. gral. san martín','puerto gral san martin','puerto general san martín',
-    'san martin','villa gobernador gálvez','galvez',
-  ];
+  // Validación de zona (simplificada)
+  const VALID_ZONES = ['fray luis beltrán', 'san lorenzo', 'capitán bermúdez', 'rosario', 'baigorria'];
   function isValidZone(loc) {
-    const lc = loc.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
-    return VALID_ZONES.some(z => {
-      const zn = z.normalize('NFD').replace(/[\u0300-\u036f]/g,'');
-      return lc.includes(zn) || zn.includes(lc);
-    });
+    const lc = loc.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    return VALID_ZONES.some(z => lc.includes(z));
   }
 
   function getLocationLabel() {
@@ -577,352 +562,323 @@ function showToast(msg, type = 'info', dur = 3200) {
     return aiState.location || '';
   }
 
-  /* ── Step indicator (5 pasos) ── */
+  // Actualizar indicador de pasos
   function updateStepIndicator(step) {
-    const steps = [null, wStep1, wStep2, wStep3, wStep4, wStep5];
-    const conns = [null, wConn1, wConn2, wConn3, wConn4];
-    for (let i = 1; i <= 5; i++) {
+    const steps = [null, wStep1, wStep2, wStep3, wStep4, wStep5, wStep6, wStep7];
+    const conns = [null, wConn1, wConn2, wConn3, wConn4, wConn5, wConn6];
+    for (let i = 1; i <= 7; i++) {
       const dot = steps[i];
       if (!dot) continue;
       dot.classList.remove('active', 'done');
       if (i < step) dot.classList.add('done');
       if (i === step) dot.classList.add('active');
     }
-    for (let i = 1; i <= 4; i++) {
+    for (let i = 1; i <= 6; i++) {
       conns[i]?.classList.toggle('done', i < step);
     }
-    const labels = ['', 'Paso 1 de 5', 'Paso 2 de 5', 'Paso 3 de 5', 'Paso 4 de 5', '¡Listo!'];
+    const labels = ['', 'Paso 1 de 7', 'Paso 2 de 7', 'Paso 3 de 7', 'Paso 4 de 7', 'Paso 5 de 7', 'Paso 6 de 7', '¡Listo!'];
     if (diagStatus) diagStatus.textContent = labels[step] || '';
   }
 
-  function showPanel(el) { el?.classList.remove('hidden'); el?.classList.add('slide-in'); }
-  function hidePanel(el) { el?.classList.add('hidden'); el?.classList.remove('slide-in'); }
+  function showPanel(panel) {
+    if (!panel) return;
+    // Ocultar todos los paneles
+    [panelLocation, panelCustomer, panelEquipment, panelSpecs, panelDiagnosis, panelConfirm, panelSend].forEach(p => p?.classList.add('hidden'));
+    panel.classList.remove('hidden');
+    panel.classList.add('slide-in');
+  }
 
+  // Actualizar barra de resumen
   function updateSummary() {
     if (summaryLoc) summaryLoc.innerHTML = `<i class="fas fa-map-marker-alt"></i> ${getLocationLabel()}`;
-    if (summaryAC && aiState.acType) summaryAC.innerHTML = `<i class="fas fa-snowflake"></i> ${aiState.acType}`;
-    if (summaryTech && aiState.technician) {
-      const techName = aiState.technician === 'franco' ? 'Franco' : 'Agustín';
-      summaryTech.innerHTML = `<i class="fas fa-user-tie"></i> ${techName}`;
+    if (summaryName && aiState.name) summaryName.innerHTML = `<i class="fas fa-user"></i> ${aiState.name} ${aiState.lastName}`;
+    if (summaryEq && aiState.equipment) summaryEq.innerHTML = `<i class="fas fa-snowflake"></i> ${aiState.equipment}`;
+    if (summarySpecs) {
+      if (aiState.specs) summarySpecs.innerHTML = `<i class="fas fa-sliders-h"></i> ${aiState.specs}`;
+      else if (aiState.specsCustom) summarySpecs.innerHTML = `<i class="fas fa-sliders-h"></i> ${aiState.specsCustom}`;
+      else summarySpecs.innerHTML = '';
     }
   }
 
-  /* ── 5.4: Haptic feedback ── */
-  function haptic() { if (navigator.vibrate) navigator.vibrate(50); }
-
-  /* ── STEP 1: Location ── */
+  // ---- PASO 1: Localidad ----
   function selectLocation(loc) {
     aiState.location = loc;
     haptic();
     panelLocation?.querySelectorAll('.wizard-opt').forEach(b => b.classList.toggle('selected', b.dataset.loc === loc));
-    if (loc === 'otra') { customLocInput?.classList.add('visible'); customLocInput?.focus(); return; }
+    if (loc === 'otra') {
+      customLocInput?.classList.add('visible');
+      customLocInput?.focus();
+      nextToCustomer.disabled = true;
+      return;
+    }
     customLocInput?.classList.remove('visible');
     aiState.locationCustom = '';
-    goToStep2();
+    nextToCustomer.disabled = false;
   }
-  function goToStep2() {
-    if (aiState.location === 'otra' && aiState.locationCustom && !isValidZone(aiState.locationCustom)) {
-      addGeoWarning(aiState.locationCustom); return;
-    }
-    aiState.step = 2; updateStepIndicator(2);
-    hidePanel(panelLocation); showPanel(panelACType);
-  }
-  function addGeoWarning(loc) {
-    let warn = panelLocation?.querySelector('.geo-warning');
-    if (!warn) {
-      warn = document.createElement('p'); warn.className = 'geo-warning';
-      warn.style.cssText = 'color:var(--amber);font-size:.82rem;margin-top:10px;padding:8px 12px;background:rgba(245,166,35,.1);border-radius:8px;border:1px solid rgba(245,166,35,.25)';
-      panelLocation?.appendChild(warn);
-    }
-    warn.innerHTML = `<i class="fas fa-triangle-exclamation"></i> <strong>${loc}</strong> está fuera de nuestra zona habitual. Podés consultarnos igualmente.`;
-  }
-  customLocInput?.addEventListener('keydown', e => {
-    if (e.key === 'Enter') { aiState.locationCustom = customLocInput.value.trim(); if (aiState.locationCustom) goToStep2(); }
-  });
+
   panelLocation?.querySelectorAll('.wizard-opt[data-loc]').forEach(btn => {
     btn.addEventListener('click', () => selectLocation(btn.dataset.loc));
   });
 
-  /* ── STEP 2: AC Type ── */
-  function selectACType(type) {
-    aiState.acType = type; aiState.step = 3; haptic();
-    panelACType?.querySelectorAll('.wizard-opt').forEach(b => b.classList.toggle('selected', b.dataset.ac === type));
-    updateStepIndicator(3);
-    hidePanel(panelACType); showPanel(panelTechnician);
-    showPanel(wizardSummary); updateSummary();
+  customLocInput?.addEventListener('input', () => {
+    aiState.locationCustom = customLocInput.value.trim();
+    nextToCustomer.disabled = !aiState.locationCustom;
+  });
+
+  nextToCustomer?.addEventListener('click', () => {
+    if (aiState.location === 'otra' && aiState.locationCustom && !isValidZone(aiState.locationCustom)) {
+      // Mostrar advertencia pero permitir continuar
+      showToast('La localidad está fuera de nuestra zona habitual, igualmente podemos consultar.', 'info', 4000);
+    }
+    aiState.step = 2;
+    updateStepIndicator(2);
+    showPanel(panelCustomer);
+  });
+
+  // ---- PASO 2: Datos del cliente ----
+  function validateCustomerData() {
+    const name = custName?.value.trim();
+    const lastName = custLastName?.value.trim();
+    const street = custStreet?.value.trim();
+    const number = custNumber?.value.trim();
+    if (name && lastName && street && number) {
+      aiState.name = name;
+      aiState.lastName = lastName;
+      aiState.street = street;
+      aiState.number = number;
+      nextToEquipment.disabled = false;
+    } else {
+      nextToEquipment.disabled = true;
+    }
   }
-  panelACType?.querySelectorAll('.wizard-opt[data-ac]').forEach(btn => {
-    btn.addEventListener('click', () => selectACType(btn.dataset.ac));
+
+  [custName, custLastName, custStreet, custNumber].forEach(field => {
+    field?.addEventListener('input', validateCustomerData);
   });
 
-  /* ── STEP 3: Technician ── */
-  function selectTechnician(tech, phone) {
-    aiState.technician = tech;
-    aiState.technicianPhone = phone;
-    haptic();
-    panelTechnician.querySelectorAll('.wizard-opt-tech').forEach(b => {
-      b.classList.toggle('selected', b.dataset.tech === tech);
-    });
-    aiState.step = 4;
-    updateStepIndicator(4);
-    hidePanel(panelTechnician);
-    showPanel(panelMaintenance);
-    showPanel(wizardSummary);
-    updateSummary();
-  }
-
-  panelTechnician?.querySelectorAll('.wizard-opt-tech').forEach(btn => {
-    btn.addEventListener('click', () => {
-      selectTechnician(btn.dataset.tech, btn.dataset.phone);
-    });
-  });
-
-  /* ── Back buttons ── */
-  $('backToLocation')?.addEventListener('click', () => {
-    aiState.step = 1; updateStepIndicator(1);
-    hidePanel(panelACType); showPanel(panelLocation);
-  });
-  $('backToACType')?.addEventListener('click', () => {
-    aiState.step = 2; updateStepIndicator(2);
-    hidePanel(panelTechnician); hidePanel(wizardSummary); hidePanel(maintWaPanel);
-    showPanel(panelACType);
-  });
-  backToTechnician?.addEventListener('click', () => {
+  nextToEquipment?.addEventListener('click', () => {
     aiState.step = 3;
     updateStepIndicator(3);
-    hidePanel(panelMaintenance);
-    hidePanel(wizardSummary);
-    hidePanel(maintWaPanel);
-    showPanel(panelTechnician);
+    showPanel(panelEquipment);
+    showPanel(wizardSummary);
+    updateSummary();
   });
 
-  /* ── STEP 4: Maintenance ── */
-  panelMaintenance?.querySelectorAll('.wizard-opt[data-maint]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      aiState.maintAnswer = btn.dataset.maint;
-      haptic();
-      panelMaintenance.querySelectorAll('.wizard-opt').forEach(b => b.classList.toggle('selected', b === btn));
-      if (aiState.maintAnswer === 'si') generateMaintenanceWA();
-      else startDiagnosis();
-    });
+  backToLocation?.addEventListener('click', () => {
+    aiState.step = 1;
+    updateStepIndicator(1);
+    showPanel(panelLocation);
   });
 
-  function generateMaintenanceWA() {
-    const loc = getLocationLabel(), type = aiState.acType;
-    const tech = aiState.technician === 'franco' ? 'Franco' : 'Agustín';
-    const msg = `Hola ${tech}, necesito un mantenimiento (limpieza) para mi aire acondicionado ${type} en ${loc}.`;
-    currentWaMsg = msg;
-    currentPhone = aiState.technicianPhone || PHONES.franco;
-    if (maintWaMsg) maintWaMsg.textContent = msg;
-    showPanel(maintWaPanel);
-    updateStepIndicator(5);
-    aiState.step = 5;
-    showToast('✅ Mensaje listo para enviar', 'success');
+  // ---- PASO 3: Tipo de equipo ----
+  function selectEquipment(eq) {
+    aiState.equipment = eq;
+    haptic();
+    panelEquipment?.querySelectorAll('.wizard-opt').forEach(b => b.classList.toggle('selected', b.dataset.eq === eq));
+    if (eq === 'otro') {
+      customEquipmentInput?.classList.add('visible');
+      customEquipmentInput?.focus();
+      nextToSpecs.disabled = true;
+    } else {
+      customEquipmentInput?.classList.remove('visible');
+      aiState.equipmentCustom = '';
+      nextToSpecs.disabled = false;
+    }
   }
 
-  btnMaintWa?.addEventListener('click', () => {
-    window.open(`https://wa.me/${currentPhone}?text=${encodeURIComponent(currentWaMsg)}`, '_blank', 'noopener noreferrer');
-    showToast('Abriendo WhatsApp...', 'success');
+  panelEquipment?.querySelectorAll('.wizard-opt[data-eq]').forEach(btn => {
+    btn.addEventListener('click', () => selectEquipment(btn.dataset.eq));
   });
 
-  function startDiagnosis() {
-    hidePanel(panelMaintenance);
-    if (history.length) history.forEach(m => addBubble(m.content, m.role === 'user'));
-    showPanel(chatEl); showPanel(chipsRow); showPanel(diagInputRow);
-    if (diagStatus) diagStatus.textContent = 'Describí el problema';
-    inputEl?.focus();
-    updateStepIndicator(4);
+  customEquipmentInput?.addEventListener('input', () => {
+    aiState.equipmentCustom = customEquipmentInput.value.trim();
+    nextToSpecs.disabled = !aiState.equipmentCustom;
+  });
+
+  nextToSpecs?.addEventListener('click', () => {
+    if (aiState.equipment === 'otro') {
+      aiState.equipment = aiState.equipmentCustom; // usar el texto personalizado
+    }
     aiState.step = 4;
-  }
+    updateStepIndicator(4);
+    showSpecsPanel(aiState.equipment);
+    showPanel(panelSpecs);
+    updateSummary();
+  });
 
-  /* ── Chat helpers ── */
-  function addBubble(html, isUser) {
-    const msg = document.createElement('div');
-    msg.className = `chat-msg ${isUser ? 'chat-user' : 'chat-ai'}`;
-    msg.innerHTML = isUser
-      ? `<div class="chat-bubble">${html}</div>`
-      : `<div class="chat-avatar-sm"><i class="fas fa-robot"></i></div><div class="chat-bubble">${html}</div>`;
-    chatEl?.appendChild(msg);
-    if (chatEl) chatEl.scrollTop = chatEl.scrollHeight;
-    return msg;
-  }
-  function addTyping() {
-    const msg = document.createElement('div');
-    msg.className = 'chat-msg chat-ai'; msg.id = 'typingMsg';
-    msg.innerHTML = '<div class="chat-avatar-sm"><i class="fas fa-robot"></i></div><div class="typing-indicator"><span></span><span></span><span></span></div>';
-    chatEl?.appendChild(msg);
-    if (chatEl) chatEl.scrollTop = chatEl.scrollHeight;
-  }
-  function removeTyping() { $('typingMsg')?.remove(); }
+  backToCustomer?.addEventListener('click', () => {
+    aiState.step = 2;
+    updateStepIndicator(2);
+    showPanel(panelCustomer);
+  });
 
-  /* ── 5.3: Char counter ── */
-  inputEl?.addEventListener('input', () => {
-    const len = inputEl.value.length;
-    if (charCounter) {
-      charCounter.textContent = `${len}/300`;
-      charCounter.className = 'char-counter' + (len > 260 ? ' warn' : '') + (len >= 300 ? ' limit' : '');
+  // ---- PASO 4: Especificaciones ----
+  function showSpecsPanel(equipo) {
+    specsOptions.innerHTML = '';
+    customSpecsInput?.classList.remove('visible');
+    nextToDiagnosis.disabled = true;
+
+    const options = specsMap[equipo] || [];
+    if (options.length === 0) {
+      specsQuestion.innerHTML = '<i class="fas fa-sliders-h"></i> Especificá las características:';
+      customSpecsInput?.classList.add('visible');
+      return;
     }
-  });
 
-  /* ── Urgency detection ── */
-  function detectUrgency(text) {
-    const words = ['no enciende','no funciona','quemado','roto','chispa','chispas','humo','olor','quemadura',
-      'urgente','inmediato','térmica','cortocircuito','corto circuito','explosión','explosion','descarga','electrocución','incendio'];
-    const lc = text.toLowerCase();
-    return words.some(w => lc.includes(w));
-  }
-
-  /* ── Chip click ── */
-  chipsRow?.querySelectorAll('.chip').forEach(chip => {
-    chip.addEventListener('click', () => {
-      $$('.chip').forEach(c => c.classList.remove('active'));
-      chip.classList.add('active');
-      if (inputEl) inputEl.value = chip.dataset.symptom;
-      inputEl?.dispatchEvent(new Event('input'));
-      inputEl?.focus();
+    specsQuestion.innerHTML = '<i class="fas fa-sliders-h"></i> Seleccioná las características:';
+    options.forEach(opt => {
+      const btn = document.createElement('button');
+      btn.className = 'wizard-opt';
+      btn.setAttribute('data-spec', opt);
+      btn.innerHTML = `<span class="opt-emoji">🔧</span> ${opt}`;
+      btn.addEventListener('click', () => {
+        specsOptions.querySelectorAll('.wizard-opt').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        aiState.specs = opt;
+        aiState.specsCustom = '';
+        nextToDiagnosis.disabled = false;
+      });
+      specsOptions.appendChild(btn);
     });
+  }
+
+  customSpecsInput?.addEventListener('input', () => {
+    aiState.specsCustom = customSpecsInput.value.trim();
+    nextToDiagnosis.disabled = !aiState.specsCustom;
   });
 
-  /* ── Voice ── */
-  const voiceBtn = $('voiceBtn');
-  if (voiceBtn && ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window)) {
-    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-    const rec = new SR(); rec.lang = 'es-AR'; rec.continuous = false;
-    rec.onstart = () => voiceBtn.classList.add('recording');
-    rec.onend   = () => voiceBtn.classList.remove('recording');
-    rec.onresult = e => {
-      if (inputEl) { inputEl.value = e.results[0][0].transcript; inputEl.dispatchEvent(new Event('input')); }
-      showToast('Texto capturado ✓', 'success', 2000);
-    };
-    voiceBtn.addEventListener('click', () => rec.start());
-  } else if (voiceBtn) { voiceBtn.title = 'Voz no disponible'; voiceBtn.style.opacity = '.4'; }
-
-  inputEl?.addEventListener('keydown', e => {
-    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); if (!busy) btnDiagnose?.click(); }
-  });
-
-  /* ── WhatsApp message builder ── */
-  function buildWaMessage(symptom, aiSuggested) {
-    const loc = getLocationLabel(), type = aiState.acType;
-    const tech = aiState.technician === 'franco' ? 'Franco' : 'Agustín';
-    let base = aiSuggested ||
-      `Hola ${tech}, tengo un ${type} en ${loc}. El asistente de triaje registró: "${symptom}". ¿Pueden contactarme?`;
-    if (!base.includes(type) && type) base += ` (Equipo: ${type})`;
-    if (!base.includes(loc) && loc) base += ` (Localidad: ${loc})`;
-    return base;
-  }
-
-  /* ── Error UI with retry ── */
-  function addRetryUI(onRetry) {
-    $('retryMsg')?.remove();
-    const msg = document.createElement('div');
-    msg.className = 'chat-msg chat-ai'; msg.id = 'retryMsg';
-    msg.innerHTML = `
-      <div class="chat-avatar-sm"><i class="fas fa-robot"></i></div>
-      <div class="chat-bubble" style="display:flex;flex-direction:column;gap:10px">
-        <span>⚠️ Sin conexión. Podés reintentar o contactarnos directamente.</span>
-        <div style="display:flex;gap:8px;flex-wrap:wrap">
-          <button id="btnRetry" style="padding:7px 14px;font-size:.8rem;background:rgba(100,200,232,.15);border:1px solid var(--ice);color:white;border-radius:8px;cursor:pointer;touch-action:manipulation">
-            <i class="fas fa-rotate-right"></i> Reintentar
-          </button>
-          <a href="https://wa.me/${PHONES.franco}" target="_blank" rel="noopener noreferrer" class="btn btn-wa" style="padding:7px 14px;font-size:.8rem;border-radius:8px">
-            <i class="fab fa-whatsapp"></i> WhatsApp directo
-          </a>
-        </div>
-      </div>`;
-    chatEl?.appendChild(msg);
-    if (chatEl) chatEl.scrollTop = chatEl.scrollHeight;
-    document.getElementById('btnRetry')?.addEventListener('click', () => { msg.remove(); onRetry(); });
-  }
-
-  /* ── 4.1: JSON response format system prompt ── */
-  function buildSystemPrompt() {
-    const loc  = getLocationLabel(), type = aiState.acType || 'aire acondicionado';
-    return `Sos el asistente de TRIAJE técnico de Kempel Refrigeración (norte de Rosario, Argentina).
-
-DATOS DEL CLIENTE: Equipo: ${type} | Localidad: ${loc}
-
-ROL ESTRICTO: Solo triaje. NUNCA diagnóstico final, NUNCA precios.
-1. Hacé 1-2 preguntas técnicas de descarte (ej: ¿El compresor arranca? ¿Saltó la térmica? ¿Hay tensión en el tomacorriente?).
-2. Luego de las respuestas, generá un resumen para el técnico.
-
-FORMATO DE RESPUESTA — Respondé EXCLUSIVAMENTE con JSON válido, sin texto adicional:
-{
-  "preguntas_descarte": "Texto con las preguntas o el resumen para el cliente.",
-  "resumen_whatsapp": "Hola, tengo un [equipo] en [localidad]. [Síntomas y respuestas del cliente]. ¿Pueden coordinar una visita?"
-}
-
-Respondé en español argentino. Máximo 120 palabras en el JSON.`;
-  }
-
-  /* ── MAIN DIAGNOSE ── */
-  async function diagnose() {
-    const rawSymptom = inputEl?.value.trim();
-    if (!rawSymptom) return;
-    const symptom = rawSymptom;
-    const loc = getLocationLabel();
-    const type = aiState.acType || "aire acondicionado";
-    const techName = aiState.technician === 'franco' ? 'Franco' : 'Agustín';
-    const phone = aiState.technicianPhone || PHONES.franco;
-    const waMessage = `Hola ${techName}, tengo un ${type} en ${loc}. Síntoma: ${symptom}. ¿Podrían coordinar una visita técnica?`;
-    currentWaMsg = waMessage;
-    currentPhone = phone;
-    // Mostrar resultado y paso 5
-    showResultPanel(symptom);
-    updateStepIndicator(5);
+  nextToDiagnosis?.addEventListener('click', () => {
     aiState.step = 5;
-    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(waMessage)}`, "_blank");
-  }
-
-  btnDiagnose?.addEventListener('click', diagnose);
-
-  btnDiagWa?.addEventListener('click', () => {
-    window.open(`https://wa.me/${currentPhone}?text=${encodeURIComponent(currentWaMsg)}`, '_blank', 'noopener noreferrer');
-    showToast('Abriendo WhatsApp...', 'success');
+    updateStepIndicator(5);
+    showPanel(panelDiagnosis);
+    updateSummary();
   });
 
-  /* ── Close panel ── */
-  function closePanel() {
-    if (abortCtrl) { abortCtrl.abort(); abortCtrl = null; }
-    if (resultPanel) resultPanel.style.display = 'none';
-    if (urgBadge) urgBadge.style.display = 'none';
-    if (confRow)  confRow.style.display  = 'none';
-    if (diagStatus) diagStatus.textContent = 'Describí el problema';
-    updateStepIndicator(4); aiState.step = 4;
-    showToast('Podés seguir consultando', 'info', 2000);
-  }
-  drpClose?.addEventListener('click', closePanel);
-
-  /* ── 5.1: ESC key closes result panel ── */
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape' && resultPanel?.style.display !== 'none') {
-      closePanel();
-      drpClose?.focus();
-    }
+  backToEquipment?.addEventListener('click', () => {
+    aiState.step = 3;
+    updateStepIndicator(3);
+    showPanel(panelEquipment);
   });
 
-  /* ── 5.2: Focus trap inside result panel ── */
-  resultPanel?.addEventListener('keydown', e => {
-    if (e.key !== 'Tab') return;
-    const focusable = Array.from(resultPanel.querySelectorAll(
-      'button:not([disabled]),a[href],input,textarea,[tabindex]:not([tabindex="-1"])'
-    )).filter(el => el.offsetParent !== null);
-    if (!focusable.length) return;
-    const first = focusable[0], last = focusable[focusable.length - 1];
-    if (e.shiftKey) { if (document.activeElement === first) { e.preventDefault(); last.focus(); } }
-    else            { if (document.activeElement === last)  { e.preventDefault(); first.focus(); } }
-  });
-
-  /* ── FAQ aria-expanded sync ── */
-  $$('.faq-q').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const item = btn.closest('.faq-item');
-      const open = item.classList.toggle('open');
-      btn.setAttribute('aria-expanded', String(open));
+  // ---- PASO 5: Diagnóstico ----
+  diagChips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      diagChips.forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      aiState.diagnosis = chip.dataset.symptom;
+      if (diagFreeText) diagFreeText.value = chip.dataset.symptom;
     });
   });
 
+  diagFreeText?.addEventListener('input', () => {
+    aiState.diagnosis = diagFreeText.value.trim();
+  });
+
+  nextToConfirm?.addEventListener('click', () => {
+    if (!aiState.diagnosis) {
+      showToast('Por favor describí el problema (podés usar los chips o escribir)', 'info', 3000);
+      return;
+    }
+    aiState.step = 6;
+    updateStepIndicator(6);
+    showConfirmSummary();
+    showPanel(panelConfirm);
+    updateSummary();
+  });
+
+  backToSpecs?.addEventListener('click', () => {
+    aiState.step = 4;
+    updateStepIndicator(4);
+    showPanel(panelSpecs);
+  });
+
+  // ---- PASO 6: Confirmar ----
+  function showConfirmSummary() {
+    const loc = getLocationLabel();
+    const mapsLink = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(aiState.street + ' ' + aiState.number + ', ' + loc + ', Santa Fe, Argentina')}`;
+    let specsText = '';
+    if (aiState.specs) specsText = `\nEspecificación: ${aiState.specs}`;
+    else if (aiState.specsCustom) specsText = `\nEspecificación: ${aiState.specsCustom}`;
+
+    const html = `
+      <p><strong>Localidad:</strong> ${loc}</p>
+      <p><strong>Nombre:</strong> ${aiState.name} ${aiState.lastName}</p>
+      <p><strong>Dirección:</strong> ${aiState.street} ${aiState.number}</p>
+      <p><strong>Equipo:</strong> ${aiState.equipment}${specsText}</p>
+      <p><strong>Problema:</strong> ${aiState.diagnosis}</p>
+      <p><strong>Ubicación:</strong> <a href="${mapsLink}" target="_blank">Ver en Google Maps</a></p>
+    `;
+    confirmSummary.innerHTML = html;
+  }
+
+  editData?.addEventListener('click', () => {
+    // Volver al paso de diagnóstico para editar (podría ser más granular)
+    aiState.step = 5;
+    updateStepIndicator(5);
+    showPanel(panelDiagnosis);
+  });
+
+  confirmSend?.addEventListener('click', () => {
+    sendToWhatsApp();
+  });
+
+  backToDiagnosis?.addEventListener('click', () => {
+    aiState.step = 5;
+    updateStepIndicator(5);
+    showPanel(panelDiagnosis);
+  });
+
+  // ---- PASO 7: Enviar WhatsApp ----
+  function sendToWhatsApp() {
+    const loc = getLocationLabel();
+    const mapsLink = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(aiState.street + ' ' + aiState.number + ', ' + loc + ', Santa Fe, Argentina')}`;
+
+    let specsText = '';
+    if (aiState.specs) specsText = `\nEspecificación: ${aiState.specs}`;
+    else if (aiState.specsCustom) specsText = `\nEspecificación: ${aiState.specsCustom}`;
+
+    const message = `Hola, se solicita servicio técnico.
+
+Localidad: ${loc}
+Nombre: ${aiState.name} ${aiState.lastName}
+Dirección: ${aiState.street} ${aiState.number}
+Equipo: ${aiState.equipment}${specsText}
+Problema: ${aiState.diagnosis}
+
+Ubicación Google Maps:
+${mapsLink}
+
+Gracias por confiar en Kempel Refrigeración.`;
+
+    // Abrir WhatsApp con Franco por defecto (podría elegirse en el futuro)
+    const url = `https://wa.me/${PHONES.franco}?text=${encodeURIComponent(message)}`;
+    window.open(url, '_blank', 'noopener');
+
+    aiState.step = 7;
+    updateStepIndicator(7);
+    showPanel(panelSend);
+  }
+
+  restartWizard?.addEventListener('click', () => {
+    // Reiniciar estado
+    Object.assign(aiState, {
+      location: null, locationCustom: '', name: '', lastName: '', street: '', number: '',
+      equipment: null, equipmentCustom: '', specs: null, specsCustom: '', diagnosis: '', step: 1
+    });
+    updateStepIndicator(1);
+    showPanel(panelLocation);
+    // Limpiar campos
+    [custName, custLastName, custStreet, custNumber].forEach(f => if (f) f.value = '');
+    if (customLocInput) customLocInput.value = '';
+    if (customEquipmentInput) customEquipmentInput.value = '';
+    if (customSpecsInput) customSpecsInput.value = '';
+    if (diagFreeText) diagFreeText.value = '';
+    diagChips.forEach(c => c.classList.remove('active'));
+  });
+
+  // Inicializar primer paso
   updateStepIndicator(1);
+  showPanel(panelLocation);
 })();
 
 /* ════════════ HEADER SHRINK DINÁMICO ════════════ */
@@ -931,8 +887,8 @@ Respondé en español argentino. Máximo 120 palabras en el JSON.`;
   if (!header) return;
   window.addEventListener('scroll', () => {
     const scrollY = window.scrollY;
-    const blur = Math.min(scrollY / 100, 1) * 16 + 8; // de 8px a 24px
-    const height = Math.max(60, 80 - scrollY / 10); // shrink de altura
+    const blur = Math.min(scrollY / 100, 1) * 16 + 8;
+    const height = Math.max(60, 80 - scrollY / 10);
     header.style.backdropFilter = `blur(${blur}px)`;
     header.style.height = `${height}px`;
     header.classList.toggle('scrolled', scrollY > 60);
@@ -960,11 +916,9 @@ Respondé en español argentino. Máximo 120 palabras en el JSON.`;
   window.addEventListener('scroll', () => {
     const currentScroll = window.scrollY;
     if (currentScroll > lastScrollY && currentScroll > 300) {
-      // scrollear abajo -> ocultar
       fabWa.style.transform = 'translateY(120%)';
       fabCall.style.transform = 'translateY(120%)';
     } else {
-      // scrollear arriba -> mostrar
       fabWa.style.transform = 'translateY(0)';
       fabCall.style.transform = 'translateY(0)';
     }
@@ -977,7 +931,7 @@ Respondé en español argentino. Máximo 120 palabras en el JSON.`;
   const backTop = document.getElementById('backTop');
   const progressCircle = document.querySelector('.back-progress');
   if (!backTop || !progressCircle) return;
-  const circumference = 2 * Math.PI * 20; // r=20
+  const circumference = 2 * Math.PI * 20;
   progressCircle.style.strokeDasharray = circumference;
   window.addEventListener('scroll', () => {
     const scrollY = window.scrollY;
@@ -992,12 +946,12 @@ Respondé en español argentino. Máximo 120 palabras en el JSON.`;
 /* ════════════ OPEN NOW BADGE ════════════ */
 (function initOpenNow() {
   const now = new Date();
-  const day = now.getDay(); // 0 domingo, 1 lunes ...
+  const day = now.getDay();
   const hour = now.getHours();
   const minutes = now.getMinutes();
   const timeValue = hour + minutes / 60;
   let open = false;
-  if (day >= 1 && day <= 6) { // lunes a sábado
+  if (day >= 1 && day <= 6) {
     if (timeValue >= 8 && timeValue < 20) open = true;
   }
   const badge = document.createElement('span');
@@ -1048,9 +1002,8 @@ document.querySelectorAll('.ripple').forEach(btn => {
   });
 });
 
-// Añadir estilo para el ripple
-const style = document.createElement('style');
-style.textContent = `
+const styleRipple = document.createElement('style');
+styleRipple.textContent = `
   .ripple-effect {
     position: absolute;
     border-radius: 50%;
@@ -1063,7 +1016,7 @@ style.textContent = `
     to { transform: scale(4); opacity: 0; }
   }
 `;
-document.head.appendChild(style);
+document.head.appendChild(styleRipple);
 
 /* Prefetch WA links on hover */
 document.addEventListener('mouseover', e => {
@@ -1081,6 +1034,4 @@ if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     // navigator.serviceWorker.register('/sw.js')
   });
-
-   
 }
