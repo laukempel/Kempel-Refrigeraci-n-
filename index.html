@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <meta name="description" content="Kempel Refrigeración – Servicio técnico de aires acondicionados, heladeras y freezers. Fray Luis Beltrán, Santa Fe → Pto. Gral. San Martín. A domicilio, rápido y confiable."/>
   <meta name="theme-color" content="#06152b"/>
-  <link rel="canonical" href="https://kempelrefrigeracion.com.ar"/>
+
 
   <!-- Open Graph -->
   <meta property="og:title" content="Kempel Refrigeración | Servicio Técnico A/C y Heladeras"/>
@@ -36,7 +36,7 @@
     "name": "Kempel Refrigeración",
     "description": "Servicio técnico de aires acondicionados, heladeras y freezers. Reparación, mantenimiento e instalación.",
     "telephone": "+5493415964079",
-    "url": "https://kempelrefrigeracion.com.ar",
+    "url": "#",
     "image": "Franco.jpg",
     "priceRange": "$$",
     "areaServed": [
@@ -356,23 +356,16 @@
             </svg>
           </div>
 
-          <div class="float-card float-a" data-parallax="0.05">
-            <div class="float-card-icon"><i class="fas fa-bolt"></i></div>
-            <div class="float-card-text">
-              <strong>Reparación express</strong>
-              <small>Misma jornada</small>
-            </div>
-          </div>
           <div class="float-card float-b" data-parallax="0.06">
             <div class="float-stars">
               <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
               <i class="fas fa-star"></i><i class="fas fa-star"></i>
             </div>
-            <small>+300 trabajos realizados</small>
+            <small>+400 trabajos realizados</small>
           </div>
           <div class="float-card float-c" data-parallax="0.08">
             <i class="fas fa-shield-halved" style="color:var(--wa-green)"></i>
-            <span>Garantía incluida</span>
+            <span>Repuestos originales</span>
           </div>
         </div>
       </div>
@@ -429,11 +422,11 @@
       <div class="container features-grid">
         <div class="feat-item scroll-reveal" data-delay="0">
           <div class="feat-icon"><i class="fas fa-house-chimney"></i></div>
-          <div><strong>A domicilio</strong><small>Sin costo de traslado</small></div>
+          <div><strong>A domicilio</strong><small>En tu casa o negocio</small></div>
         </div>
         <div class="feat-item scroll-reveal" data-delay="80">
-          <div class="feat-icon"><i class="fas fa-bolt"></i></div>
-          <div><strong>Respuesta 24hs</strong><small>Urgencias disponibles</small></div>
+          <div class="feat-icon"><i class="fas fa-comment-dots"></i></div>
+          <div><strong>Respuesta rápida</strong><small>Coordinamos por WhatsApp</small></div>
         </div>
         <div class="feat-item scroll-reveal" data-delay="160">
           <div class="feat-icon"><i class="fas fa-shield-halved"></i></div>
@@ -564,8 +557,8 @@
               </a>
             </div>
 
-            <!-- Step indicator 7 pasos -->
-            <div class="diag-steps diag-steps-7" id="diagSteps">
+            <!-- Step indicator 8 pasos -->
+            <div class="diag-steps diag-steps-8" id="diagSteps">
               <div class="diag-step-dot active" data-step="1" id="wStep1">
                 <span class="step-num">1</span>
                 <span class="step-label">Localidad</span>
@@ -597,6 +590,11 @@
               </div>
               <div class="step-connector" id="wConn6"></div>
               <div class="diag-step-dot" data-step="7" id="wStep7">
+                <span class="step-num">7</span>
+                <span class="step-label">Técnico</span>
+              </div>
+              <div class="step-connector" id="wConn7"></div>
+              <div class="diag-step-dot" data-step="8" id="wStep8">
                 <span class="step-num"><i class="fab fa-whatsapp" style="font-size:.65rem"></i></span>
                 <span class="step-label">Enviar</span>
               </div>
@@ -711,7 +709,26 @@
               <p class="confirm-note">Si algo no está bien, podés volver y corregirlo. ¡No hay apuro! 🤝</p>
             </div>
 
-            <!-- PANEL 7: Enviar -->
+            <!-- PANEL 7: Elegir Técnico -->
+            <div class="wizard-panel hidden" id="panelTech" role="region" aria-label="Elegir técnico">
+              <button class="wizard-back" id="backToConfirm"><i class="fas fa-arrow-left"></i> Volver</button>
+              <p class="wizard-q"><i class="fas fa-user-gear"></i> ¿Con qué técnico querés comunicarte?</p>
+              <p class="wizard-subtitle">Elegí el técnico con quien te sentís más cómodo. ¡Los dos están para ayudarte!</p>
+              <div class="wizard-opts tech-opts" id="techOpts">
+                <button class="wizard-opt tech-opt-card" data-tech="franco" data-phone="5493415964079">
+                  <span class="opt-emoji">👨‍🔧</span>
+                  <strong>Franco</strong>
+                  <span class="tech-opt-sub">Técnico principal · Refrigeración</span>
+                </button>
+                <button class="wizard-opt tech-opt-card" data-tech="agustin" data-phone="5493413278981">
+                  <span class="opt-emoji">👨‍🔧</span>
+                  <strong>Agustín</strong>
+                  <span class="tech-opt-sub">Técnico · Aire acondicionado</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- PANEL 8: Enviar -->
             <div class="wizard-panel hidden" id="panelSend" role="region" aria-label="Enviar por WhatsApp">
               <div class="send-ready">
                 <div class="send-icon"><i class="fab fa-whatsapp"></i></div>
@@ -732,7 +749,7 @@
           <i class="fas fa-info-circle"></i>
           Diagnóstico orientativo. El técnico confirmará y presupuestará en persona, sin cargo.
         </p>
-        <p class="diag-counter">⚙️ Ya ayudamos a más de 1.200 equipos con esta herramienta</p>
+        <p class="diag-counter">⚙️ Ya ayudamos a más de 400 equipos con esta herramienta</p>
       </div>
     </section>
 
@@ -1239,6 +1256,6 @@
     <i class="fas fa-chevron-up"></i>
   </button>
 
-  <script src="script.js"></script>
+  <script src="script.js" defer></script>
 </body>
 </html>

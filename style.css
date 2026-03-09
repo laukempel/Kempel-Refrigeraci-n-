@@ -1449,21 +1449,94 @@ body {
 }
 [data-tooltip]:hover::after { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-/* ── MEJORA UI: Photo oval fix ── */
-.tech-big-avatar img,
-.stc-avatar img,
-.ftb-av img,
-.tech-opt-avatar img,
-.opt-avatar-img img {
-  width: 120px !important;
-  height: 120px !important;
-  border-radius: 50% !important;
-  object-fit: cover !important;
-  aspect-ratio: 1/1 !important;
-  display: block;
+/* ── FOTO FIX DEFINITIVO v5 ──────────────────────────────
+   Problema: width/height de img > contenedor → oval.
+   Solución: img siempre 100%/100% del contenedor.
+   Contenedor tiene dimensiones fijas con min/max.
+   ──────────────────────────────────────────────────────── */
+
+/* Contenedor grande (sección Técnicos) */
+.tech-big-avatar {
+  width: 80px !important; height: 80px !important;
+  min-width: 80px !important; min-height: 80px !important;
+  max-width: 80px !important; max-height: 80px !important;
+  border-radius: 50% !important; overflow: hidden !important;
+  flex-shrink: 0 !important; align-self: flex-start !important;
 }
-.ftb-av img { width: 44px !important; height: 44px !important; }
-.stc-avatar img { width: 52px !important; height: 52px !important; }
+.tech-big-avatar img {
+  width: 100% !important; height: 100% !important;
+  max-width: 100% !important; max-height: 100% !important;
+  object-fit: cover !important; object-position: center top !important;
+  border-radius: 0 !important; display: block !important;
+  aspect-ratio: auto !important;
+}
+
+/* opt-avatar (contacto form) */
+.opt-avatar,
+.opt-avatar.opt-avatar-img {
+  width: 52px !important; height: 52px !important;
+  min-width: 52px !important; min-height: 52px !important;
+  max-width: 52px !important; max-height: 52px !important;
+  border-radius: 50% !important; overflow: hidden !important;
+  flex-shrink: 0 !important; align-self: flex-start !important;
+}
+.opt-avatar img {
+  width: 100% !important; height: 100% !important;
+  max-width: 100% !important; max-height: 100% !important;
+  object-fit: cover !important; object-position: center top !important;
+  border-radius: 0 !important; display: block !important;
+  aspect-ratio: auto !important;
+}
+
+/* stc-avatar (sidebar contacto) */
+.stc-avatar,
+.stc-avatar.stc-avatar-img {
+  width: 52px !important; height: 52px !important;
+  min-width: 52px !important; min-height: 52px !important;
+  max-width: 52px !important; max-height: 52px !important;
+  border-radius: 50% !important; overflow: hidden !important;
+  flex-shrink: 0 !important;
+}
+.stc-avatar img {
+  width: 100% !important; height: 100% !important;
+  max-width: 100% !important; max-height: 100% !important;
+  object-fit: cover !important; object-position: center top !important;
+  border-radius: 0 !important; display: block !important;
+  aspect-ratio: auto !important;
+}
+
+/* ftb-av (footer botones) */
+.ftb-av,
+.ftb-av.ftb-av-img {
+  width: 40px !important; height: 40px !important;
+  min-width: 40px !important; min-height: 40px !important;
+  max-width: 40px !important; max-height: 40px !important;
+  border-radius: 50% !important; overflow: hidden !important;
+  flex-shrink: 0 !important;
+}
+.ftb-av img {
+  width: 100% !important; height: 100% !important;
+  max-width: 100% !important; max-height: 100% !important;
+  object-fit: cover !important; object-position: center top !important;
+  border-radius: 0 !important; display: block !important;
+  aspect-ratio: auto !important;
+}
+
+/* tech-opt-avatar (wizard) */
+.tech-opt-avatar {
+  width: 54px !important; height: 54px !important;
+  min-width: 54px !important; min-height: 54px !important;
+  max-width: 54px !important; max-height: 54px !important;
+  border-radius: 50% !important; overflow: hidden !important;
+  flex-shrink: 0 !important;
+}
+.tech-opt-avatar img {
+  width: 100% !important; height: 100% !important;
+  max-width: 100% !important; max-height: 100% !important;
+  object-fit: cover !important; object-position: center top !important;
+  border-radius: 0 !important; display: block !important;
+  aspect-ratio: auto !important;
+}
 
 /* ── MEJORA UI: FAQ accordion suave ── */
 .faq-a {
@@ -1514,7 +1587,8 @@ body {
 
 /* ── WIZARD NUEVO 7 PASOS ── */
 /* Step indicator 7 pasos */
-.diag-steps-7 {
+.diag-steps-7,
+.diag-steps-8 {
   display: flex;
   align-items: center;
   gap: 0;
@@ -1523,9 +1597,11 @@ body {
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
-.diag-steps-7::-webkit-scrollbar { display: none; }
+.diag-steps-7::-webkit-scrollbar,
+.diag-steps-8::-webkit-scrollbar { display: none; }
 
-.diag-steps-7 .diag-step-dot {
+.diag-steps-7 .diag-step-dot,
+.diag-steps-8 .diag-step-dot {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1533,7 +1609,8 @@ body {
   flex-shrink: 0;
   min-width: 36px;
 }
-.diag-steps-7 .step-num {
+.diag-steps-7 .step-num,
+.diag-steps-8 .step-num {
   width: 28px;
   height: 28px;
   border-radius: 50%;
@@ -1547,26 +1624,31 @@ body {
   color: var(--muted);
   transition: all .3s;
 }
-.diag-steps-7 .step-label {
+.diag-steps-7 .step-label,
+.diag-steps-8 .step-label {
   font-size: .58rem;
   color: var(--muted);
   white-space: nowrap;
   transition: color .3s;
 }
-.diag-steps-7 .diag-step-dot.active .step-num {
+.diag-steps-7 .diag-step-dot.active .step-num,
+.diag-steps-8 .diag-step-dot.active .step-num {
   background: var(--ice);
   border-color: var(--ice);
   color: var(--navy);
   box-shadow: 0 0 12px rgba(100,200,232,.4);
   transform: scale(1.12);
 }
-.diag-steps-7 .diag-step-dot.active .step-label { color: var(--ice); font-weight: 600; }
-.diag-steps-7 .diag-step-dot.done .step-num {
+.diag-steps-7 .diag-step-dot.active .step-label,
+.diag-steps-8 .diag-step-dot.active .step-label { color: var(--ice); font-weight: 600; }
+.diag-steps-7 .diag-step-dot.done .step-num,
+.diag-steps-8 .diag-step-dot.done .step-num {
   background: rgba(100,200,232,.2);
   border-color: var(--ice);
   color: var(--ice);
 }
-.diag-steps-7 .step-connector {
+.diag-steps-7 .step-connector,
+.diag-steps-8 .step-connector {
   flex: 1;
   height: 2px;
   background: rgba(100,200,232,.12);
@@ -1574,7 +1656,39 @@ body {
   transition: background .4s;
   min-width: 6px;
 }
-.diag-steps-7 .step-connector.done { background: var(--ice); }
+.diag-steps-7 .step-connector.done,
+.diag-steps-8 .step-connector.done { background: var(--ice); }
+
+/* Tech opt cards */
+.tech-opt-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 18px 24px;
+  text-align: center;
+}
+.tech-opt-card strong {
+  display: block;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--light);
+}
+.tech-opt-card .tech-opt-sub {
+  font-size: .75rem;
+  color: var(--muted);
+  display: block;
+}
+.tech-opt-card .opt-emoji {
+  font-size: 2rem;
+  display: block;
+}
+.tech-opts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
 
 /* Wizard panels slide-in */
 .wizard-panel {
@@ -2118,3 +2232,545 @@ button, a, .wizard-opt, .chip, .stab, .faq-q, .opt-card, label[for] {
 /* ── MEJORA UI: Scroll suave header opacity ── */
 .header { transition: backdrop-filter .3s, height .3s, background .4s; }
 
+
+/* ════════════════════════════════════════════════════════════════
+   KEMPEL — MEJORAS UI/UX/DESIGN — LISTA COMPLETA
+   ════════════════════════════════════════════════════════════════ */
+
+/* ─── 🎨 MEJORA 1: Transición suave de tema ─────────────────── */
+html { transition: background-color 0.4s ease, color 0.4s ease; }
+body,
+.navbar, .hero-section, .section, .features-strip,
+.footer-top, .footer-bottom, .diag-card, .diag-topbar,
+.service-card, .tech-profile, .faq-item, .testimonial-card,
+.payment-method, .payment-section, .why-list, .tech-why,
+.contact-sidebar, .sidebar-tech-card, .opt-card {
+  transition: background-color 0.35s ease, border-color 0.35s ease,
+              box-shadow 0.35s ease, color 0.25s ease !important;
+}
+/* Excluir animaciones activas */
+.fab-pulse, .fab-pulse2, .hero-canvas, canvas,
+.loader-fill, .conf-fill, .tech-online-ring { transition: none !important; }
+
+/* ─── 🎨 MEJORA 2: Focus outlines accesibles ─────────────────── */
+:focus-visible {
+  outline: 2px solid var(--ice) !important;
+  outline-offset: 3px !important;
+  border-radius: 4px !important;
+}
+a:focus-visible, button:focus-visible { border-radius: 8px !important; }
+
+/* ─── 🎨 MEJORA 3: Cursor pointer universal ─────────────────── */
+button, a, [role="button"], label[for],
+.wizard-opt, .chip, .stab, .faq-q, .opt-card,
+.service-card .svc-link, .back-top, .fab-wa, .fab-call,
+.theme-toggle, .hamburger, .nav-link, .footer-tech-btn,
+.social-btn, .cov-tags span { cursor: pointer !important; }
+
+/* ─── 🎨 MEJORA 4: Sombra profunda en tarjetas servicio ─────── */
+.service-card:hover {
+  box-shadow: 0 28px 64px rgba(100,200,232,.18), 0 8px 24px rgba(0,0,0,.3) !important;
+  transform: translateY(-8px) scale(1.01) !important;
+}
+
+/* ─── 🎨 MEJORA 5: Barra progreso cubic-bezier ──────────────── */
+.read-progress, .back-progress, .conf-fill {
+  transition: width 0.12s cubic-bezier(0.4,0,0.2,1) !important;
+}
+
+/* ─── 🎨 MEJORA 6: Nav link activo brillante ────────────────── */
+.nav-link.active {
+  text-shadow: 0 0 12px rgba(100,200,232,.5) !important;
+}
+
+/* ─── 🎨 MEJORA 7: Rotación ícono tema ──────────────────────── */
+#themeIcon, .theme-toggle i {
+  transition: transform 0.45s cubic-bezier(0.4,0,0.2,1) !important;
+  display: inline-block;
+}
+.theme-toggle:active #themeIcon,
+.theme-toggle:active .theme-toggle i { transform: rotate(180deg) !important; }
+
+/* ─── 🎨 MEJORA 11: Escala extra en botones magnéticos ─────── */
+.btn.magnetic:hover { transform: scale(1.04) !important; }
+.btn.magnetic:active { transform: scale(0.97) !important; }
+
+/* ─── 🎨 MEJORA 13: Sombra float cards ──────────────────────── */
+.float-card {
+  box-shadow: 0 16px 48px rgba(0,0,0,.35), 0 4px 16px rgba(100,200,232,.12) !important;
+}
+
+/* ─── 🎨 MEJORA 16: Hamburguesa elástica ────────────────────── */
+.hamburger span {
+  transition: transform 0.38s cubic-bezier(0.175,0.885,0.32,1.275),
+              opacity 0.22s ease !important;
+}
+
+/* ─── 🎨 MEJORA 17: FAB bounce al cargar ────────────────────── */
+.fab-wa {
+  animation: fabBounceIn 0.8s 0.5s cubic-bezier(0.175,0.885,0.32,1.275) both !important;
+}
+@keyframes fabBounceIn {
+  0%   { transform: translateY(40px) scale(0.6); opacity: 0; }
+  60%  { transform: translateY(-10px) scale(1.08); opacity: 1; }
+  80%  { transform: translateY(4px) scale(0.97); }
+  100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+/* ─── 🎨 MEJORA 18: Redes sociales elevación ────────────────── */
+.social-btn {
+  transition: transform 0.25s cubic-bezier(0.4,0,0.2,1),
+              background 0.2s, color 0.2s, border-color 0.2s !important;
+}
+.social-btn:hover {
+  transform: translateY(-4px) scale(1.15) !important;
+  background: rgba(100,200,232,.2) !important;
+  border-color: var(--ice) !important;
+  color: white !important;
+}
+
+/* ─── 🎨 MEJORA 20: Char counter naranja < 50 chars ────────── */
+.char-counter { font-size: .72rem; color: var(--text-muted); text-align: right; margin-top: 4px; }
+.char-counter.warn { color: var(--amber, #f5a623) !important; font-weight: 600; }
+.char-counter.limit { color: #ff6b6b !important; font-weight: 700; }
+
+/* ─── 🎨 MEJORA 22: Pulso suave open-now ───────────────────── */
+.open-now i, .badge-live, #openNowBadge i {
+  animation: openPulse 2.5s ease-in-out infinite !important;
+}
+@keyframes openPulse {
+  0%,100% { opacity: 1; transform: scale(1); }
+  50%     { opacity: 0.35; transform: scale(1.25); }
+}
+
+/* ─── 🎨 MEJORA 23: Marquesina pausa en hover ──────────────── */
+.marquee-track { animation-play-state: running; }
+.marquee-strip:hover .marquee-track { animation-play-state: paused !important; }
+.marquee-content  { animation-play-state: inherit !important; }
+
+/* ─── 🎨 MEJORA 26: Wizard panel deslizamiento ──────────────── */
+.wizard-panel.slide-in {
+  animation: panelSlide 0.32s cubic-bezier(0.4,0,0.2,1) !important;
+}
+@keyframes panelSlide {
+  from { opacity: 0; transform: translateX(20px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.wizard-panel.slide-back {
+  animation: panelSlideBack 0.32s cubic-bezier(0.4,0,0.2,1) !important;
+}
+@keyframes panelSlideBack {
+  from { opacity: 0; transform: translateX(-20px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* ─── 🎨 MEJORA 27: Borde brillante wizard opts ─────────────── */
+.wizard-opt {
+  transition: all 0.22s cubic-bezier(0.4,0,0.2,1) !important;
+  position: relative !important;
+}
+.wizard-opt:hover {
+  border-color: var(--ice) !important;
+  box-shadow: 0 0 0 1px rgba(100,200,232,.4), 0 6px 18px rgba(100,200,232,.15) !important;
+  transform: translateY(-2px) scale(1.02) !important;
+}
+.wizard-opt.selected {
+  background: rgba(100,200,232,.2) !important;
+  border-color: var(--ice) !important;
+  box-shadow: 0 0 0 2px rgba(100,200,232,.3) !important;
+}
+
+/* ─── 🎨 MEJORA 28: Checkmark elástico ──────────────────────── */
+.opt-check {
+  transition: transform 0.35s cubic-bezier(0.175,0.885,0.32,1.275),
+              opacity 0.2s ease !important;
+  transform: scale(0);
+  opacity: 0;
+}
+.opt-card.selected .opt-check {
+  transform: scale(1) !important;
+  opacity: 1 !important;
+}
+
+/* ─── 🎨 MEJORA 29: Chip hover scale ────────────────────────── */
+.chip {
+  transition: all 0.22s cubic-bezier(0.4,0,0.2,1) !important;
+}
+.chip:hover {
+  transform: translateY(-2px) scale(1.06) !important;
+  background: rgba(100,200,232,.18) !important;
+  border-color: var(--ice) !important;
+}
+.chip.active {
+  background: rgba(100,200,232,.24) !important;
+  border-color: var(--ice) !important;
+  color: var(--ice) !important;
+  font-weight: 600 !important;
+}
+
+/* ─── 🎨 MEJORA 30: Sombra cuadro chat ──────────────────────── */
+.diag-card {
+  box-shadow: 0 24px 80px rgba(0,0,0,.45), 0 6px 24px rgba(100,200,232,.1) !important;
+}
+
+/* ─── ⚡ MEJORA 7: will-change para elementos animados ─────── */
+.float-card, .stat-glass, .fab-wa, .fab-call, .back-top,
+.scroll-reveal, .service-card, .tech-profile {
+  will-change: transform;
+}
+
+/* ─── ⚡ MEJORA 23: FAQ grid-template-rows ───────────────────── */
+.faq-item {
+  display: grid !important;
+  grid-template-rows: auto 0fr !important;
+  transition: grid-template-rows 0.38s cubic-bezier(0.4,0,0.2,1) !important;
+  border-radius: 12px !important;
+}
+.faq-item.open { grid-template-rows: auto 1fr !important; }
+.faq-a {
+  overflow: hidden !important;
+  min-height: 0 !important;
+  padding: 0 20px !important;
+  max-height: none !important; /* override old max-height trick */
+  transition: padding 0.3s ease !important;
+}
+.faq-item.open .faq-a { padding: 0 20px 16px !important; }
+.faq-icon { transition: transform 0.35s cubic-bezier(0.4,0,0.2,1) !important; }
+.faq-item.open .faq-icon { transform: rotate(45deg) !important; color: var(--amber) !important; }
+.faq-item:hover { background: rgba(100,200,232,.03) !important; }
+
+/* ─── 🔍 MEJORA: Ripple en botón WhatsApp ───────────────────── */
+.btn-wa::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.15), transparent);
+  transform: translateX(-100%);
+  border-radius: inherit;
+  pointer-events: none;
+}
+.btn-wa:hover::after {
+  animation: btnShimmer 0.7s ease forwards;
+}
+@keyframes btnShimmer {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(100%); }
+}
+
+/* ─── 🔍 MEJORA: badge shimmer popular ─────────────────────── */
+.svc-badge {
+  animation: badgePulse 3s ease-in-out infinite !important;
+}
+@keyframes badgePulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(255,107,53,.4); }
+  50%     { box-shadow: 0 0 0 5px rgba(255,107,53,.0); }
+}
+
+/* ─── 🔍 MEJORA: send-icon animate ─────────────────────────── */
+.send-icon {
+  animation: sendBounce 0.6s cubic-bezier(0.175,0.885,0.32,1.275) !important;
+}
+@keyframes sendBounce {
+  0%  { transform: scale(0.4); opacity: 0; }
+  60% { transform: scale(1.18); }
+  80% { transform: scale(0.95); }
+  100%{ transform: scale(1); opacity: 1; }
+}
+
+/* ─── 📱 MEJORA: Responsive mejorado ───────────────────────── */
+@media (max-width: 768px) {
+  .hero-orb { opacity: 0.3 !important; }
+  .float-card { display: none !important; } /* reducir decoración en móvil */
+  .fab-wa { width: 54px !important; height: 54px !important; font-size: 1.45rem !important; }
+
+  /* Step wizard scrollable en móvil */
+  .diag-steps, .diag-steps-7 {
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    scrollbar-width: none !important;
+    -webkit-overflow-scrolling: touch !important;
+    padding-bottom: 6px !important;
+    flex-wrap: nowrap !important;
+  }
+  .diag-steps::-webkit-scrollbar,
+  .diag-steps-7::-webkit-scrollbar { display: none !important; }
+
+  /* Touch areas mínimo 44px */
+  .btn, button, a.btn { min-height: 44px !important; }
+  .wizard-opt { min-height: 44px !important; align-items: center !important; }
+  .chip { min-height: 36px !important; align-items: center !important; }
+
+  /* Chips más separados */
+  .chips-row, .wizard-opts { gap: 10px !important; }
+
+  /* FAQ legibilidad */
+  .faq-q { font-weight: 700 !important; font-size: 0.95rem !important; }
+
+  /* Secciones menos padding */
+  .section { padding: 52px 0 !important; }
+  .hero-section { min-height: 95vh !important; }
+
+  /* Ocultar cursor custom en touch */
+  #cursor, .cursor-dot { display: none !important; }
+
+  /* Paralaje desactivado en móvil */
+  [data-parallax] { transform: none !important; }
+}
+
+@media (max-width: 480px) {
+  .tecnicos-grid { grid-template-columns: 1fr !important; }
+  .testimonials-grid { grid-template-columns: 1fr !important; }
+  .features-grid { grid-template-columns: 1fr 1fr !important; }
+  .client-form-row { grid-template-columns: 1fr !important; }
+  .wizard-input, .diag-textarea, .wizard-custom-input {
+    font-size: 16px !important; /* evita zoom iOS */
+  }
+  .section-title { font-size: clamp(1.6rem, 7vw, 2.5rem) !important; }
+}
+
+/* ─── 🧠 MEJORA: Colores modo claro ─────────────────────────── */
+
+/* Hero stats */
+[data-theme="light"] .stat-glass {
+  background: rgba(255,255,255,.93) !important;
+  border-color: rgba(14,42,71,.1) !important;
+  box-shadow: 0 4px 20px rgba(14,42,71,.1) !important;
+}
+[data-theme="light"] .stat-num { color: #0e2a47 !important; }
+[data-theme="light"] .stat-glass sup { color: #0e2a47 !important; }
+[data-theme="light"] .stat-label { color: #3a4a5c !important; }
+[data-theme="light"] .stat-glass i { color: var(--orange, #ff6b35) !important; }
+
+/* Float cards en modo claro */
+[data-theme="light"] .float-card {
+  background: rgba(255,255,255,.95) !important;
+  border-color: rgba(14,42,71,.1) !important;
+  color: #0e2a47 !important;
+}
+[data-theme="light"] .float-stars i { color: #f5a623 !important; }
+[data-theme="light"] .float-card span { color: #0e2a47 !important; }
+[data-theme="light"] .float-card small { color: #3a4a5c !important; }
+
+/* Wizard en modo claro */
+[data-theme="light"] .diag-section { background: linear-gradient(180deg, #dde8f5, #e8f1f8) !important; }
+[data-theme="light"] .diag-card {
+  background: #fff !important;
+  border: 1px solid rgba(14,42,71,.12) !important;
+  box-shadow: 0 20px 60px rgba(14,42,71,.12) !important;
+}
+[data-theme="light"] .diag-topbar {
+  background: #f4f8ff !important;
+  border-bottom: 1px solid rgba(14,42,71,.08) !important;
+}
+[data-theme="light"] .diag-topbar strong { color: #0e2a47 !important; }
+[data-theme="light"] .ai-status-row span { color: #5a6a7a !important; }
+[data-theme="light"] .step-num {
+  background: #edf2fb !important;
+  border-color: rgba(14,42,71,.15) !important;
+  color: #3a4a5c !important;
+}
+[data-theme="light"] .step-label { color: #6b7a8d !important; }
+[data-theme="light"] .step-connector { background: rgba(14,42,71,.08) !important; }
+[data-theme="light"] .diag-step-dot.active .step-num {
+  background: var(--ice) !important;
+  border-color: var(--ice) !important;
+  color: #0e2a47 !important;
+}
+[data-theme="light"] .diag-step-dot.done .step-num {
+  background: rgba(100,200,232,.18) !important;
+  border-color: rgba(100,200,232,.5) !important;
+  color: #0e6ea8 !important;
+}
+[data-theme="light"] .step-connector.done { background: var(--ice) !important; }
+[data-theme="light"] .wizard-q { color: #0e2a47 !important; }
+[data-theme="light"] .wizard-q i { color: var(--ice) !important; }
+[data-theme="light"] .wizard-subtitle { color: #5a6a7a !important; }
+[data-theme="light"] .wizard-opt {
+  background: #edf3fb !important;
+  border-color: rgba(14,42,71,.14) !important;
+  color: #0e2a47 !important;
+}
+[data-theme="light"] .wizard-opt:hover {
+  background: rgba(100,200,232,.2) !important;
+  border-color: var(--ice) !important;
+}
+[data-theme="light"] .wizard-opt.selected {
+  background: rgba(100,200,232,.22) !important;
+  border-color: var(--ice) !important;
+  color: #0e4a7a !important;
+}
+[data-theme="light"] .wizard-input,
+[data-theme="light"] .wizard-custom-input,
+[data-theme="light"] .diag-textarea {
+  background: #f6faff !important;
+  border-color: rgba(14,42,71,.18) !important;
+  color: #0e2a47 !important;
+}
+[data-theme="light"] .wizard-input::placeholder,
+[data-theme="light"] .wizard-custom-input::placeholder,
+[data-theme="light"] .diag-textarea::placeholder { color: #8a9bac !important; }
+[data-theme="light"] .client-form-group label { color: #3a4a5c !important; }
+[data-theme="light"] .field-hint { color: #7a8b9a !important; }
+[data-theme="light"] .wizard-back { color: #6b7a8d !important; }
+[data-theme="light"] .wizard-back:hover { color: var(--navy) !important; }
+[data-theme="light"] .chip {
+  background: #edf3fb !important;
+  border-color: rgba(14,42,71,.14) !important;
+  color: #0e2a47 !important;
+}
+[data-theme="light"] .chip.active {
+  background: rgba(100,200,232,.22) !important;
+  border-color: var(--ice) !important;
+  color: #0e4a7a !important;
+}
+[data-theme="light"] .confirm-summary {
+  background: #edf3fb !important;
+  border-color: rgba(14,42,71,.1) !important;
+}
+[data-theme="light"] .confirm-row span { color: #0e2a47 !important; }
+[data-theme="light"] .confirm-row strong { color: #5a6a7a !important; }
+[data-theme="light"] .confirm-note { color: #5a6a7a !important; }
+[data-theme="light"] .send-ready h3 { color: #0e2a47 !important; }
+[data-theme="light"] .send-ready > p,
+[data-theme="light"] .send-thanks { color: #5a6a7a !important; }
+[data-theme="light"] .wa-preview {
+  background: #f0fff4 !important;
+  border-color: rgba(37,211,102,.3) !important;
+  color: #1a3d15 !important;
+}
+[data-theme="light"] .wizard-hint-text {
+  background: rgba(245,166,35,.08) !important;
+  border-color: rgba(245,166,35,.25) !important;
+  color: #7a5500 !important;
+}
+[data-theme="light"] .form-error {
+  background: rgba(220,50,50,.06) !important;
+  border-color: rgba(220,50,50,.2) !important;
+  color: #b71c1c !important;
+}
+[data-theme="light"] .btn-human-chat {
+  background: rgba(37,211,102,.08) !important;
+  color: #1a6e35 !important;
+  border-color: rgba(37,211,102,.2) !important;
+}
+[data-theme="light"] .diag-disclaimer,
+[data-theme="light"] .diag-counter { color: #5a6a7a !important; }
+
+/* Testimonios modo claro */
+[data-theme="light"] .testimonials-section { background: #e8f2fb !important; }
+[data-theme="light"] .testimonial-card {
+  background: #fff !important;
+  border-color: rgba(14,42,71,.1) !important;
+  box-shadow: 0 4px 20px rgba(14,42,71,.07) !important;
+}
+[data-theme="light"] .testimonial-text { color: #3a4a5c !important; }
+[data-theme="light"] .testimonial-author strong { color: #0e2a47 !important; }
+[data-theme="light"] .testimonial-author small { color: #6b7a8d !important; }
+[data-theme="light"] .testimonials-section .section-title { color: #0e2a47 !important; }
+[data-theme="light"] .testimonials-section .section-desc { color: #3a4a5c !important; }
+
+/* Medios de pago modo claro */
+[data-theme="light"] .payment-section { background: #dce9f6 !important; }
+[data-theme="light"] .payment-title { color: #0e2a47 !important; }
+[data-theme="light"] .payment-desc { color: #3a4a5c !important; }
+[data-theme="light"] .payment-method {
+  background: #fff !important;
+  border-color: rgba(14,42,71,.12) !important;
+  color: #0e2a47 !important;
+}
+
+/* Trust seals modo claro */
+[data-theme="light"] .trust-seal { color: rgba(14,42,71,.55) !important; }
+[data-theme="light"] .trust-seal i { color: var(--ice) !important; }
+[data-theme="light"] .footer-sublema { color: var(--ice) !important; }
+[data-theme="light"] .sidebar-offhours { color: #0e6ea8 !important; }
+
+/* ─── 🧠 MEJORA: Tooltip CSS puro ──────────────────────────── */
+[data-tooltip] { position: relative !important; }
+[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%) translateY(5px);
+  background: rgba(4,12,28,.95);
+  color: #fff;
+  font-size: .7rem;
+  padding: 5px 11px;
+  border-radius: 8px;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  z-index: 2000;
+  border: 1px solid rgba(100,200,232,.2);
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
+}
+[data-tooltip]:hover::after {
+  opacity: 1 !important;
+  transform: translateX(-50%) translateY(0) !important;
+}
+
+/* ─── 🔍 MEJORA: Hover tech profile ────────────────────────── */
+.tech-profile {
+  transition: transform 0.3s cubic-bezier(0.4,0,0.2,1),
+              box-shadow 0.3s ease !important;
+}
+.tech-profile:hover {
+  transform: translateY(-7px) scale(1.01) !important;
+  box-shadow: 0 24px 60px rgba(100,200,232,.15) !important;
+}
+
+/* ─── 🔍 MEJORA: feat-icon scale ───────────────────────────── */
+.feat-icon { transition: transform 0.22s cubic-bezier(0.4,0,0.2,1) !important; }
+.feat-item:hover .feat-icon { transform: scale(1.22) rotate(-5deg) !important; }
+.svc-icon { transition: transform 0.22s cubic-bezier(0.4,0,0.2,1) !important; }
+.service-card:hover .svc-icon { transform: scale(1.14) !important; }
+
+/* ─── 🔍 MEJORA: testimonial hover ─────────────────────────── */
+.testimonial-card {
+  transition: transform 0.25s cubic-bezier(0.4,0,0.2,1),
+              box-shadow 0.25s ease !important;
+}
+.testimonial-card:hover {
+  transform: translateY(-6px) !important;
+  box-shadow: 0 20px 48px rgba(100,200,232,.14) !important;
+}
+
+/* ─── 🔍 MEJORA: back-top animación entrada ─────────────────── */
+.back-top.visible {
+  animation: backTopIn 0.45s cubic-bezier(0.175,0.885,0.32,1.275) forwards !important;
+}
+@keyframes backTopIn {
+  from { transform: translateY(20px) scale(0.7); opacity: 0; }
+  70%  { transform: translateY(-5px) scale(1.08); }
+  to   { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+/* ─── 🔍 MEJORA: Loading state en botón envío ───────────────── */
+.btn-loading {
+  pointer-events: none !important;
+  opacity: 0.75 !important;
+}
+.btn-loading::before {
+  content: '';
+  width: 16px; height: 16px;
+  border: 2px solid rgba(255,255,255,.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: btnSpin 0.7s linear infinite;
+  margin-right: 8px;
+  display: inline-block;
+  vertical-align: middle;
+}
+@keyframes btnSpin { to { transform: rotate(360deg); } }
+
+/* ─── Scroll indicator arrow ────────────────────────────────── */
+.scroll-indicator {
+  animation: scrollBounce 2s ease-in-out infinite !important;
+}
+@keyframes scrollBounce {
+  0%,100% { transform: translateX(-50%) translateY(0); opacity: 0.6; }
+  50%     { transform: translateX(-50%) translateY(6px); opacity: 1; }
+}
