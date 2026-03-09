@@ -13,36 +13,43 @@ function makeObserver(cb, opts = {}) {
   return new IntersectionObserver(cb, { threshold: 0.1, rootMargin: '0px 0px -40px 0px', ...opts });
 }
 
-/* ════════════ ANIM 1: PAGE LOADER (mejorado con timeout de seguridad) ════════════ */
+/* ════════════ ANIM 1: PAGE LOADER (máximo 2 segundos) ════════════ */
 (function initLoader() {
   const loader = $('pageLoader');
   const fill   = $('loaderFill');
   if (!loader) return;
-  
+
+  const LOADER_DURATION = 2000; // 2 segundos máximo
+  const start = Date.now();
+
   let pct = 0;
   const iv = setInterval(() => {
-    pct = Math.min(pct + (Math.random() * 18 + 5), 95);
+    const elapsed = Date.now() - start;
+    const progress = elapsed / LOADER_DURATION;
+    pct = Math.min(progress * 100 * (0.9 + Math.random() * 0.1), 95);
     if (fill) fill.style.width = pct + '%';
   }, 80);
 
-  // Timeout de seguridad: ocultar el loader después de 8 segundos máximo
-  const safetyTimeout = setTimeout(() => {
+  function hideLoader() {
     clearInterval(iv);
     if (fill) fill.style.width = '100%';
-    loader.classList.add('done');
-    console.warn('⚠️ Loader ocultado por timeout de seguridad (8s)');
-  }, 8000);
+    setTimeout(() => loader.classList.add('done'), 200);
+  }
 
+  // Ocultar siempre a los 2 segundos
+  const hardTimeout = setTimeout(hideLoader, LOADER_DURATION);
+
+  // Si la página carga antes, ocultar antes (pero esperando mínimo 500ms para la animación)
   window.addEventListener('load', () => {
-    clearTimeout(safetyTimeout);
-    clearInterval(iv);
-    if (fill) fill.style.width = '100%';
-    setTimeout(() => loader.classList.add('done'), 300);
+    const elapsed = Date.now() - start;
+    const remaining = Math.max(500 - elapsed, 0);
+    clearTimeout(hardTimeout);
+    setTimeout(hideLoader, remaining);
   });
 
   // Capturar errores de recursos (imágenes, scripts, estilos)
   window.addEventListener('error', function(e) {
-    if (e.target.tagName) {
+    if (e.target && e.target.tagName) {
       console.warn('⚠️ Error cargando recurso:', e.target.src || e.target.href);
     }
   }, true);
