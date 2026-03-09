@@ -15,6 +15,11 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com"/>
+
+  <!-- Precarga de imágenes críticas -->
+  <link rel="preload" as="image" href="Franco.jpg"/>
+  <link rel="preload" as="image" href="Agustin.jpg"/>
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap" onload="this.rel='stylesheet'"/>
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&display=swap" as="style" onload="this.rel='stylesheet'"/>
   <noscript>
@@ -115,6 +120,18 @@
   <a href="#main" class="skip-link">Ir al contenido</a>
 
   <!-- PAGE LOADER -->
+  <script>
+    // Forzar cierre del loader a los 2 segundos, sin depender de script.js ni window.load
+    (function() {
+      function hideLoader() {
+        var l = document.getElementById('pageLoader');
+        var f = document.getElementById('loaderFill');
+        if (f) f.style.width = '100%';
+        if (l) l.classList.add('done');
+      }
+      setTimeout(hideLoader, 2000);
+    })();
+  </script>
   <div class="page-loader" id="pageLoader">
     <div class="loader-logo">
       <svg viewBox="0 0 60 60" fill="none" width="64" height="64">
@@ -166,8 +183,8 @@
     <div class="welcome-content">
       <button class="welcome-close" id="welcomeClose"><i class="fas fa-times"></i></button>
       <div class="welcome-avatars">
-        <img src="Franco.jpg" alt="Franco">
-        <img src="Agustin.jpg" alt="Agustín">
+        <img src="Franco.jpg" alt="Franco" loading="lazy">
+        <img src="Agustin.jpg" alt="Agustín" loading="lazy">
       </div>
       <h3>¡Hola! Somos Franco y Agustín</h3>
       <p>Estamos acá para ayudarte con tu equipo. Si necesitás algo, preguntanos sin compromiso.</p>
