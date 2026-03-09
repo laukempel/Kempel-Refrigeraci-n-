@@ -794,142 +794,26 @@ Respondé en español argentino. Máximo 120 palabras en el JSON.`;
 
   /* ── MAIN DIAGNOSE ── */
   async function diagnose() {
-    if (busy) return; // 4.5: anti-spam
 
     const rawSymptom = inputEl?.value.trim();
-    if (!rawSymptom) {
-      if (inputEl) { inputEl.style.borderColor = 'var(--amber)'; setTimeout(() => inputEl.style.borderColor = '', 1200); }
-      return;
-    }
+    if (!rawSymptom) return;
 
-    /* 4.3: XSS sanitize before display and before sending */
-    const symptom = sanitize(rawSymptom);
+    const symptom = rawSymptom;
 
-    /* 4.5: Lock UI */
-    busy = true;
-    if (btnDiagnose) btnDiagnose.disabled = true;
-    if (inputEl)     inputEl.disabled = true;
+    const loc = getLocationLabel();
+    const type = aiState.acType || "aire acondicionado";
 
-    addBubble(symptom, true);
-    if (inputEl) inputEl.value = '';
-    if (charCounter) charCounter.textContent = '0/300';
-    $$('.chip').forEach(c => c.classList.remove('active'));
+    const waMessage =
+`Hola, tengo un ${type} en ${loc}.
+Síntoma: ${symptom}.
+¿Podrían coordinar una visita técnica?`;
 
-    if (detectUrgency(symptom)) {
-      if (urgBadge) urgBadge.style.display = 'flex';
-      if (urgText)  urgText.textContent = '¡Urgente!';
-      showToast('Caso urgente — Te conectamos rápido', 'success');
-    } else {
-      if (urgBadge) urgBadge.style.display = 'none';
-    }
+    const phone = PHONES.franco;
 
-    addTyping();
-    if (diagStatus) diagStatus.textContent = 'Analizando...';
+    const url = `https://wa.me/${phone}?text=${encodeURIComponent(waMessage)}`;
 
-    /* 4.4: Sliding window — keep last 6 messages only */
-    history.push({ role: 'user', content: symptom });
-    history = history.slice(-6);
-    saveHistory();
+    window.open(url, "_blank");
 
-    /* 4.2: AbortController — cancel previous request */
-    if (abortCtrl) abortCtrl.abort();
-    abortCtrl = new AbortController();
-
-    /* 4.7: 15s timeout */
-    let timeoutId;
-    const timeoutPromise = new Promise(resolve => {
-      timeoutId = setTimeout(() => { abortCtrl.abort(); resolve(null); }, 15000);
-    });
-
-    let data = null;
-    try {
-      const fetchPromise = fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        signal: abortCtrl.signal,
-        body: JSON.stringify({
-          messages: history,
-          system: buildSystemPrompt(),
-          max_tokens: 300,
-        }),
-      }).then(async r => {
-        if (r.status === 404) {
-          /* Dev fallback — direct Anthropic (CORS will fail in prod without backend) */
-          return fetch('https://api.anthropic.com/v1/messages', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            signal: abortCtrl.signal,
-            body: JSON.stringify({
-              model: 'claude-sonnet-4-20250514',
-              max_tokens: 300,
-              system: buildSystemPrompt(),
-              messages: history,
-            }),
-          }).then(r2 => r2.ok ? r2.json() : null);
-        }
-        return r.ok ? r.json() : null;
-      });
-
-      data = await Promise.race([fetchPromise, timeoutPromise]);
-    } catch (err) {
-      if (err.name !== 'AbortError') console.warn('AI fetch error:', err);
-      data = null;
-    }
-
-    clearTimeout(timeoutId);
-    removeTyping();
-
-    /* Unlock UI */
-    busy = false;
-    if (btnDiagnose) btnDiagnose.disabled = false;
-    if (inputEl)     inputEl.disabled = false;
-
-    if (!data) {
-      addRetryUI(diagnose);
-      if (diagStatus) diagStatus.textContent = 'Error de conexión';
-      return;
-    }
-
-    const rawText = data?.content?.map(b => b.text || '').join('') || '';
-    if (!rawText) { addRetryUI(diagnose); return; }
-
-    /* 4.1: Parse JSON response */
-    let parsed = { preguntas_descarte: '', resumen_whatsapp: '' };
-    try {
-      const clean = rawText.replace(/```json|```/g, '').trim();
-      parsed = JSON.parse(clean);
-    } catch {
-      /* Fallback: treat entire response as preguntas_descarte */
-      parsed.preguntas_descarte = rawText;
-    }
-
-    history.push({ role: 'assistant', content: rawText });
-    history = history.slice(-6);
-    saveHistory();
-
-    /* Confidence bar */
-    const wordCount = rawSymptom.split(' ').length;
-    const confidence = Math.min(60 + wordCount * 4, 97);
-    if (confRow && confFill && confPct) {
-      confRow.style.display = 'flex';
-      setTimeout(() => { confFill.style.width = confidence + '%'; confPct.textContent = confidence + '%'; }, 300);
-    }
-
-    /* 4.8: Render markdown in response */
-    const displayHtml = mdToHtml(parsed.preguntas_descarte || rawText);
-    addBubble(displayHtml, false);
-
-    if (drpBody) drpBody.innerHTML = `<p>${displayHtml}</p>`;
-    if (drpEstimate) drpEstimate.style.display = 'none';
-    if ($('drpTechName')) $('drpTechName').textContent = 'Franco Kempel';
-
-    currentWaMsg  = buildWaMessage(symptom, parsed.resumen_whatsapp || null);
-    currentPhone  = PHONES.franco;
-
-    updateStepIndicator(4); aiState.step = 4;
-    if (resultPanel) resultPanel.style.display = 'block';
-    if (diagStatus)  diagStatus.textContent = '✓ Triaje completo';
-    showToast('Triaje completado', 'success');
   }
 
   btnDiagnose?.addEventListener('click', diagnose);
