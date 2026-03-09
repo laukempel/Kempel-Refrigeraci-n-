@@ -521,7 +521,7 @@ body {
 /* ANIM 10: filter hide/show */
 .service-card.hidden{display:none}
 
-.services-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.services-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px; overflow:visible}
 /* ESTÉTICA 14: Cards with conic glow border */
 .service-card{
   background:var(--bg-card);border-radius:var(--radius);padding:30px 26px;
@@ -530,6 +530,7 @@ body {
   display:flex;flex-direction:column;gap:14px;position:relative;overflow:hidden;
   contain:layout style;
 }
+.service-card-featured { overflow:visible; margin-top:14px; padding-top:36px; }
 .svc-glow{
   position:absolute;inset:-2px;border-radius:var(--radius);z-index:0;opacity:0;
   background:conic-gradient(from var(--angle,0deg),var(--ice),var(--amber),var(--purple),var(--ice));
@@ -554,6 +555,7 @@ body {
 .service-card-featured{background:linear-gradient(140deg,var(--navy),var(--navy-mid));border-color:rgba(100,200,232,.22)}
 .service-card-featured::after{background:linear-gradient(140deg,var(--navy),var(--navy-mid))}
 .svc-badge{position:absolute;top:16px;right:16px;z-index:10;background:var(--amber);color:var(--navy);font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.07em;padding:4px 10px;border-radius:99px}
+.svc-badge-top{position:absolute;top:-14px;left:50%;transform:translateX(-50%);z-index:10;background:var(--amber);color:var(--navy);font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.07em;padding:5px 16px;border-radius:99px;white-space:nowrap;box-shadow:0 4px 12px rgba(245,158,11,.35)}
 
 .svc-top{display:flex;align-items:center;justify-content:space-between}
 .svc-icon{width:56px;height:56px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;transition:var(--spring)}
@@ -763,8 +765,9 @@ body {
 .diag-card{
   background:rgba(255,255,255,.04);backdrop-filter:blur(20px);
   border:1px solid rgba(100,200,232,.14);border-radius:var(--radius);
-  overflow:hidden;box-shadow:0 24px 64px rgba(0,0,0,.35),0 0 0 1px rgba(124,58,237,.08);
+  overflow:visible;box-shadow:0 24px 64px rgba(0,0,0,.35),0 0 0 1px rgba(124,58,237,.08);
 }
+.diag-card > *:not(.svc-badge-top) { border-radius: inherit; }
 .diag-topbar{
   display:flex;align-items:center;justify-content:space-between;
   padding:16px 24px;background:rgba(255,255,255,.03);border-bottom:1px solid rgba(100,200,232,.1);
@@ -1664,9 +1667,32 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
-  padding: 18px 24px;
+  gap: 8px;
+  padding: 20px 24px;
   text-align: center;
+}
+.tech-opt-photo {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid rgba(100,200,232,.35);
+  background: rgba(100,200,232,.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 4px;
+  box-shadow: 0 0 18px rgba(100,200,232,.2);
+}
+.tech-opt-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+.tech-opt-card.selected .tech-opt-photo {
+  border-color: var(--ice);
+  box-shadow: 0 0 24px rgba(100,200,232,.45);
 }
 .tech-opt-card strong {
   display: block;
@@ -1679,14 +1705,20 @@ body {
   color: var(--muted);
   display: block;
 }
-.tech-opt-card .opt-emoji {
-  font-size: 2rem;
-  display: block;
-}
 .tech-opts {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 12px;
+}
+
+/* Clickable step dots */
+.diag-step-dot[data-step] {
+  cursor: pointer;
+  transition: opacity .2s;
+}
+.diag-step-dot[data-step]:hover .step-num {
+  opacity: .8;
+  transform: scale(1.08);
 }
 
 

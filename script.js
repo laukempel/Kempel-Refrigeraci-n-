@@ -858,6 +858,17 @@ ${mapsLink}
   // Inicializar
   updateStepIndicator(1);
   showPanel(panels.location);
+
+  /* ── Clickable step dots (go back) ── */
+  document.querySelectorAll('#diagSteps .diag-step-dot[data-step]').forEach(dot => {
+    dot.addEventListener('click', () => {
+      const targetStep = parseInt(dot.dataset.step);
+      // Only allow going to a step that was already completed (< current step)
+      if (targetStep < state.step) {
+        goToStep(targetStep);
+      }
+    });
+  });
 })();
 
 /* ════════════ HEADER SHRINK DINÁMICO ════════════ */
