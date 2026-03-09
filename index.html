@@ -44,6 +44,7 @@
       {"@type": "City", "name": "San Lorenzo"},
       {"@type": "City", "name": "Capitán Bermúdez"},
       {"@type": "City", "name": "Puerto General San Martín"},
+      {"@type": "City", "name": "Ricardone"},
       {"@type": "City", "name": "Rosario"},
       {"@type": "City", "name": "Granadero Baigorria"}
     ],
@@ -390,6 +391,8 @@
           <span class="mq-item"><i class="fas fa-location-dot"></i> San Lorenzo</span>
           <span class="mq-sep">→</span>
           <span class="mq-item"><i class="fas fa-location-dot"></i> Pto. Gral. San Martín</span>
+          <span class="mq-sep">→</span>
+          <span class="mq-item"><i class="fas fa-location-dot"></i> Ricardone</span>
           <span class="mq-sep">·</span>
           <span class="mq-item mq-consult"><i class="fas fa-comments"></i> Baigorria (consultar)</span>
           <span class="mq-sep">·</span>
@@ -404,6 +407,8 @@
           <span class="mq-item"><i class="fas fa-location-dot"></i> San Lorenzo</span>
           <span class="mq-sep">→</span>
           <span class="mq-item"><i class="fas fa-location-dot"></i> Pto. Gral. San Martín</span>
+          <span class="mq-sep">→</span>
+          <span class="mq-item"><i class="fas fa-location-dot"></i> Ricardone</span>
           <span class="mq-sep">·</span>
           <span class="mq-item mq-consult"><i class="fas fa-comments"></i> Baigorria (consultar)</span>
           <span class="mq-sep">·</span>
@@ -605,6 +610,7 @@
                 <button class="wizard-opt" data-loc="Capitán Bermúdez"><span class="opt-emoji">📍</span> Capitán Bermúdez</button>
                 <button class="wizard-opt" data-loc="Rosario"><span class="opt-emoji">🌆</span> Rosario</button>
                 <button class="wizard-opt" data-loc="Granadero Baigorria"><span class="opt-emoji">📍</span> Baigorria</button>
+                <button class="wizard-opt" data-loc="Ricardone"><span class="opt-emoji">📍</span> Ricardone</button>
                 <button class="wizard-opt" data-loc="otra"><span class="opt-emoji">✏️</span> Otra localidad</button>
               </div>
               <input type="text" class="wizard-custom-input" id="customLocationInput" placeholder="Tu localidad..." aria-label="Ingresá tu localidad" />
@@ -713,14 +719,14 @@
               <div class="wizard-opts tech-opts" id="techOpts">
                 <button class="wizard-opt tech-opt-card" data-tech="franco" data-phone="5493415964079">
                   <div class="tech-opt-photo">
-                    <img src="https://ui-avatars.com/api/?name=Franco+Kempel&background=0e3a6e&color=64c8e8&size=80&bold=true&font-size=0.33" alt="Franco" onerror="this.style.display='none';this.parentElement.innerHTML='<span style=\'font-size:2.2rem\'>👨‍🔧</span>'">
+                    <img src="Franco.jpg" alt="Franco Kempel" onerror="this.style.display='none'">👨‍🔧</span>'">
                   </div>
                   <strong>Franco</strong>
                   <span class="tech-opt-sub">Técnico principal · Refrigeración</span>
                 </button>
                 <button class="wizard-opt tech-opt-card" data-tech="agustin" data-phone="5493413278981">
                   <div class="tech-opt-photo">
-                    <img src="https://ui-avatars.com/api/?name=Agustin+Kempel&background=1a2a4a&color=64c8e8&size=80&bold=true&font-size=0.33" alt="Agustín" onerror="this.style.display='none';this.parentElement.innerHTML='<span style=\'font-size:2.2rem\'>👨‍🔧</span>'">
+                    <img src="Agustin.jpg" alt="Agustín Kempel" onerror="this.style.display='none'">👨‍🔧</span>'">
                   </div>
                   <strong>Agustín</strong>
                   <span class="tech-opt-sub">Técnico · Aire acondicionado</span>
@@ -749,7 +755,7 @@
           <i class="fas fa-info-circle"></i>
           Diagnóstico orientativo. El técnico confirmará y presupuestará en persona, sin cargo.
         </p>
-        <p class="diag-counter">⚙️ Ya ayudamos a más de 400 equipos con esta herramienta</p>
+        <p class="diag-disclaimer"><i class="fas fa-info-circle"></i> El técnico te dará el diagnóstico en tu casa y presupuestará en persona, sin cargo.</p>
       </div>
     </section>
 
@@ -828,7 +834,7 @@
                 <strong>Zona de cobertura</strong>
                 <div class="cov-tags">
                   <span>Cap. Bermúdez</span><span>F. L. Beltrán</span>
-                  <span>San Lorenzo</span><span>Pto. Gral. San Martín</span>
+                  <span>San Lorenzo</span><span>Pto. Gral. San Martín</span><span>Ricardone</span>
                   <span class="cov-consult">Baigorria*</span><span class="cov-consult">Rosario*</span>
                 </div>
                 <small>* Consultar disponibilidad</small>
@@ -991,7 +997,7 @@
                 <strong>Zona de cobertura</strong>
                 <div class="cov-tags-sm">
                   <span>Cap. Bermúdez</span><span>F.L. Beltrán</span>
-                  <span>San Lorenzo</span><span>Pto. San Martín</span>
+                  <span>San Lorenzo</span><span>Pto. San Martín</span><span>Ricardone</span>
                   <span class="cov-c">Baigorria*</span><span class="cov-c">Rosario*</span>
                 </div>
               </div>
@@ -1193,16 +1199,6 @@
       </div>
     </div>
   </footer>
-
-  <!-- FABs -->
-  <a href="https://wa.me/5493415964079" target="_blank" rel="noopener noreferrer" class="fab-wa" id="fabWa" aria-label="Contactar por WhatsApp" data-tooltip="Conversemos">
-    <i class="fab fa-whatsapp"></i>
-    <span class="fab-pulse"></span>
-    <span class="fab-pulse fab-pulse2"></span>
-  </a>
-  <a href="tel:+543415964079" class="fab-call" id="fabCall" aria-label="Llamar por teléfono" data-tooltip="Llamar ahora">
-    <i class="fas fa-phone"></i>
-  </a>
   <button class="back-top" id="backTop" aria-label="Volver arriba" data-tooltip="Volvé arriba, te acompañamos">
     <svg width="44" height="44" viewBox="0 0 44 44">
       <circle cx="22" cy="22" r="20" stroke="rgba(100,200,232,0.3)" stroke-width="2" fill="none"/>
