@@ -1271,14 +1271,31 @@ body {
 .footer-bottom-inner i{color:var(--amber)}
 
 /* ── FAB ─────────────────────────────────────────────── */
-/* fab-wa eliminado */
+/* ANIM 19: Double ring FAB */
+.fab-wa{position:fixed;bottom:28px;right:28px;z-index:900;width:62px;height:62px;border-radius:50%;background:linear-gradient(135deg,var(--wa-green),var(--wa-dark));display:flex;align-items:center;justify-content:center;font-size:1.65rem;color:white;box-shadow:0 4px 24px rgba(37,211,102,.55);transition:transform .35s var(--spring),box-shadow .3s}
 .fab-wa:hover{transform:scale(1.12) rotate(-8deg);box-shadow:0 8px 36px rgba(37,211,102,.7)}
-
-
-100%{transform:scale(2.3);opacity:0}}
+.fab-pulse,.fab-pulse2{position:absolute;inset:0;border-radius:50%;background:rgba(37,211,102,.35);animation:fabRing 2.8s ease-out infinite}
+.fab-pulse2{animation-delay:1.4s}
+@keyframes fabRing{0%{transform:scale(1);opacity:.7}100%{transform:scale(2.3);opacity:0}}
 
 /* ─── FAB CALL ───────────────────────────────────────── */
-
+.fab-call {
+  position: fixed;
+  bottom: 28px;
+  right: 102px;
+  z-index: 900;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--ice), #3ab4d8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.2rem;
+  box-shadow: 0 4px 20px rgba(100,200,232,0.4);
+  transition: transform 0.35s var(--spring), box-shadow 0.3s;
+}
 .fab-call:hover {
   transform: scale(1.12);
   box-shadow: 0 8px 32px rgba(100,200,232,0.7);
@@ -2256,7 +2273,8 @@ body,
               box-shadow 0.35s ease, color 0.25s ease !important;
 }
 /* Excluir animaciones activas */
-
+.fab-pulse, .fab-pulse2, .hero-canvas, canvas,
+.loader-fill, .conf-fill, .tech-online-ring { transition: none !important; }
 
 /* ─── 🎨 MEJORA 2: Focus outlines accesibles ─────────────────── */
 :focus-visible {
@@ -2778,12 +2796,12 @@ input::placeholder, textarea::placeholder { color: var(--text-muted) !important;
 
 /* ── FAB LAYOUT (no overlaps) ── */
 .fab-wa  { bottom: 28px !important; right: 28px !important; z-index: 900; }
-
+.fab-call{ bottom: 100px !important; right: 28px !important; z-index: 900; }
 .back-top{ bottom: 28px !important; right: 100px !important; z-index: 900; }
 
 @media(max-width:600px) {
   .fab-wa  { bottom: 18px !important; right: 18px !important; width: 52px !important; height: 52px !important; }
-  
+  .fab-call{ bottom: 82px !important; right: 18px !important; }
   .back-top{ bottom: 18px !important; right: 82px !important; }
 }
 
@@ -2804,336 +2822,358 @@ input::placeholder, textarea::placeholder { color: var(--text-muted) !important;
 
 
 /* ════════════════════════════════════════════════════════
-   KEMPEL v3 — CORRECCIONES VISUALES FINALES
+   KEMPEL v3 — REFACTORIZACIÓN VISUAL COMPLETA
    ════════════════════════════════════════════════════════ */
 
-/* ── Paneles de técnicos y contacto: fondo claro con texto oscuro ── */
-.tech-profile-inner {
-  background: #e8f4fb !important;
-  border-radius: 0 0 var(--radius) var(--radius);
-}
-.tech-profile-info h3 { color: #0a1f38 !important; }
-.tech-role            { color: #2a4a6b !important; }
-.tech-stat span       { color: #2a4a6b !important; }
-.tech-stat i          { color: var(--ice) !important; }
-.tech-profile-badge   {
-  background: rgba(37,211,102,.15) !important;
-  color: #0d7a3e !important;
-  border-color: rgba(37,211,102,.3) !important;
+/* ── 1. HEADER ── */
+/* Scroll shadow */
+.header.scrolled {
+  box-shadow: 0 4px 24px rgba(0,0,0,.45) !important;
 }
 
-/* ── Panel "¿Por qué elegirnos?" ── */
-.tech-why {
-  background: #e8f4fb !important;
+/* Touch targets mínimos en nav */
+.nav-link {
+  min-height: 44px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  padding-left: 10px !important;
+  padding-right: 10px !important;
+  opacity: 1;
+  transition: opacity .2s, color .2s !important;
 }
-.tech-why h3          { color: #0a1f38 !important; }
-.why-list li          { color: #1d3f60 !important; }
-.why-dot              { background: var(--ice) !important; }
-.why-coverage strong  { color: #0a1f38 !important; }
-.why-coverage small   { color: #3a5a7c !important; }
-.cov-tags span        {
-  background: rgba(6,21,43,.1) !important;
-  border-color: rgba(6,21,43,.18) !important;
+.nav-link:hover { opacity: .82 !important; }
+
+/* Active state: underline más visible */
+.nav-link.active {
+  color: var(--ice) !important;
+}
+.nav-link.active::after {
+  width: 70% !important;
+  background: var(--ice) !important;
+  opacity: 1 !important;
+}
+
+/* "Zonas de cobertura" / btn-location — sin cambios de layout */
+.btn-location { min-height: 44px !important; }
+
+/* "Abierto ahora" badge — verde más vibrante */
+.open-badge, .badge-live, [class*="open-now"], [class*="abierto"] {
+  color: #2ecc71 !important;
+}
+.badge-live::before {
+  background: #2ecc71 !important;
+  box-shadow: 0 0 6px #2ecc71 !important;
+}
+
+/* ── 2. HERO ── */
+/* Hero desc más legible */
+.hero-desc { color: rgba(255,255,255,.82) !important; }
+
+/* Hero botones alineados al margen del título */
+.hero-actions { justify-content: flex-start !important; }
+
+/* Float cards con glow/blur */
+.float-card {
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+  box-shadow: 0 8px 32px rgba(0,0,0,.35), 0 0 0 1px rgba(100,200,232,.15) !important;
+}
+
+/* ── 3. STATS glassmorphism ── */
+.stat-glass {
+  background: linear-gradient(135deg, rgba(100,200,232,.1), rgba(58,180,216,.05)) !important;
+  border: 1px solid rgba(100,200,232,.2) !important;
+  backdrop-filter: blur(10px) !important;
+}
+.stat-glass > i { display: flex; justify-content: center; }
+
+/* Scroll indicator bounce (si no existe ya) */
+@keyframes bounceArrow {
+  0%,100% { transform: translateY(0); }
+  50%      { transform: translateY(8px); }
+}
+.scroll-indicator i { animation: bounceArrow 1.8s ease-in-out infinite !important; }
+
+/* ── 4. MARCAS ── */
+.marcas-content span {
+  filter: brightness(0) invert(1) !important;
+  opacity: .65 !important;
+  transition: opacity .25s !important;
+}
+.marcas-content span:hover { opacity: 1 !important; }
+
+/* ── 5. SERVICIOS ── */
+/* Tab activo fuerte */
+.stab.active {
+  background: var(--ice) !important;
+  color: var(--navy) !important;
+  font-weight: 700 !important;
+  box-shadow: 0 3px 14px rgba(100,200,232,.4) !important;
+}
+.stab:not(.active) {
+  background: rgba(255,255,255,.07) !important;
+  color: rgba(255,255,255,.55) !important;
+}
+
+/* Tarjeta: hover scale + toda cliqueable */
+.service-card {
+  cursor: pointer !important;
+  padding-bottom: 28px !important;
+}
+.service-card:hover {
+  transform: translateY(-6px) scale(1.02) !important;
+}
+
+/* Badge "Popular" texto oscuro */
+.svc-badge { color: var(--navy) !important; font-weight: 700 !important; }
+
+/* ── 6. TÉCNICOS — Paneles claros con texto oscuro ── */
+.tech-profile-inner {
+  background: #eaf3fb !important;
+}
+.tech-profile-info h3  { color: #0a192f !important; }
+.tech-role             { color: #2a4a6b !important; }
+.tech-stat span        { color: #2a4a6b !important; }
+.tech-stat i           { color: var(--ice) !important; }
+.tech-profile-inner    { padding: 28px 28px 32px !important; }
+.tech-stats-row        { gap: 10px !important; margin-bottom: 22px !important; }
+
+/* Badge disponible → punto animado */
+.tech-profile-badge {
+  background: rgba(46,204,113,.15) !important;
+  color: #1a8a4a !important;
+  border: 1px solid rgba(46,204,113,.3) !important;
+  display: flex !important; align-items: center !important; gap: 6px !important;
+}
+.avail-dot {
+  display: inline-block !important;
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  background: #2ecc71;
+  animation: availPulse 1.8s ease-in-out infinite !important;
+  flex-shrink: 0;
+}
+@keyframes availPulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(46,204,113,.5); }
+  50%      { box-shadow: 0 0 0 6px rgba(46,204,113,0); }
+}
+
+/* WhatsApp botones #25D366 */
+.btn-tech-wa {
+  background: linear-gradient(135deg, #25D366, #1ebe58) !important;
+  box-shadow: 0 4px 18px rgba(37,211,102,.35) !important;
+}
+
+/* Por qué elegirnos — paneles claros */
+.tech-why {
+  background: #eaf3fb !important;
+  padding: 32px 30px !important;
+}
+.tech-why h3        { color: #0a192f !important; }
+.why-list li        { color: #1d3f60 !important; line-height: 1.6 !important; }
+.why-dot            { background: #2ecc71 !important; }
+
+/* Replace bullet with checkmark via pseudo */
+.why-list li {
+  list-style: none !important;
+  padding-left: 24px !important;
+  position: relative !important;
+}
+.why-list li::before {
+  content: '\f00c' !important;
+  font-family: 'Font Awesome 6 Free' !important;
+  font-weight: 900 !important;
+  position: absolute !important;
+  left: 0 !important;
+  color: #2ecc71 !important;
+  font-size: .85rem !important;
+}
+.why-dot { display: none !important; }
+
+.why-coverage strong { color: #0a192f !important; }
+.why-coverage small  { color: #3a5a7c !important; }
+.cov-tags span {
+  background: rgba(6,21,43,.08) !important;
+  border-color: rgba(6,21,43,.2) !important;
   color: #1d3f60 !important;
 }
-.cov-consult, .cov-c  {
-  background: rgba(180,90,10,.12) !important;
-  border-color: rgba(200,100,10,.25) !important;
+.cov-consult {
+  background: rgba(180,90,10,.1) !important;
+  border-color: rgba(200,100,10,.22) !important;
   color: #8a4500 !important;
 }
 
-/* ── Tarjetas contacto sidebar ── */
+/* ── 7. CONTACTO sidebar paneles claros ── */
 .sidebar-tech-card {
-  background: #e8f4fb !important;
+  background: #eaf3fb !important;
+  padding: 20px 24px !important;
 }
-.stc-info strong      { color: #0a1f38 !important; }
-.stc-info span        { color: #2a4a6b !important; }
-.stc-phone            { color: #0a1f38 !important; font-weight: 700 !important; }
+.stc-info strong  { color: #0a192f !important; }
+.stc-info span    { color: #2a4a6b !important; }
+.stc-phone        { color: #0a192f !important; font-weight: 700 !important; }
 
 .sidebar-note {
-  background: #e8f4fb !important;
+  background: #eaf3fb !important;
+  padding: 16px 20px !important;
 }
-.sidebar-note strong  { color: #0a1f38 !important; }
-.sidebar-note span    { color: #2a4a6b !important; }
-.sidebar-offhours     { color: var(--ice) !important; }
+.sidebar-note strong { color: #0a192f !important; }
+.sidebar-note span   { color: #2a4a6b !important; }
+.sidebar-offhours    { color: var(--ice) !important; }
 
 .trust-badge {
-  background: linear-gradient(135deg, rgba(100,200,232,.12), rgba(37,211,102,.08)) !important;
+  background: linear-gradient(135deg, rgba(100,200,232,.12), rgba(37,211,102,.07)) !important;
 }
-.trust-badge strong   { color: #0a1f38 !important; }
-.trust-badge span     { color: #2a4a6b !important; }
+.trust-badge strong  { color: #0a192f !important; }
+.trust-badge span    { color: #2a4a6b !important; }
 
 .payment-badge {
-  background: #e8f4fb !important;
-}
-.payment-badge        { color: #1d3f60 !important; }
-
-/* ── Mejor padding interno en paneles ── */
-.tech-profile-inner   { padding: 28px 28px 32px !important; }
-.tech-profile-info    { padding-top: 6px !important; }
-.tech-stats-row       { gap: 10px !important; margin-bottom: 22px !important; }
-.sidebar-tech-card    { padding: 20px 24px !important; gap: 16px !important; }
-.sidebar-note         { padding: 16px 20px !important; gap: 14px !important; }
-.sidebar-note > div   { gap: 6px !important; }
-.tech-why             { padding: 32px 30px !important; }
-.why-list             { gap: 12px !important; margin-bottom: 24px !important; }
-.why-list li          { font-size: .9rem !important; }
-.why-coverage         { padding-top: 20px !important; gap: 12px !important; }
-.cov-tags             { gap: 7px !important; margin-bottom: 8px !important; }
-
-/* ── Contact form card ── */
-.contact-form-card    { background: #e8f4fb !important; }
-.form-step-label      { color: #0a1f38 !important; }
-.opt-card             {
-  background: rgba(6,21,43,.06) !important;
-  border-color: rgba(6,21,43,.16) !important;
+  background: #eaf3fb !important;
   color: #1d3f60 !important;
 }
-.opt-card:hover       { background: rgba(100,200,232,.12) !important; color: #0a1f38 !important; }
-.opt-card.selected    {
-  background: linear-gradient(135deg, rgba(100,200,232,.18), rgba(58,180,216,.1)) !important;
-  color: #0a1f38 !important;
-}
-.opt-tech-info strong { color: #0a1f38 !important; }
-.opt-tech-info small  { color: #3a5a7c !important; }
-.form-hint            { color: #3a5a7c !important; }
-.opt-label            { color: #5a7a9a !important; }
-.step-badge           { background: linear-gradient(135deg,var(--ice),#3ab4d8) !important; color: var(--navy) !important; }
 
-/* ── Wizard tech-opt-photo usa fotos reales ── */
+/* Contact form card fondo claro */
+.contact-form-card { background: #eaf3fb !important; }
+.form-step-label   { color: #0a192f !important; font-weight: 600 !important; }
+.opt-card {
+  background: rgba(6,21,43,.06) !important;
+  border-color: rgba(6,21,43,.18) !important;
+  color: #1d3f60 !important;
+}
+.opt-card:hover  { background: rgba(100,200,232,.14) !important; color: #0a192f !important; }
+.opt-card.selected {
+  background: linear-gradient(135deg,rgba(100,200,232,.2),rgba(58,180,216,.1)) !important;
+  color: #0a192f !important;
+  border-color: var(--ice) !important;
+}
+.opt-tech-info strong { color: #0a192f !important; }
+.opt-tech-info small  { color: #3a5a7c !important; }
+.step-badge { background: linear-gradient(135deg,var(--ice),#3ab4d8) !important; color: var(--navy) !important; }
+.form-hint  { color: #3a5a7c !important; }
+
+/* ── 8. FAQ ── */
+.faq-q {
+  width: 100% !important;
+  text-align: left !important;
+  cursor: pointer !important;
+}
+.faq-icon {
+  transition: transform .3s ease !important;
+}
+.faq-q[aria-expanded="true"] .faq-icon {
+  transform: rotate(45deg) !important;
+}
+.faq-a { color: rgba(255,255,255,.78) !important; }
+
+/* ── 9. FOOTER ── */
+/* Medios de pago */
+.payment-desc { color: #334155 !important; }
+.payment-method { cursor: default !important; }
+.payment-section {
+  border-bottom: 1px solid rgba(255,255,255,.08) !important;
+}
+
+/* Footer links hover → blanco */
+.footer-col ul a {
+  transition: color .2s !important;
+}
+.footer-col ul a:hover { color: #ffffff !important; }
+
+/* Footer trust seals alineados */
+.trust-seal {
+  display: flex !important;
+  align-items: center !important;
+  gap: 7px !important;
+}
+
+/* Footer tech cards simplificadas */
+.footer-tech-btn {
+  background: #112240 !important;
+}
+.footer-tech-btn:hover { background: #162e55 !important; }
+
+/* Copyright legible */
+.footer-bottom-inner span {
+  color: #94a3b8 !important;
+}
+.footer-bottom-inner #copyrightYear { color: #94a3b8 !important; }
+
+/* ── 10. WIZARD — Foto técnico real en selector ── */
 .tech-opt-photo {
-  width: 76px !important;
-  height: 76px !important;
+  width: 72px !important; height: 72px !important;
   border-radius: 50% !important;
   overflow: hidden !important;
-  border: 3px solid rgba(100,200,232,.4) !important;
+  border: 3px solid rgba(100,200,232,.35) !important;
+  background: rgba(6,21,43,.4) !important;
 }
 .tech-opt-photo img {
-  width: 100% !important;
-  height: 100% !important;
+  width: 100% !important; height: 100% !important;
   object-fit: cover !important;
   object-position: center top !important;
   border-radius: 50% !important;
 }
 .tech-opt-card.selected .tech-opt-photo {
   border-color: var(--ice) !important;
-  box-shadow: 0 0 20px rgba(100,200,232,.5) !important;
+  box-shadow: 0 0 18px rgba(100,200,232,.5) !important;
 }
 
-/* ── FABs eliminados — back-top reposicionado ── */
-.fab-wa, .fab-call { display: none !important; }
-.back-top {
-  bottom: 28px !important;
-  right: 28px !important;
+/* Wizard opts — contraste borde inactivo */
+.wizard-opt {
+  border: 1.5px solid rgba(100,200,232,.25) !important;
+  transition: border-color .2s, background .2s, transform .15s !important;
 }
-@media(max-width:600px) {
-  .back-top { bottom: 18px !important; right: 18px !important; }
-}
-
-/* ── Diag topbar: texto no cortado ── */
-.diag-ai-id strong {
-  font-size: .85rem !important;
-  white-space: nowrap !important;
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
-  max-width: 220px !important;
-}
-#diagStatus {
-  font-size: .72rem !important;
-  white-space: nowrap !important;
-  color: rgba(255,255,255,.6) !important;
-}
-.ai-status-row {
-  display: flex !important;
-  align-items: center !important;
-  gap: 5px !important;
-  flex-wrap: nowrap !important;
-}
-.diag-topbar {
-  padding: 14px 18px !important;
-  gap: 10px !important;
-}
-
-/* ── Payment section text contrast ── */
-.payment-method {
-  color: #0a1f38 !important;
+.wizard-opt:hover  { border-color: rgba(100,200,232,.6) !important; }
+.wizard-opt.selected {
+  border-color: var(--ice) !important;
   background: rgba(100,200,232,.15) !important;
-  border-color: rgba(100,200,232,.3) !important;
+  transform: scale(1.03) !important;
+}
+
+/* Btn "Técnico real" — ícono WA más visible */
+.btn-human-chat i {
+  font-size: 1.15rem !important;
+  color: #25D366 !important;
+}
+.btn-human-chat {
+  border: 1.5px solid rgba(37,211,102,.5) !important;
   font-weight: 600 !important;
 }
+
+/* diag-disclaimer */
+.diag-disclaimer {
+  text-align: center;
+  color: rgba(255,255,255,.55);
+  font-size: .82rem;
+  margin-top: 14px;
+}
+.diag-disclaimer i { color: var(--ice); margin-right: 5px; }
+
+/* ── 11. FABs eliminados — ocultos por si quedaron residuos ── */
+.fab-wa, .fab-call { display: none !important; }
+
+/* Back-top reposicionado (sin competir con FABs) */
+.back-top { bottom: 28px !important; right: 28px !important; }
+@media(max-width:600px) { .back-top { bottom: 18px !important; right: 18px !important; } }
+
+
+/* ════ FIX: Sección Medios de Pago — fondo oscuro original restaurado ════ */
 .payment-section {
-  background: #d6edf8 !important;
+  background: rgba(10, 30, 55, 0.97) !important;
+  border-top: 1px solid rgba(100,200,232,.12) !important;
+  border-bottom: 1px solid rgba(100,200,232,.08) !important;
 }
-.payment-title  { color: var(--navy) !important; }
-.payment-desc   { color: #1d3f60 !important; }
-.payment-box    { max-width: 560px; }
-
-/* ═══════════════════════════════════════════════════════════
-   CORRECCIONES UI v4 — PALETA, PANELES Y LIMPIEZA FAB
-   ═══════════════════════════════════════════════════════════ */
-
-/* ── Eliminar botones flotantes defectuosos ─────────────── */
-.fab-wa,
-.fab-call,
-#fabWa,
-#fabCall { display: none !important; }
-
-/* ── Variables de paleta para paneles claros ────────────── */
-:root {
-  --panel-light-bg: #e8f4fb;
-  --panel-light-border: rgba(100,200,232,.22);
-  --panel-dark-text: #06152b;
-  --panel-mid-text: #1d3f60;
-  --panel-sub-text: #2a5275;
+.payment-title {
+  color: var(--ice) !important;
 }
-
-/* ── Tarjetas de técnicos ───────────────────────────────── */
-.tech-profile-inner {
-  background: var(--panel-light-bg) !important;
-  border-radius: 0 0 var(--radius) var(--radius);
-  padding: 28px 28px 32px !important;
+.payment-desc {
+  color: rgba(255,255,255,.6) !important;
+  font-size: .88rem !important;
 }
-.tech-profile-info h3 {
-  color: var(--panel-dark-text) !important;
+.payment-method {
+  background: rgba(100,200,232,.09) !important;
+  border: 1px solid rgba(100,200,232,.22) !important;
+  color: rgba(255,255,255,.88) !important;
+  cursor: default !important;
 }
-.tech-profile-info .tech-role {
-  color: var(--panel-mid-text) !important;
+.payment-method i {
+  color: var(--ice) !important;
 }
-.tech-profile-info .tech-stat span {
-  color: var(--panel-sub-text) !important;
-}
-.tech-profile-info .tech-stat i {
-  color: var(--navy-mid) !important;
-}
-
-/* ── Panel "¿Por qué elegirnos?" ────────────────────────── */
-.tech-why {
-  background: var(--panel-light-bg) !important;
-  border-color: var(--panel-light-border) !important;
-  padding: 32px 30px !important;
-}
-.tech-why h3 {
-  color: var(--panel-dark-text) !important;
-}
-.tech-why h3 i {
-  color: var(--navy-mid) !important;
-}
-.why-list li {
-  color: var(--panel-mid-text) !important;
-}
-.why-dot {
-  background: var(--navy-mid) !important;
-}
-.why-coverage strong {
-  color: var(--panel-dark-text) !important;
-}
-.why-coverage small {
-  color: var(--panel-sub-text) !important;
-}
-.cov-tags span,
-.cov-tags-sm span {
-  color: var(--panel-dark-text) !important;
-  background: rgba(14,42,71,.1) !important;
-  border-color: rgba(14,42,71,.2) !important;
-}
-.cov-tags .cov-consult,
-.cov-tags-sm .cov-c {
-  color: var(--navy-mid) !important;
-  background: rgba(245,166,35,.15) !important;
-  border-color: rgba(245,166,35,.3) !important;
-}
-
-/* ── Sidebar de contacto (tarjetas técnicos) ────────────── */
-.sidebar-tech-card {
-  background: var(--panel-light-bg) !important;
-  border-color: var(--panel-light-border) !important;
-  padding: 18px 20px !important;
-}
-.stc-info strong {
-  color: var(--panel-dark-text) !important;
-}
-.stc-info span,
-.stc-phone {
-  color: var(--panel-mid-text) !important;
-}
-
-/* ── Sidebar notas (horario, dirección, zona) ───────────── */
-.sidebar-note {
-  background: var(--panel-light-bg) !important;
-  border-color: var(--panel-light-border) !important;
-  padding: 18px 20px !important;
-}
-.sidebar-note strong {
-  color: var(--panel-dark-text) !important;
-}
-.sidebar-note span,
-.sidebar-note small,
-.sidebar-offhours {
-  color: var(--panel-mid-text) !important;
-}
-.sidebar-note > i {
-  color: var(--navy-mid) !important;
-}
-
-/* ── Cards de selección del formulario de contacto ───────── */
-.opt-card {
-  background: var(--panel-light-bg) !important;
-  border-color: var(--panel-light-border) !important;
-  color: var(--panel-dark-text) !important;
-  padding: 18px 16px !important;
-}
-.opt-card span:not(.opt-check) {
-  color: var(--panel-dark-text) !important;
-}
-.opt-card.selected {
-  background: rgba(100,200,232,.18) !important;
-  border-color: var(--ice) !important;
-  color: var(--panel-dark-text) !important;
-}
-.opt-tech-info strong,
-.opt-tech-info small,
-.opt-phone {
-  color: var(--panel-dark-text) !important;
-}
-.opt-tech-info small,
-.opt-phone {
-  color: var(--panel-mid-text) !important;
-}
-
-/* ── Formulario de contacto (card principal) ────────────── */
-.contact-form-card {
-  background: var(--panel-light-bg) !important;
-  border-color: var(--panel-light-border) !important;
-}
-.form-step-label {
-  color: var(--panel-dark-text) !important;
-}
-.opt-label {
-  color: var(--panel-mid-text) !important;
-}
-.contact-textarea {
-  color: var(--panel-dark-text) !important;
-  background: rgba(255,255,255,.85) !important;
-  border-color: rgba(14,42,71,.2) !important;
-}
-.contact-textarea::placeholder {
-  color: var(--panel-sub-text) !important;
-  opacity: .7 !important;
-}
-.form-hint {
-  color: var(--panel-mid-text) !important;
-}
-
-/* ── Trust badge y payment badge ─────────────────────────── */
-.trust-badge {
-  background: var(--panel-light-bg) !important;
-  border-color: var(--panel-light-border) !important;
-}
-.trust-badge strong { color: var(--panel-dark-text) !important; }
-.trust-badge span   { color: var(--panel-mid-text) !important; }
-.trust-badge i      { color: var(--navy-mid) !important; }
-
-/* ── Respiro extra en paneles ─────────────────────────────── */
-.tech-profile-inner .tech-stats-row { margin-top: 12px; }
-.sidebar-note > div { gap: 6px; }
-.contact-form-card .form-body { padding: 28px 28px !important; }
