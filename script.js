@@ -13,33 +13,28 @@ function makeObserver(cb, opts = {}) {
   return new IntersectionObserver(cb, { threshold: 0.1, rootMargin: '0px 0px -40px 0px', ...opts });
 }
 
-/* ════════════ ANIM 1: PAGE LOADER (2 segundos fijos) ════════════ */
+/* ════════════ ANIM 1: PAGE LOADER ════════════ */
 (function initLoader() {
   const loader = $('pageLoader');
   const fill   = $('loaderFill');
   if (!loader) return;
-
-  // Animar la barra de progreso en 2 segundos
-  let start = null;
-  function animateBar(ts) {
-    if (!start) start = ts;
-    const elapsed = ts - start;
-    const pct = Math.min((elapsed / 2000) * 100, 100);
+  let pct = 0;
+  const iv = setInterval(() => {
+    pct = Math.min(pct + (Math.random() * 18 + 5), 95);
     if (fill) fill.style.width = pct + '%';
-    if (elapsed < 2000) requestAnimationFrame(animateBar);
-  }
-  requestAnimationFrame(animateBar);
-
-  // Ocultar el loader siempre a los 2 segundos, sin depender de window.load
-  setTimeout(function() {
-    loader.classList.add('done');
-  }, 2000);
+  }, 80);
+  window.addEventListener('load', () => {
+    clearInterval(iv);
+    if (fill) fill.style.width = '100%';
+    setTimeout(() => loader.classList.add('done'), 300);
+  });
 })();
 
 /* ════════════ ANIM 2: READING PROGRESS ════════════ */
 (function initProgress() {
   const bar = $('readProgress');
   if (!bar) return;
+  /* OPT 3: passive scroll */
   window.addEventListener('scroll', () => {
     const scrolled = document.documentElement.scrollTop;
     const total    = document.documentElement.scrollHeight - window.innerHeight;
@@ -82,13 +77,14 @@ document.addEventListener('visibilitychange', () => {
   });
 })();
 
-/* ════════════ ANIM 4: CANVAS SNOWFLAKES ════════════ */
+/* ════════════ ANIM 4: CANVAS SNOWFLAKES — pauses when off-screen ════════════ */
 (function initCanvas() {
   const canvas = $('heroCanvas');
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
-  let paused = false;
+  let paused = false; // OPT 15: pause rAF when hero not visible
 
+  /* OPT 15: IntersectionObserver to pause canvas */
   new IntersectionObserver(entries => {
     paused = !entries[0].isIntersecting;
   }, { threshold: 0 }).observe(canvas);
@@ -122,7 +118,7 @@ document.addEventListener('visibilitychange', () => {
   let last = 0;
   function animate(ts) {
     requestAnimationFrame(animate);
-    if (paused || _tabHidden) return;
+    if (paused || _tabHidden) return; // 6.1: pause on tab hidden too
     if (ts - last < 16) return;
     last = ts;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -141,6 +137,7 @@ document.addEventListener('visibilitychange', () => {
 /* ════════════ ANIM 5: HERO LINE REVEAL ════════════ */
 window.addEventListener('load', () => {
   setTimeout(() => {
+    /* Reveal hero title lines */
     $$('.hero-line').forEach((el, i) => {
       setTimeout(() => el.classList.add('revealed'), i * 130);
     });
@@ -153,10 +150,12 @@ window.addEventListener('load', () => {
   }, 200);
 });
 
+/* 6.3: Passive touch/wheel events for better scroll performance */
 window.addEventListener('touchstart', () => {}, { passive: true });
 window.addEventListener('wheel',      () => {}, { passive: true });
 
-/* ════════════ ANIM 6: SCROLL REVEAL + COUNTERS ════════════ */
+/* ════════════ ANIM 6: SCROLL REVEAL + COUNTERS (consolidated observer) ════════════ */
+/* 6.2: Single observer handles scroll-reveal, card-stagger, counters, and FAQ stagger */
 function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
 function countUp(el, target, dur = 1800) {
   const start = performance.now();
@@ -171,12 +170,19 @@ const revealObs = makeObserver(entries => {
   entries.forEach(e => {
     if (!e.isIntersecting) return;
     const el = e.target;
+
+    /* Reveal animation */
     el.classList.add('visible');
+
+    /* FAQ children stagger */
     if (el.id === 'faqList') {
       el.querySelectorAll('.faq-item').forEach(item => item.classList.add('visible'));
     }
+
+    /* Counter animation (6.2: consolidated) */
     if (el.dataset.count) countUp(el, +el.dataset.count);
     if (el.dataset.text)  setTimeout(() => el.textContent = el.dataset.text, 1200);
+
     revealObs.unobserve(el);
   });
 }, { threshold: 0.12 });
@@ -185,6 +191,7 @@ $$('.scroll-reveal,.card-stagger,[data-count],[data-text]').forEach(el => reveal
 
 /* ════════════ ANIM 7: PARALLAX HERO ════════════ */
 (function initParallax() {
+  /* OPT 9: only on desktop */
   if (window.matchMedia('(max-width:768px)').matches) return;
   const heroInner = $('heroInner');
   if (!heroInner) return;
@@ -204,7 +211,10 @@ $$('.scroll-reveal,.card-stagger,[data-count],[data-text]').forEach(el => reveal
   }, { passive: true });
 })();
 
+/* ════════════ ANIM 8: SCRAMBLE — removed (replaced by CSS hero-line fade-in) ════════════ */
+
 /* ════════════ ANIM 9: MAGNETIC BUTTONS ════════════ */
+/* OPT 10: Event delegation */
 document.addEventListener('mousemove', e => {
   const btn = e.target.closest('.magnetic');
   if (!btn) return;
@@ -225,6 +235,7 @@ document.querySelectorAll('.magnetic').forEach(btn => {
 (function initHeader() {
   const header = document.getElementById('header');
   const backTop = $('backTop');
+  /* OPT 11: passive scroll */
   window.addEventListener('scroll', () => {
     const y = window.scrollY;
     header?.classList.toggle('scrolled', y > 60);
@@ -244,6 +255,7 @@ document.querySelectorAll('.magnetic').forEach(btn => {
     hb.setAttribute('aria-expanded', open);
     document.body.style.overflow = open ? 'hidden' : '';
   });
+  /* OPT 12: delegate nav link clicks */
   nav.addEventListener('click', e => {
     if (e.target.classList.contains('nav-link')) {
       nav.classList.remove('open'); hb.classList.remove('open');
@@ -268,9 +280,12 @@ document.querySelectorAll('.magnetic').forEach(btn => {
   secs.forEach(s => obs.observe(s));
 })();
 
+/* ════════════ ANIM 13: STAT COUNTERS — consolidated into revealObs above ════════════ */
+
 /* ════════════ ANIM 14: SERVICE CARD TILT + MOUSE GLOW ════════════ */
 (function initTilt() {
   $$('.service-card:not(.service-card-cta)').forEach(card => {
+    /* OPT 13: Add mouse-glow element */
     const glow = document.createElement('div');
     glow.className = 'svc-mouse-glow';
     card.prepend(glow);
@@ -281,6 +296,7 @@ document.querySelectorAll('.magnetic').forEach(btn => {
       const x  = (e.clientX - r.left) / r.width  - .5;
       const y  = (e.clientY - r.top)  / r.height - .5;
       card.style.transform = `translateY(-7px) perspective(700px) rotateX(${-y * 5}deg) rotateY(${x * 5}deg)`;
+      /* Radial glow follows cursor */
       const mx = ((e.clientX - r.left) / r.width  * 100).toFixed(1) + '%';
       const my = ((e.clientY - r.top)  / r.height * 100).toFixed(1) + '%';
       glow.style.setProperty('--mx', mx);
@@ -304,6 +320,7 @@ document.querySelectorAll('.magnetic').forEach(btn => {
       const f = tab.dataset.filter;
       cards.forEach(c => {
         const show = f === 'all' || c.dataset.category === f || c.dataset.category === 'all';
+        /* OPT 14: toggle display via class, avoid reflow cascade */
         c.classList.toggle('hidden', !show);
       });
     });
@@ -322,6 +339,7 @@ document.querySelectorAll('.magnetic').forEach(btn => {
 })();
 
 /* ════════════ ANIM 17: SMOOTH SCROLL ════════════ */
+/* OPT 15: single delegated listener */
 document.addEventListener('click', e => {
   const a = e.target.closest('a[href^="#"]');
   if (!a) return;
@@ -332,15 +350,16 @@ document.addEventListener('click', e => {
   setTimeout(() => window.scrollBy(0, -80), 300);
 });
 
-/* ════════════ ANIM 18: THEME TOGGLE ════════════ */
+/* ════════════ ANIM 18: THEME TOGGLE — localStorage persistence ════════════ */
 (function initTheme() {
   const btn  = $('themeToggle');
   const icon = $('themeIcon');
   if (!btn) return;
+  /* OPT 18: restore saved theme */
   let dark = localStorage.getItem('kempel-theme') !== 'light';
   function applyTheme(isDark) {
     document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
-    document.body.style.backgroundColor = 'transparent';
+    document.body.style.background = isDark ? '' : 'var(--bg)';
     if (icon) icon.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
   }
   applyTheme(dark);
@@ -364,6 +383,7 @@ document.addEventListener('click', e => {
     html += `<svg style="position:absolute;left:${x}px;top:${y}px;opacity:${op};animation:hexPulse 4s ${delay}s ease-in-out infinite" width="${SIZE*1.16}" height="${SIZE*1.33}" viewBox="0 0 100 115"><polygon points="50,0 100,25 100,75 50,100 0,75 0,25" fill="none" stroke="#64c8e8" stroke-width="1"/></svg>`;
   }
   grid.innerHTML = html;
+  /* Add keyframe */
   const style = document.createElement('style');
   style.textContent = '@keyframes hexPulse{0%,100%{opacity:.03}50%{opacity:.09}}';
   document.head.appendChild(style);
@@ -386,6 +406,7 @@ function showToast(msg, type = 'info', dur = 3200) {
 
 /* ════════════ WHATSAPP FORM ════════════ */
 (function initForm() {
+  /* OPT 18: Centralized phone map */
   const phones   = { franco: '5493415964079', agustin: '5493413278981' };
   const messages = {
     aire:     'Hola, estoy consultando por un servicio de aire acondicionado. Me contacto desde la página de Kempel Refrigeración.',
@@ -395,9 +416,11 @@ function showToast(msg, type = 'info', dur = 3200) {
   const bar   = $('formProgBar');
   const hint  = $('formHint');
 
+  /* OPT 18: Restore from localStorage */
   let selEquipo  = localStorage.getItem('kempel-equipo')  || null;
   let selTecnico = localStorage.getItem('kempel-tecnico') || null;
 
+  /* Restore UI state on load */
   if (selEquipo) {
     const card = document.querySelector(`.opt-card input[name="equipo"][value="${selEquipo}"]`)?.closest('.opt-card');
     if (card) { card.classList.add('selected'); card.querySelector('input').checked = true; }
@@ -407,6 +430,7 @@ function showToast(msg, type = 'info', dur = 3200) {
     if (card) { card.classList.add('selected'); card.querySelector('input').checked = true; }
   }
 
+  /* OPT 16: delegate option card clicks */
   document.querySelectorAll('.opt-card').forEach(card => {
     const inp = card.querySelector('input[type=radio]');
     if (!inp) return;
@@ -438,7 +462,7 @@ function showToast(msg, type = 'info', dur = 3200) {
       hint.textContent = hintMap[(selEquipo ? '1' : '0') + (selTecnico ? '1' : '0')];
     }
   }
-  updateForm();
+  updateForm(); // apply on load if restored
 
   btnWa?.addEventListener('click', () => {
     if (!selEquipo || !selTecnico) return;
@@ -451,432 +475,370 @@ function showToast(msg, type = 'info', dur = 3200) {
   });
 })();
 
-/* ========== NUEVO ASISTENTE IA — 7 PASOS CON ESPECIFICACIONES ========== */
-(function initAI() {
-  // Estado del asistente
-  const aiState = {
+/* ════════════ IA DIAGNÓSTICO — NUEVO WIZARD 7 PASOS ════════════ */
+/* MEJORA FUNCIONAL: Flujo completo con specs, datos cliente, diagnóstico, confirmación y WhatsApp */
+(function initWizard() {
+  const FRANCO_PHONE = '5493415964079';
+
+  // Estado del wizard
+  const state = {
+    step: 1,
     location: null,
     locationCustom: '',
-    name: '',
-    lastName: '',
-    street: '',
-    number: '',
-    equipment: null,
-    equipmentCustom: '',
-    specs: null,
-    specsCustom: '',
-    diagnosis: '',
-    step: 1
+    equipType: null,       // key: split|ventana|industrial|heladera|freezer|otro
+    equipLabel: null,      // label visible
+    equipCustom: '',
+    specs: null,           // frigorías / tecnología / tipo
+    nombre: '',
+    apellido: '',
+    calle: '',
+    altura: '',
+    apodo: '',
+    diagnostico: ''
   };
 
-  // Mapa de especificaciones por tipo de equipo
-  const specsMap = {
-    'Aire acondicionado split': ['2250 frigorías', '3000 frigorías', '3500 frigorías', '4500 frigorías', '5500 frigorías', '6000 frigorías', '7500 frigorías', '9000 frigorías'],
-    'Aire de ventana': ['2250 frigorías', '3000 frigorías', '3500 frigorías', '4500 frigorías', '6000 frigorías'],
-    'Aire industrial': ['9000 frigorías', '12000 frigorías', '18000 frigorías'],
-    'Heladera': ['Cíclica', 'No Frost'],
-    'Freezer': ['Horizontal (pozo)', 'Vertical'],
-    'otro': []
+  // DOM refs
+  const diagStatus     = $('diagStatus');
+  const panels = {
+    location:    $('panelLocation'),
+    equipType:   $('panelEquipType'),
+    specs:       $('panelSpecs'),
+    clientData:  $('panelClientData'),
+    diag:        $('panelDiag'),
+    confirm:     $('panelConfirm'),
+    send:        $('panelSend'),
+  };
+  const stepDots = [1,2,3,4,5,6,7].map(i => $('wStep' + i));
+  const stepConns = [1,2,3,4,5,6].map(i => $('wConn' + i));
+
+  // Especificaciones por tipo de equipo
+  const SPECS_MAP = {
+    split: {
+      q: '¿Cuántas frigorías tiene el equipo?',
+      opts: ['2250 frigorías','3000 frigorías','3500 frigorías','4500 frigorías','5500 frigorías','6000 frigorías','7500 frigorías','9000 frigorías']
+    },
+    ventana: {
+      q: '¿Cuántas frigorías tiene el equipo?',
+      opts: ['2250 frigorías','3000 frigorías','3500 frigorías','4500 frigorías','6000 frigorías']
+    },
+    industrial: {
+      q: '¿Cuántas frigorías tiene el equipo?',
+      opts: ['9000 frigorías','12000 frigorías','18000 frigorías']
+    },
+    heladera: {
+      q: '¿Qué tecnología tiene la heladera?',
+      opts: ['Cíclica','No Frost']
+    },
+    freezer: {
+      q: '¿Qué tipo de freezer es?',
+      opts: ['Horizontal (pozo)','Vertical']
+    },
+    otro: null // sin especificaciones
   };
 
-  // Teléfonos de técnicos
-  const PHONES = { franco: '5493415964079', agustin: '5493413278981' };
-
-  // Referencias DOM
-  const diagStatus    = $('diagStatus');
-  const urgBadge      = $('urgencyBadge');
-  const urgText       = $('urgencyText');
-
-  // Paneles
-  const panelLocation    = $('panelLocation');
-  const panelCustomer    = $('panelCustomerData');
-  const panelEquipment   = $('panelEquipment');
-  const panelSpecs       = $('panelSpecs');
-  const panelDiagnosis   = $('panelDiagnosis');
-  const panelConfirm     = $('panelConfirm');
-  const panelSend        = $('panelSend');
-
-  // Botones de navegación
-  const nextToCustomer   = $('nextToCustomerData');
-  const nextToEquipment  = $('nextToEquipment');
-  const nextToSpecs      = $('nextToSpecs');
-  const nextToDiagnosis  = $('nextToDiagnosis');
-  const nextToConfirm    = $('nextToConfirm');
-  const confirmSend      = $('confirmSend');
-  const editData         = $('editData');
-  const restartWizard    = $('restartWizard');
-
-  // Botones "back"
-  const backToLocation    = $('backToLocation');
-  const backToCustomer    = $('backToCustomerData');
-  const backToEquipment   = $('backToEquipment');
-  const backToSpecs       = $('backToSpecs');
-  const backToDiagnosis   = $('backToDiagnosis');
-
-  // Campos de entrada
-  const customLocInput    = $('customLocationInput');
-  const custName          = $('custName');
-  const custLastName      = $('custLastName');
-  const custStreet        = $('custStreet');
-  const custNumber        = $('custNumber');
-  const customEquipmentInput = $('customEquipmentInput');
-  const specsOptions      = $('specsOptions');
-  const specsQuestion     = $('specsQuestion');
-  const customSpecsInput  = $('customSpecsInput');
-  const diagChips         = document.querySelectorAll('#diagChips .chip');
-  const diagFreeText      = $('diagFreeText');
-
-  // Elementos de resumen
-  const wizardSummary     = $('wizardSummary');
-  const summaryLoc        = $('summaryLoc');
-  const summaryName       = $('summaryName');
-  const summaryEq         = $('summaryEq');
-  const summarySpecs      = $('summarySpecs');
-  const confirmSummary    = $('confirmSummary');
-
-  // Step indicators
-  const wStep1 = $('wStep1');
-  const wStep2 = $('wStep2');
-  const wStep3 = $('wStep3');
-  const wStep4 = $('wStep4');
-  const wStep5 = $('wStep5');
-  const wStep6 = $('wStep6');
-  const wStep7 = $('wStep7');
-  const wConn1 = $('wConn1');
-  const wConn2 = $('wConn2');
-  const wConn3 = $('wConn3');
-  const wConn4 = $('wConn4');
-  const wConn5 = $('wConn5');
-  const wConn6 = $('wConn6');
-
-  // Utilidades
-  function haptic() { if (navigator.vibrate) navigator.vibrate(50); }
-
-  function sanitize(str) { return str.trim().replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
-
-  // Validación de zona (simplificada)
-  const VALID_ZONES = ['fray luis beltrán', 'san lorenzo', 'capitán bermúdez', 'rosario', 'baigorria'];
-  function isValidZone(loc) {
-    const lc = loc.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-    return VALID_ZONES.some(z => lc.includes(z));
+  /* ── Utilidades ── */
+  function showPanel(el) {
+    if (!el) return;
+    el.classList.remove('hidden');
+    requestAnimationFrame(() => el.classList.add('slide-in'));
+  }
+  function hidePanel(el) {
+    if (!el) return;
+    el.classList.add('hidden');
+    el.classList.remove('slide-in');
+  }
+  function hideAllPanels() {
+    Object.values(panels).forEach(hidePanel);
   }
 
-  function getLocationLabel() {
-    if (aiState.location === 'otra') return aiState.locationCustom.trim() || 'otra localidad';
-    return aiState.location || '';
-  }
-
-  // Actualizar indicador de pasos
+  /* MEJORA UI: Indicador de pasos dinámico 7 pasos */
   function updateStepIndicator(step) {
-    const steps = [null, wStep1, wStep2, wStep3, wStep4, wStep5, wStep6, wStep7];
-    const conns = [null, wConn1, wConn2, wConn3, wConn4, wConn5, wConn6];
-    for (let i = 1; i <= 7; i++) {
-      const dot = steps[i];
-      if (!dot) continue;
+    stepDots.forEach((dot, i) => {
+      if (!dot) return;
       dot.classList.remove('active', 'done');
-      if (i < step) dot.classList.add('done');
-      if (i === step) dot.classList.add('active');
-    }
-    for (let i = 1; i <= 6; i++) {
-      conns[i]?.classList.toggle('done', i < step);
-    }
-    const labels = ['', 'Paso 1 de 7', 'Paso 2 de 7', 'Paso 3 de 7', 'Paso 4 de 7', 'Paso 5 de 7', 'Paso 6 de 7', '¡Listo!'];
+      if (i + 1 < step) dot.classList.add('done');
+      if (i + 1 === step) dot.classList.add('active');
+    });
+    stepConns.forEach((conn, i) => {
+      if (!conn) return;
+      conn.classList.toggle('done', i + 1 < step);
+    });
+    const labels = ['', 'Paso 1 de 7','Paso 2 de 7','Paso 3 de 7','Paso 4 de 7','Paso 5 de 7','Paso 6 de 7','¡Listo para enviar!'];
     if (diagStatus) diagStatus.textContent = labels[step] || '';
   }
 
-  function showPanel(panel) {
-    if (!panel) return;
-    // Ocultar todos los paneles
-    [panelLocation, panelCustomer, panelEquipment, panelSpecs, panelDiagnosis, panelConfirm, panelSend].forEach(p => p?.classList.add('hidden'));
-    panel.classList.remove('hidden');
-    panel.classList.add('slide-in');
+  /* MEJORA FUNCIONAL 1.5: Google Maps link */
+  function buildMapsLink() {
+    const loc = state.location === 'otra' ? state.locationCustom : state.location;
+    const q = encodeURIComponent(`${state.calle} ${state.altura} ${loc} Santa Fe Argentina`);
+    return `https://www.google.com/maps/search/?api=1&query=${q}`;
   }
 
-  // Actualizar barra de resumen
-  function updateSummary() {
-    if (summaryLoc) summaryLoc.innerHTML = `<i class="fas fa-map-marker-alt"></i> ${getLocationLabel()}`;
-    if (summaryName && aiState.name) summaryName.innerHTML = `<i class="fas fa-user"></i> ${aiState.name} ${aiState.lastName}`;
-    if (summaryEq && aiState.equipment) summaryEq.innerHTML = `<i class="fas fa-snowflake"></i> ${aiState.equipment}`;
-    if (summarySpecs) {
-      if (aiState.specs) summarySpecs.innerHTML = `<i class="fas fa-sliders-h"></i> ${aiState.specs}`;
-      else if (aiState.specsCustom) summarySpecs.innerHTML = `<i class="fas fa-sliders-h"></i> ${aiState.specsCustom}`;
-      else summarySpecs.innerHTML = '';
-    }
-  }
+  /* MEJORA FUNCIONAL 1.4: Mensaje WhatsApp */
+  function buildWaMessage() {
+    const loc = state.location === 'otra' ? state.locationCustom : state.location;
+    const nombre = state.apodo || state.nombre;
+    let equipLine = state.equipLabel;
+    if (state.specs) equipLine += ` · ${state.specs}`;
+    const mapsLink = buildMapsLink();
 
-  // ---- PASO 1: Localidad ----
-  function selectLocation(loc) {
-    aiState.location = loc;
-    haptic();
-    panelLocation?.querySelectorAll('.wizard-opt').forEach(b => b.classList.toggle('selected', b.dataset.loc === loc));
-    if (loc === 'otra') {
-      customLocInput?.classList.add('visible');
-      customLocInput?.focus();
-      nextToCustomer.disabled = true;
-      return;
-    }
-    customLocInput?.classList.remove('visible');
-    aiState.locationCustom = '';
-    nextToCustomer.disabled = false;
-  }
-
-  panelLocation?.querySelectorAll('.wizard-opt[data-loc]').forEach(btn => {
-    btn.addEventListener('click', () => selectLocation(btn.dataset.loc));
-  });
-
-  customLocInput?.addEventListener('input', () => {
-    aiState.locationCustom = customLocInput.value.trim();
-    nextToCustomer.disabled = !aiState.locationCustom;
-  });
-
-  nextToCustomer?.addEventListener('click', () => {
-    if (aiState.location === 'otra' && aiState.locationCustom && !isValidZone(aiState.locationCustom)) {
-      showToast('La localidad está fuera de nuestra zona habitual, igualmente podemos consultar.', 'info', 4000);
-    }
-    aiState.step = 2;
-    updateStepIndicator(2);
-    showPanel(panelCustomer);
-  });
-
-  // ---- PASO 2: Datos del cliente ----
-  function validateCustomerData() {
-    const name = custName?.value.trim();
-    const lastName = custLastName?.value.trim();
-    const street = custStreet?.value.trim();
-    const number = custNumber?.value.trim();
-    if (name && lastName && street && number) {
-      aiState.name = name;
-      aiState.lastName = lastName;
-      aiState.street = street;
-      aiState.number = number;
-      nextToEquipment.disabled = false;
-    } else {
-      nextToEquipment.disabled = true;
-    }
-  }
-
-  [custName, custLastName, custStreet, custNumber].forEach(field => {
-    field?.addEventListener('input', validateCustomerData);
-  });
-
-  nextToEquipment?.addEventListener('click', () => {
-    aiState.step = 3;
-    updateStepIndicator(3);
-    showPanel(panelEquipment);
-    showPanel(wizardSummary);
-    updateSummary();
-  });
-
-  backToLocation?.addEventListener('click', () => {
-    aiState.step = 1;
-    updateStepIndicator(1);
-    showPanel(panelLocation);
-  });
-
-  // ---- PASO 3: Tipo de equipo ----
-  function selectEquipment(eq) {
-    aiState.equipment = eq;
-    haptic();
-    panelEquipment?.querySelectorAll('.wizard-opt').forEach(b => b.classList.toggle('selected', b.dataset.eq === eq));
-    if (eq === 'otro') {
-      customEquipmentInput?.classList.add('visible');
-      customEquipmentInput?.focus();
-      nextToSpecs.disabled = true;
-    } else {
-      customEquipmentInput?.classList.remove('visible');
-      aiState.equipmentCustom = '';
-      nextToSpecs.disabled = false;
-    }
-  }
-
-  panelEquipment?.querySelectorAll('.wizard-opt[data-eq]').forEach(btn => {
-    btn.addEventListener('click', () => selectEquipment(btn.dataset.eq));
-  });
-
-  customEquipmentInput?.addEventListener('input', () => {
-    aiState.equipmentCustom = customEquipmentInput.value.trim();
-    nextToSpecs.disabled = !aiState.equipmentCustom;
-  });
-
-  nextToSpecs?.addEventListener('click', () => {
-    if (aiState.equipment === 'otro') {
-      aiState.equipment = aiState.equipmentCustom;
-    }
-    aiState.step = 4;
-    updateStepIndicator(4);
-    showSpecsPanel(aiState.equipment);
-    showPanel(panelSpecs);
-    updateSummary();
-  });
-
-  backToCustomer?.addEventListener('click', () => {
-    aiState.step = 2;
-    updateStepIndicator(2);
-    showPanel(panelCustomer);
-  });
-
-  // ---- PASO 4: Especificaciones ----
-  function showSpecsPanel(equipo) {
-    specsOptions.innerHTML = '';
-    customSpecsInput?.classList.remove('visible');
-    nextToDiagnosis.disabled = true;
-
-    const options = specsMap[equipo] || [];
-    if (options.length === 0) {
-      specsQuestion.innerHTML = '<i class="fas fa-sliders-h"></i> Especificá las características:';
-      customSpecsInput?.classList.add('visible');
-      return;
-    }
-
-    specsQuestion.innerHTML = '<i class="fas fa-sliders-h"></i> Seleccioná las características:';
-    options.forEach(opt => {
-      const btn = document.createElement('button');
-      btn.className = 'wizard-opt';
-      btn.setAttribute('data-spec', opt);
-      btn.innerHTML = `<span class="opt-emoji">🔧</span> ${opt}`;
-      btn.addEventListener('click', () => {
-        specsOptions.querySelectorAll('.wizard-opt').forEach(b => b.classList.remove('selected'));
-        btn.classList.add('selected');
-        aiState.specs = opt;
-        aiState.specsCustom = '';
-        nextToDiagnosis.disabled = false;
-      });
-      specsOptions.appendChild(btn);
-    });
-  }
-
-  customSpecsInput?.addEventListener('input', () => {
-    aiState.specsCustom = customSpecsInput.value.trim();
-    nextToDiagnosis.disabled = !aiState.specsCustom;
-  });
-
-  nextToDiagnosis?.addEventListener('click', () => {
-    aiState.step = 5;
-    updateStepIndicator(5);
-    showPanel(panelDiagnosis);
-    updateSummary();
-  });
-
-  backToEquipment?.addEventListener('click', () => {
-    aiState.step = 3;
-    updateStepIndicator(3);
-    showPanel(panelEquipment);
-  });
-
-  // ---- PASO 5: Diagnóstico ----
-  diagChips.forEach(chip => {
-    chip.addEventListener('click', () => {
-      diagChips.forEach(c => c.classList.remove('active'));
-      chip.classList.add('active');
-      aiState.diagnosis = chip.dataset.symptom;
-      if (diagFreeText) diagFreeText.value = chip.dataset.symptom;
-    });
-  });
-
-  diagFreeText?.addEventListener('input', () => {
-    aiState.diagnosis = diagFreeText.value.trim();
-  });
-
-  nextToConfirm?.addEventListener('click', () => {
-    if (!aiState.diagnosis) {
-      showToast('Por favor describí el problema (podés usar los chips o escribir)', 'info', 3000);
-      return;
-    }
-    aiState.step = 6;
-    updateStepIndicator(6);
-    showConfirmSummary();
-    showPanel(panelConfirm);
-    updateSummary();
-  });
-
-  backToSpecs?.addEventListener('click', () => {
-    aiState.step = 4;
-    updateStepIndicator(4);
-    showPanel(panelSpecs);
-  });
-
-  // ---- PASO 6: Confirmar ----
-  function showConfirmSummary() {
-    const loc = getLocationLabel();
-    const mapsLink = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(aiState.street + ' ' + aiState.number + ', ' + loc + ', Santa Fe, Argentina')}`;
-    let specsText = '';
-    if (aiState.specs) specsText = `<br><strong>Especificación:</strong> ${aiState.specs}`;
-    else if (aiState.specsCustom) specsText = `<br><strong>Especificación:</strong> ${aiState.specsCustom}`;
-
-    const html = `
-      <p><strong>Localidad:</strong> ${loc}</p>
-      <p><strong>Nombre:</strong> ${aiState.name} ${aiState.lastName}</p>
-      <p><strong>Dirección:</strong> ${aiState.street} ${aiState.number}</p>
-      <p><strong>Equipo:</strong> ${aiState.equipment}${specsText}</p>
-      <p><strong>Problema:</strong> ${aiState.diagnosis}</p>
-      <p><strong>Ubicación:</strong> <a href="${mapsLink}" target="_blank">Ver en Google Maps</a></p>
-    `;
-    confirmSummary.innerHTML = html;
-  }
-
-  editData?.addEventListener('click', () => {
-    aiState.step = 5;
-    updateStepIndicator(5);
-    showPanel(panelDiagnosis);
-  });
-
-  confirmSend?.addEventListener('click', () => {
-    sendToWhatsApp();
-  });
-
-  backToDiagnosis?.addEventListener('click', () => {
-    aiState.step = 5;
-    updateStepIndicator(5);
-    showPanel(panelDiagnosis);
-  });
-
-  // ---- PASO 7: Enviar WhatsApp ----
-  function sendToWhatsApp() {
-    const loc = getLocationLabel();
-    const mapsLink = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(aiState.street + ' ' + aiState.number + ', ' + loc + ', Santa Fe, Argentina')}`;
-
-    let specsText = '';
-    if (aiState.specs) specsText = `\nEspecificación: ${aiState.specs}`;
-    else if (aiState.specsCustom) specsText = `\nEspecificación: ${aiState.specsCustom}`;
-
-    const message = `Hola, se solicita servicio técnico.
+    return `Hola, se solicita servicio técnico.
 
 Localidad: ${loc}
-Nombre: ${aiState.name} ${aiState.lastName}
-Dirección: ${aiState.street} ${aiState.number}
-Equipo: ${aiState.equipment}${specsText}
-Problema: ${aiState.diagnosis}
+
+Nombre: ${state.nombre} ${state.apellido}
+
+Dirección: ${state.calle} ${state.altura}
+
+Equipo: ${equipLine}
+
+Problema: ${state.diagnostico}
 
 Ubicación Google Maps:
 ${mapsLink}
 
-Gracias por confiar en Kempel Refrigeración.`;
-
-    const url = `https://wa.me/${PHONES.franco}?text=${encodeURIComponent(message)}`;
-    window.open(url, '_blank', 'noopener');
-
-    aiState.step = 7;
-    updateStepIndicator(7);
-    showPanel(panelSend);
+— Enviado desde kempelrefrigeracion.com.ar`;
   }
 
-  restartWizard?.addEventListener('click', () => {
-    Object.assign(aiState, {
-      location: null, locationCustom: '', name: '', lastName: '', street: '', number: '',
-      equipment: null, equipmentCustom: '', specs: null, specsCustom: '', diagnosis: '', step: 1
+  /* ── PASO 1: Localidad ── */
+  panels.location?.querySelectorAll('.wizard-opt[data-loc]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const loc = btn.dataset.loc;
+      panels.location.querySelectorAll('.wizard-opt').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      haptic();
+      state.location = loc;
+
+      // MEJORA CLIENTE: mensaje para Rosario
+      if (loc === 'Rosario') {
+        showToast('Trabajamos en Rosario con disponibilidad, ¡consultanos! 😊', 'info', 3500);
+      }
+
+      if (loc === 'otra') {
+        const inp = $('customLocationInput');
+        inp?.classList.add('visible');
+        inp?.focus();
+        const hint = $('locHint');
+        if (hint) hint.style.display = 'flex';
+        return;
+      }
+      $('customLocationInput')?.classList.remove('visible');
+      goToStep(2);
     });
-    updateStepIndicator(1);
-    showPanel(panelLocation);
-    [custName, custLastName, custStreet, custNumber].forEach(f => if (f) f.value = '');
-    if (customLocInput) customLocInput.value = '';
-    if (customEquipmentInput) customEquipmentInput.value = '';
-    if (customSpecsInput) customSpecsInput.value = '';
-    if (diagFreeText) diagFreeText.value = '';
-    diagChips.forEach(c => c.classList.remove('active'));
   });
 
+  $('customLocationInput')?.addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      const val = $('customLocationInput').value.trim();
+      if (val) { state.locationCustom = val; goToStep(2); }
+    }
+  });
+  // Also handle blur for mobile
+  $('customLocationInput')?.addEventListener('blur', e => {
+    const val = e.target.value.trim();
+    if (val && state.location === 'otra') state.locationCustom = val;
+  });
+
+  /* ── PASO 2: Tipo de equipo ── */
+  panels.equipType?.querySelectorAll('.wizard-opt[data-equip-key]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const key = btn.dataset.equipKey;
+      const label = btn.dataset.equip;
+      panels.equipType.querySelectorAll('.wizard-opt').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      haptic();
+      state.equipType = key;
+      state.equipLabel = label;
+
+      // MEJORA CLIENTE: consejo para split
+      if (key === 'split') {
+        showToast('¿Sabías que una limpieza anual puede alargar la vida útil de tu split? 🌟', 'info', 4000);
+      }
+
+      if (key === 'otro') {
+        const inp = $('customEquipInput');
+        inp?.classList.add('visible');
+        inp?.focus();
+        return;
+      }
+      $('customEquipInput')?.classList.remove('visible');
+
+      if (SPECS_MAP[key]) {
+        goToStep(3);
+      } else {
+        state.specs = null;
+        goToStep(4);
+      }
+    });
+  });
+
+  $('customEquipInput')?.addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      const val = $('customEquipInput').value.trim();
+      if (val) { state.equipCustom = val; state.equipLabel = val; state.specs = null; goToStep(4); }
+    }
+  });
+
+  /* ── PASO 3: Especificaciones ── */
+  function buildSpecsPanel() {
+    const specsData = SPECS_MAP[state.equipType];
+    if (!specsData) return;
+    const qEl = $('specsQuestion');
+    const optsEl = $('specsOpts');
+    if (qEl) qEl.innerHTML = `<i class="fas fa-sliders"></i> ${specsData.q}`;
+    if (optsEl) {
+      optsEl.innerHTML = '';
+      specsData.opts.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'wizard-opt';
+        btn.textContent = opt;
+        btn.addEventListener('click', () => {
+          optsEl.querySelectorAll('.wizard-opt').forEach(b => b.classList.remove('selected'));
+          btn.classList.add('selected');
+          haptic();
+          state.specs = opt;
+          goToStep(4);
+        });
+        optsEl.appendChild(btn);
+      });
+    }
+  }
+
+  /* ── PASO 4: Datos cliente ── */
+  $('btnNextTodiag')?.addEventListener('click', () => {
+    const nombre   = $('clientNombre')?.value.trim();
+    const apellido = $('clientApellido')?.value.trim();
+    const calle    = $('clientCalle')?.value.trim();
+    const altura   = $('clientAltura')?.value.trim();
+    const errEl    = $('clientError');
+
+    if (!nombre || !apellido || !calle || !altura) {
+      if (errEl) errEl.style.display = 'flex';
+      return;
+    }
+    if (errEl) errEl.style.display = 'none';
+    state.nombre   = nombre;
+    state.apellido = apellido;
+    state.calle    = calle;
+    state.altura   = altura;
+    state.apodo    = $('clientApodo')?.value.trim() || '';
+    // MEJORA CLIENTE: si dirección incompleta
+    goToStep(5);
+  });
+
+  /* MEJORA CLIENTE: falla eléctrica warning */
+  $('diagInput')?.addEventListener('input', function() {
+    const val = this.value;
+    const len = val.length;
+    const cc = $('charCounter');
+    if (cc) {
+      cc.textContent = `${len}/300`;
+      cc.className = 'char-counter' + (len > 260 ? ' warn' : '') + (len >= 300 ? ' limit' : '');
+    }
+    if (val.toLowerCase().includes('eléctri') || val.toLowerCase().includes('electric')) {
+      showToast('Importante: no manipules el equipo. Lo revisamos con seguridad 🔌', 'info', 4000);
+    }
+  });
+
+  /* ── Chips de diagnóstico ── */
+  $('diagChipsRow')?.querySelectorAll('.chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      $$('.chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      const inp = $('diagInput');
+      if (inp) { inp.value = chip.dataset.symptom; inp.dispatchEvent(new Event('input')); }
+    });
+  });
+
+  /* ── PASO 5: Diagnóstico → Confirmar ── */
+  $('btnNextToConfirm')?.addEventListener('click', () => {
+    const diagVal = $('diagInput')?.value.trim();
+    const errEl   = $('diagError');
+    if (!diagVal) {
+      if (errEl) errEl.style.display = 'flex';
+      return;
+    }
+    if (errEl) errEl.style.display = 'none';
+    state.diagnostico = diagVal;
+    buildConfirmSummary();
+    goToStep(6);
+  });
+
+  /* ── PASO 6: Confirmar datos ── */
+  function buildConfirmSummary() {
+    const loc = state.location === 'otra' ? state.locationCustom : state.location;
+    let equipLine = state.equipLabel;
+    if (state.specs) equipLine += ` · ${state.specs}`;
+    const summary = $('confirmSummary');
+    if (!summary) return;
+    summary.innerHTML = `
+      <div class="confirm-row"><i class="fas fa-map-marker-alt"></i><div><strong>Localidad</strong><span>${loc}</span></div></div>
+      <div class="confirm-row"><i class="fas fa-snowflake"></i><div><strong>Equipo</strong><span>${equipLine}</span></div></div>
+      <div class="confirm-row"><i class="fas fa-user"></i><div><strong>Nombre</strong><span>${state.nombre} ${state.apellido}</span></div></div>
+      <div class="confirm-row"><i class="fas fa-location-dot"></i><div><strong>Dirección</strong><span>${state.calle} ${state.altura}, ${loc}</span></div></div>
+      <div class="confirm-row"><i class="fas fa-comment-dots"></i><div><strong>Problema</strong><span>${state.diagnostico}</span></div></div>
+      <button class="btn btn-primary btn-full wizard-next-btn" id="btnGoToSend" style="margin-top:16px">
+        Confirmar y continuar <i class="fas fa-arrow-right"></i>
+      </button>
+    `;
+    $('btnGoToSend')?.addEventListener('click', () => goToStep(7));
+  }
+
+  /* ── PASO 7: Enviar ── */
+  function buildSendPanel() {
+    const waMsg = buildWaMessage();
+    const preview = $('waPreview');
+    if (preview) {
+      preview.textContent = waMsg;
+    }
+    // WhatsApp button
+    const btnSend = $('btnFinalSend');
+    if (btnSend) {
+      // Remove old listeners
+      const newBtn = btnSend.cloneNode(true);
+      btnSend.parentNode.replaceChild(newBtn, btnSend);
+      newBtn.addEventListener('click', () => {
+        // MEJORA FUNCIONAL 1.2: envío correcto con encodeURIComponent
+        const url = `https://wa.me/${FRANCO_PHONE}?text=${encodeURIComponent(waMsg)}`;
+        window.open(url, '_blank', 'noopener,noreferrer');
+        showToast('¡Mensaje enviado! Tu técnico te responderá a la brevedad. 🤝', 'success', 4000);
+      });
+    }
+  }
+
+  /* ── Navegación entre pasos ── */
+  function goToStep(n) {
+    state.step = n;
+    hideAllPanels();
+    updateStepIndicator(n);
+
+    switch(n) {
+      case 1: showPanel(panels.location); break;
+      case 2: showPanel(panels.equipType); break;
+      case 3: buildSpecsPanel(); showPanel(panels.specs); break;
+      case 4: showPanel(panels.clientData); break;
+      case 5: showPanel(panels.diag); break;
+      case 6: buildConfirmSummary(); showPanel(panels.confirm); break;
+      case 7: buildSendPanel(); showPanel(panels.send); break;
+    }
+  }
+
+  /* ── Back buttons ── */
+  $('backToLocation')?.addEventListener('click', () => goToStep(1));
+  $('backToEquipType')?.addEventListener('click', () => goToStep(2));
+  $('backToSpecs')?.addEventListener('click', () => {
+    if (SPECS_MAP[state.equipType]) goToStep(3);
+    else goToStep(2);
+  });
+  $('backToClientData')?.addEventListener('click', () => goToStep(4));
+  $('backToDiag')?.addEventListener('click', () => goToStep(5));
+
+  /* ── Haptic ── */
+  function haptic() { if (navigator.vibrate) navigator.vibrate(40); }
+
+  // Inicializar
   updateStepIndicator(1);
-  showPanel(panelLocation);
+  showPanel(panels.location);
 })();
 
 /* ════════════ HEADER SHRINK DINÁMICO ════════════ */
@@ -885,8 +847,8 @@ Gracias por confiar en Kempel Refrigeración.`;
   if (!header) return;
   window.addEventListener('scroll', () => {
     const scrollY = window.scrollY;
-    const blur = Math.min(scrollY / 100, 1) * 16 + 8;
-    const height = Math.max(60, 80 - scrollY / 10);
+    const blur = Math.min(scrollY / 100, 1) * 16 + 8; // de 8px a 24px
+    const height = Math.max(60, 80 - scrollY / 10); // shrink de altura
     header.style.backdropFilter = `blur(${blur}px)`;
     header.style.height = `${height}px`;
     header.classList.toggle('scrolled', scrollY > 60);
@@ -914,9 +876,11 @@ Gracias por confiar en Kempel Refrigeración.`;
   window.addEventListener('scroll', () => {
     const currentScroll = window.scrollY;
     if (currentScroll > lastScrollY && currentScroll > 300) {
+      // scrollear abajo -> ocultar
       fabWa.style.transform = 'translateY(120%)';
       fabCall.style.transform = 'translateY(120%)';
     } else {
+      // scrollear arriba -> mostrar
       fabWa.style.transform = 'translateY(0)';
       fabCall.style.transform = 'translateY(0)';
     }
@@ -929,7 +893,7 @@ Gracias por confiar en Kempel Refrigeración.`;
   const backTop = document.getElementById('backTop');
   const progressCircle = document.querySelector('.back-progress');
   if (!backTop || !progressCircle) return;
-  const circumference = 2 * Math.PI * 20;
+  const circumference = 2 * Math.PI * 20; // r=20
   progressCircle.style.strokeDasharray = circumference;
   window.addEventListener('scroll', () => {
     const scrollY = window.scrollY;
@@ -944,12 +908,12 @@ Gracias por confiar en Kempel Refrigeración.`;
 /* ════════════ OPEN NOW BADGE ════════════ */
 (function initOpenNow() {
   const now = new Date();
-  const day = now.getDay();
+  const day = now.getDay(); // 0 domingo, 1 lunes ...
   const hour = now.getHours();
   const minutes = now.getMinutes();
   const timeValue = hour + minutes / 60;
   let open = false;
-  if (day >= 1 && day <= 6) {
+  if (day >= 1 && day <= 6) { // lunes a sábado
     if (timeValue >= 8 && timeValue < 20) open = true;
   }
   const badge = document.createElement('span');
@@ -1000,8 +964,9 @@ document.querySelectorAll('.ripple').forEach(btn => {
   });
 });
 
-const styleRipple = document.createElement('style');
-styleRipple.textContent = `
+// Añadir estilo para el ripple
+const style = document.createElement('style');
+style.textContent = `
   .ripple-effect {
     position: absolute;
     border-radius: 50%;
@@ -1014,7 +979,7 @@ styleRipple.textContent = `
     to { transform: scale(4); opacity: 0; }
   }
 `;
-document.head.appendChild(styleRipple);
+document.head.appendChild(style);
 
 /* Prefetch WA links on hover */
 document.addEventListener('mouseover', e => {
@@ -1032,4 +997,138 @@ if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     // navigator.serviceWorker.register('/sw.js')
   });
+
+   
 }
+
+/* ════════════ MEJORAS CLIENTE + UI ADICIONALES ════════════ */
+
+/* MEJORA CLIENTE: Toast de bienvenida de vuelta */
+(function initWelcomeBack() {
+  const lastVisit = localStorage.getItem('kempel-last-visit');
+  const now = Date.now();
+  if (lastVisit && now - parseInt(lastVisit) > 86400000) { // más de 24hs
+    setTimeout(() => showToast('¡Bienvenido de nuevo! Seguimos acá para ayudarte 🤝', 'info', 4000), 2500);
+  }
+  localStorage.setItem('kempel-last-visit', now.toString());
+})();
+
+/* MEJORA UI: Modal de bienvenida amigable (una vez por sesión) */
+(function initWelcomeModal() {
+  if (sessionStorage.getItem('kempel-welcomed')) return;
+  sessionStorage.setItem('kempel-welcomed', '1');
+  setTimeout(() => {
+    const modal = document.createElement('div');
+    modal.id = 'welcomeModal';
+    modal.style.cssText = `
+      position:fixed;bottom:90px;right:24px;z-index:9999;
+      background:var(--card-bg,rgba(14,42,71,.98));
+      border:1.5px solid rgba(100,200,232,.25);
+      border-radius:16px;padding:18px 20px;max-width:280px;
+      box-shadow:0 16px 48px rgba(0,0,0,.5);
+      animation:welcomeIn .5s cubic-bezier(.4,0,.2,1) forwards;
+    `;
+    modal.innerHTML = `
+      <style>@keyframes welcomeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}</style>
+      <button onclick="this.closest('#welcomeModal').remove()" style="position:absolute;top:10px;right:12px;background:none;border:none;color:var(--muted);cursor:pointer;font-size:.9rem;padding:2px">✕</button>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <div style="font-size:1.8rem">👋</div>
+        <div><strong style="color:var(--light);font-size:.95rem">Hola, somos Franco y Agustín</strong></div>
+      </div>
+      <p style="font-size:.82rem;color:var(--muted);margin:0 0 12px;line-height:1.5">Si necesitás algo, estamos acá para ayudarte. ¡Usá el asistente o escribinos directo!</p>
+      <a href="#diagnostico" onclick="this.closest('#welcomeModal').remove()" style="display:flex;align-items:center;justify-content:center;gap:7px;background:rgba(100,200,232,.15);border:1px solid rgba(100,200,232,.25);color:var(--ice);border-radius:8px;padding:8px 14px;font-size:.82rem;font-weight:600;text-decoration:none;cursor:pointer;transition:background .2s">
+        <i class="fas fa-robot"></i> Usar el asistente
+      </a>
+    `;
+    document.body.appendChild(modal);
+    setTimeout(() => modal.remove(), 8000);
+  }, 2200);
+})();
+
+/* MEJORA UI: Aria-current en nav activo */
+(function initAriaCurrent() {
+  const links = document.querySelectorAll('.nav-link[data-section]');
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        links.forEach(l => {
+          const isActive = l.dataset.section === e.target.id;
+          l.setAttribute('aria-current', isActive ? 'page' : 'false');
+        });
+      }
+    });
+  }, { threshold: 0.35 });
+  links.forEach(l => {
+    const sec = document.getElementById(l.dataset.section);
+    if (sec) obs.observe(sec);
+  });
+})();
+
+/* MEJORA UI: Aria-hidden en todos los iconos decorativos */
+document.querySelectorAll('.fas, .fab, .far').forEach(icon => {
+  if (!icon.closest('a') && !icon.closest('button') && !icon.closest('[role]')) {
+    icon.setAttribute('aria-hidden', 'true');
+  }
+});
+
+/* MEJORA UI: Lazy loading para imágenes bajo el pliegue */
+document.querySelectorAll('img:not([loading])').forEach(img => {
+  img.setAttribute('loading', 'lazy');
+});
+
+/* MEJORA CLIENTE: Open-now badge con horario domingo */
+(function updateOpenNowMsg() {
+  const badge = document.querySelector('.open-now');
+  if (!badge) return;
+  const day = new Date().getDay();
+  if (day === 0) { // domingo
+    badge.innerHTML = '<i class="fas fa-circle"></i> Cerrado (Domingo)';
+    badge.title = 'Hoy descansamos, pero podés dejarnos tu consulta';
+    badge.style.color = '#ff8a80';
+  } else {
+    badge.setAttribute('data-tooltip', 'Estamos disponibles para conversar');
+  }
+})();
+
+/* MEJORA UI: Hover en service card icon scale */
+document.querySelectorAll('.svc-icon').forEach(icon => {
+  icon.closest('.service-card')?.addEventListener('mouseenter', () => {
+    icon.style.transform = 'scale(1.18)';
+    icon.style.transition = 'transform .25s cubic-bezier(.4,0,.2,1)';
+  });
+  icon.closest('.service-card')?.addEventListener('mouseleave', () => {
+    icon.style.transform = '';
+  });
+});
+
+/* MEJORA UI: Tech profile hover */
+document.querySelectorAll('.tech-profile').forEach(card => {
+  card.addEventListener('mouseenter', () => {
+    card.style.transform = 'translateY(-6px) scale(1.01)';
+    card.style.transition = 'transform .28s cubic-bezier(.4,0,.2,1), box-shadow .28s';
+    card.style.boxShadow = '0 20px 50px rgba(100,200,232,.12)';
+  });
+  card.addEventListener('mouseleave', () => {
+    card.style.transform = '';
+    card.style.boxShadow = '';
+  });
+});
+
+/* MEJORA CLIENTE: Toast de "No enciende" warning */
+document.addEventListener('click', e => {
+  const chip = e.target.closest('.chip');
+  if (!chip) return;
+  if (chip.dataset?.symptom?.toLowerCase().includes('no enciende')) {
+    showToast('Puede ser algo eléctrico, no te preocupés, somos especialistas 🔌', 'info', 4000);
+  }
+  if (chip.dataset?.symptom?.toLowerCase().includes('falla eléctrica')) {
+    showToast('Importante: no manipules el equipo. Lo revisamos con total seguridad ⚡', 'info', 4500);
+  }
+});
+
+/* MEJORA UI: Stagger delay cards de servicio */
+document.querySelectorAll('.card-stagger').forEach((card, i) => {
+  card.style.setProperty('--si', i);
+  card.style.transitionDelay = `${i * 70}ms`;
+});
+
