@@ -13,28 +13,45 @@ function makeObserver(cb, opts = {}) {
   return new IntersectionObserver(cb, { threshold: 0.1, rootMargin: '0px 0px -40px 0px', ...opts });
 }
 
-/* ════════════ ANIM 1: PAGE LOADER ════════════ */
+/* ════════════ ANIM 1: PAGE LOADER (mejorado con timeout de seguridad) ════════════ */
 (function initLoader() {
   const loader = $('pageLoader');
   const fill   = $('loaderFill');
   if (!loader) return;
+  
   let pct = 0;
   const iv = setInterval(() => {
     pct = Math.min(pct + (Math.random() * 18 + 5), 95);
     if (fill) fill.style.width = pct + '%';
   }, 80);
+
+  // Timeout de seguridad: ocultar el loader después de 8 segundos máximo
+  const safetyTimeout = setTimeout(() => {
+    clearInterval(iv);
+    if (fill) fill.style.width = '100%';
+    loader.classList.add('done');
+    console.warn('⚠️ Loader ocultado por timeout de seguridad (8s)');
+  }, 8000);
+
   window.addEventListener('load', () => {
+    clearTimeout(safetyTimeout);
     clearInterval(iv);
     if (fill) fill.style.width = '100%';
     setTimeout(() => loader.classList.add('done'), 300);
   });
+
+  // Capturar errores de recursos (imágenes, scripts, estilos)
+  window.addEventListener('error', function(e) {
+    if (e.target.tagName) {
+      console.warn('⚠️ Error cargando recurso:', e.target.src || e.target.href);
+    }
+  }, true);
 })();
 
 /* ════════════ ANIM 2: READING PROGRESS ════════════ */
 (function initProgress() {
   const bar = $('readProgress');
   if (!bar) return;
-  /* OPT 3: passive scroll */
   window.addEventListener('scroll', () => {
     const scrolled = document.documentElement.scrollTop;
     const total    = document.documentElement.scrollHeight - window.innerHeight;
@@ -77,7 +94,7 @@ document.addEventListener('visibilitychange', () => {
   });
 })();
 
-/* ════════════ ANIM 4: CANVAS SNOWFLAKES — pauses when off-screen ════════════ */
+/* ════════════ ANIM 4: CANVAS SNOWFLAKES ════════════ */
 (function initCanvas() {
   const canvas = $('heroCanvas');
   if (!canvas) return;
@@ -327,7 +344,7 @@ document.addEventListener('click', e => {
   setTimeout(() => window.scrollBy(0, -80), 300);
 });
 
-/* ════════════ ANIM 18: THEME TOGGLE — mejorado con transiciones suaves ════════════ */
+/* ════════════ ANIM 18: THEME TOGGLE ════════════ */
 (function initTheme() {
   const btn  = $('themeToggle');
   const icon = $('themeIcon');
@@ -335,7 +352,6 @@ document.addEventListener('click', e => {
   let dark = localStorage.getItem('kempel-theme') !== 'light';
   function applyTheme(isDark) {
     document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
-    // Forzar reflow para transiciones suaves
     document.body.style.backgroundColor = 'transparent';
     if (icon) icon.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
   }
@@ -627,7 +643,6 @@ function showToast(msg, type = 'info', dur = 3200) {
 
   nextToCustomer?.addEventListener('click', () => {
     if (aiState.location === 'otra' && aiState.locationCustom && !isValidZone(aiState.locationCustom)) {
-      // Mostrar advertencia pero permitir continuar
       showToast('La localidad está fuera de nuestra zona habitual, igualmente podemos consultar.', 'info', 4000);
     }
     aiState.step = 2;
@@ -697,7 +712,7 @@ function showToast(msg, type = 'info', dur = 3200) {
 
   nextToSpecs?.addEventListener('click', () => {
     if (aiState.equipment === 'otro') {
-      aiState.equipment = aiState.equipmentCustom; // usar el texto personalizado
+      aiState.equipment = aiState.equipmentCustom;
     }
     aiState.step = 4;
     updateStepIndicator(4);
@@ -797,8 +812,8 @@ function showToast(msg, type = 'info', dur = 3200) {
     const loc = getLocationLabel();
     const mapsLink = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(aiState.street + ' ' + aiState.number + ', ' + loc + ', Santa Fe, Argentina')}`;
     let specsText = '';
-    if (aiState.specs) specsText = `\nEspecificación: ${aiState.specs}`;
-    else if (aiState.specsCustom) specsText = `\nEspecificación: ${aiState.specsCustom}`;
+    if (aiState.specs) specsText = `<br><strong>Especificación:</strong> ${aiState.specs}`;
+    else if (aiState.specsCustom) specsText = `<br><strong>Especificación:</strong> ${aiState.specsCustom}`;
 
     const html = `
       <p><strong>Localidad:</strong> ${loc}</p>
@@ -812,7 +827,6 @@ function showToast(msg, type = 'info', dur = 3200) {
   }
 
   editData?.addEventListener('click', () => {
-    // Volver al paso de diagnóstico para editar (podría ser más granular)
     aiState.step = 5;
     updateStepIndicator(5);
     showPanel(panelDiagnosis);
@@ -850,7 +864,6 @@ ${mapsLink}
 
 Gracias por confiar en Kempel Refrigeración.`;
 
-    // Abrir WhatsApp con Franco por defecto (podría elegirse en el futuro)
     const url = `https://wa.me/${PHONES.franco}?text=${encodeURIComponent(message)}`;
     window.open(url, '_blank', 'noopener');
 
@@ -860,14 +873,12 @@ Gracias por confiar en Kempel Refrigeración.`;
   }
 
   restartWizard?.addEventListener('click', () => {
-    // Reiniciar estado
     Object.assign(aiState, {
       location: null, locationCustom: '', name: '', lastName: '', street: '', number: '',
       equipment: null, equipmentCustom: '', specs: null, specsCustom: '', diagnosis: '', step: 1
     });
     updateStepIndicator(1);
     showPanel(panelLocation);
-    // Limpiar campos
     [custName, custLastName, custStreet, custNumber].forEach(f => if (f) f.value = '');
     if (customLocInput) customLocInput.value = '';
     if (customEquipmentInput) customEquipmentInput.value = '';
@@ -876,7 +887,6 @@ Gracias por confiar en Kempel Refrigeración.`;
     diagChips.forEach(c => c.classList.remove('active'));
   });
 
-  // Inicializar primer paso
   updateStepIndicator(1);
   showPanel(panelLocation);
 })();
