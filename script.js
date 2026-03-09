@@ -351,24 +351,9 @@ document.addEventListener('click', e => {
 });
 
 /* ════════════ ANIM 18: THEME TOGGLE — localStorage persistence ════════════ */
-(function initTheme() {
-  const btn  = $('themeToggle');
-  const icon = $('themeIcon');
-  if (!btn) return;
-  /* OPT 18: restore saved theme */
-  let dark = localStorage.getItem('kempel-theme') !== 'light';
-  function applyTheme(isDark) {
-    document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
-    document.body.style.background = isDark ? '' : 'var(--bg)';
-    if (icon) icon.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
-  }
-  applyTheme(dark);
-  btn.addEventListener('click', () => {
-    dark = !dark;
-    localStorage.setItem('kempel-theme', dark ? 'dark' : 'light');
-    applyTheme(dark);
-  });
-})();
+/* Theme is locked to dark — no toggle needed */
+document.documentElement.setAttribute('data-theme', 'dark');
+localStorage.removeItem('kempel-theme');
 
 /* ════════════ ANIM 19: HEX GRID BACKGROUND ════════════ */
 (function initHexGrid() {
@@ -877,10 +862,6 @@ ${mapsLink}
   if (!header) return;
   window.addEventListener('scroll', () => {
     const scrollY = window.scrollY;
-    const blur = Math.min(scrollY / 100, 1) * 16 + 8; // de 8px a 24px
-    const height = Math.max(60, 80 - scrollY / 10); // shrink de altura
-    header.style.backdropFilter = `blur(${blur}px)`;
-    header.style.height = `${height}px`;
     header.classList.toggle('scrolled', scrollY > 60);
   }, { passive: true });
 })();
