@@ -3177,3 +3177,66 @@ input::placeholder, textarea::placeholder { color: var(--text-muted) !important;
 .payment-method i {
   color: var(--ice) !important;
 }
+
+/* ════ FIX FINAL: 3 correcciones puntuales ════ */
+
+/* 1. "Servicio garantizado" y "Sin cobro online" — mismo fondo claro que los demás paneles */
+.trust-badge {
+  background: #eaf3fb !important;
+  border: 1px solid rgba(6,21,43,.12) !important;
+}
+.trust-badge > i      { color: var(--ice) !important; }
+.trust-badge strong   { color: #0a192f !important; }
+.trust-badge span     { color: #2a4a6b !important; }
+
+.payment-badge {
+  background: #eaf3fb !important;
+  border: 1px solid rgba(6,21,43,.12) !important;
+  color: #1d3f60 !important;
+}
+.payment-badge i { color: #1d3f60 !important; }
+
+/* 2. Textarea "Descripción del problema" — borde gris visible */
+.contact-textarea {
+  border: 1.5px solid rgba(100,200,232,.35) !important;
+  background: rgba(255,255,255,.06) !important;
+}
+.contact-textarea::placeholder { color: rgba(255,255,255,.38) !important; }
+.contact-textarea:focus {
+  border-color: var(--ice) !important;
+  box-shadow: 0 0 0 3px rgba(100,200,232,.12) !important;
+}
+
+/* 3. Fotos técnicos en wizard — centradas, sin desplazamiento */
+.tech-opts {
+  display: flex !important;
+  justify-content: center !important;
+  gap: 20px !important;
+}
+.tech-opt-card {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+}
+.tech-opt-photo {
+  width: 80px !important;
+  height: 80px !important;
+  border-radius: 50% !important;
+  overflow: hidden !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin: 0 auto 8px auto !important;
+  flex-shrink: 0 !important;
+}
+.tech-opt-photo img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center top !important;
+  border-radius: 50% !important;
+  display: block !important;
+  margin: 0 !important;
+}
