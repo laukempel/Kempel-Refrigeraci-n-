@@ -888,12 +888,12 @@ ${mapsLink}
     const currentScroll = window.scrollY;
     if (currentScroll > lastScrollY && currentScroll > 300) {
       // scrollear abajo -> ocultar
-      fabWa.style.transform = 'translateY(120%)';
-      fabCall.style.transform = 'translateY(120%)';
+      if (fabWa)   fabWa.style.transform   = 'translateY(120%)';
+      if (fabCall) fabCall.style.transform = 'translateY(120%)';
     } else {
       // scrollear arriba -> mostrar
-      fabWa.style.transform = 'translateY(0)';
-      fabCall.style.transform = 'translateY(0)';
+      if (fabWa)   fabWa.style.transform   = 'translateY(0)';
+      if (fabCall) fabCall.style.transform = 'translateY(0)';
     }
     lastScrollY = currentScroll;
   }, { passive: true });
@@ -1323,4 +1323,3 @@ document.addEventListener('click', e => {
   }, { threshold: 0 });
   obs.observe(canvas);
 })();
-
