@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <meta name="description" content="Kempel Refrigeración – Servicio técnico de aires acondicionados, heladeras y freezers. Fray Luis Beltrán, Santa Fe → Pto. Gral. San Martín. A domicilio, rápido y confiable."/>
   <meta name="theme-color" content="#06152b"/>
-  <link rel="canonical" href="https://kempelrefrigeracion.com.ar"/>
 
   <!-- Open Graph -->
   <meta property="og:title" content="Kempel Refrigeración | Servicio Técnico A/C y Heladeras"/>
@@ -36,7 +35,6 @@
     "name": "Kempel Refrigeración",
     "description": "Servicio técnico de aires acondicionados, heladeras y freezers. Reparación, mantenimiento e instalación.",
     "telephone": "+5493415964079",
-    "url": "https://kempelrefrigeracion.com.ar",
     "image": "Franco.jpg",
     "priceRange": "$$",
     "areaServed": [
@@ -144,7 +142,7 @@
       </svg>
     </div>
     <div class="loader-bar"><div class="loader-fill" id="loaderFill"></div></div>
-    <span class="loader-text">Cargando Kempel...</span>
+    <span class="loader-text">Preparando todo para vos...</span>
   </div>
 
   <!-- CURSOR -->
@@ -158,10 +156,24 @@
   <!-- TOAST CONTAINER -->
   <div class="toast-container" id="toastContainer"></div>
 
-  <!-- THEME TOGGLE -->
-  <button class="theme-toggle" id="themeToggle" aria-label="Cambiar tema">
+  <!-- THEME TOGGLE (mejorado) -->
+  <button class="theme-toggle" id="themeToggle" aria-label="Cambiar tema" data-tooltip="Elegí el fondo que te haga sentir más cómodo">
     <i class="fas fa-sun" id="themeIcon"></i>
   </button>
+
+  <!-- WELCOME MODAL -->
+  <div class="welcome-modal" id="welcomeModal">
+    <div class="welcome-content">
+      <button class="welcome-close" id="welcomeClose"><i class="fas fa-times"></i></button>
+      <div class="welcome-avatars">
+        <img src="Franco.jpg" alt="Franco">
+        <img src="Agustin.jpg" alt="Agustín">
+      </div>
+      <h3>¡Hola! Somos Franco y Agustín</h3>
+      <p>Estamos acá para ayudarte con tu equipo. Si necesitás algo, preguntanos sin compromiso.</p>
+      <button class="btn btn-primary" id="welcomeGotIt">¡Entendido!</button>
+    </div>
+  </div>
 
   <!-- HEADER -->
   <header class="header" id="header">
@@ -210,8 +222,8 @@
           </svg>
         </div>
         <div class="logo-text">
-          <span class="logo-name">Kempel</span>
-          <span class="logo-sub">Refrigeración</span>
+          <span class="logo-name">Kempel Refrigeración</span>
+          <span class="logo-sub">Frío y calor con calidez humana</span>
         </div>
       </a>
 
@@ -219,7 +231,7 @@
         <a href="#inicio" class="nav-link" data-section="inicio">Inicio</a>
         <a href="#servicios" class="nav-link" data-section="servicios">Servicios</a>
         <a href="#diagnostico" class="nav-link nav-link-ai" data-section="diagnostico">
-          <span class="nav-ai-dot"></span><i class="fas fa-robot"></i> IA Diagnóstico
+          <span class="nav-ai-dot"></span><i class="fas fa-robot"></i> Diagnóstico con ayuda IA
         </a>
         <a href="#tecnicos" class="nav-link" data-section="tecnicos">Técnicos</a>
         <a href="#contacto" class="nav-link" data-section="contacto">Contacto</a>
@@ -230,7 +242,7 @@
 
       <div class="header-actions">
         <a href="https://wa.me/5493415964079" target="_blank" rel="noopener noreferrer" class="btn btn-wa btn-sm magnetic" id="headerWaBtn">
-          <i class="fab fa-whatsapp"></i> WhatsApp
+          <i class="fab fa-whatsapp"></i> Conversemos
         </a>
         <button class="hamburger" id="hamburger" aria-label="Menú" aria-expanded="false">
           <span></span><span></span><span></span>
@@ -272,7 +284,7 @@
 
           <div class="hero-actions" id="heroActions">
             <a href="#contacto" class="btn btn-primary magnetic ripple" id="heroCta">
-              <i class="fab fa-whatsapp"></i> Solicitar servicio
+              <i class="fab fa-whatsapp"></i> Contanos qué necesitas
             </a>
             <a href="#diagnostico" class="btn btn-ai magnetic ripple">
               <i class="fas fa-robot"></i> Diagnóstico IA
@@ -285,7 +297,7 @@
           <div class="hero-stats" id="heroStats">
             <div class="stat-glass">
               <i class="fas fa-wrench"></i>
-              <span class="stat-num" data-count="300+">0</span><sup>+</sup>
+              <span class="stat-num" data-count="400">0</span><sup>+</sup>
               <span class="stat-label">Trabajos realizados</span>
             </div>
             <div class="stat-glass">
@@ -312,7 +324,7 @@
           <div class="hero-orb hero-orb-purple" data-parallax="0.03"></div>
 
           <div class="hero-device" data-parallax="0.02">
-            <svg viewBox="0 0 220 320" fill="none" class="ac-svg" aria-label="Aire acondicionado Kempel">
+            <svg viewBox="0 0 220 320" fill="none" class="ac-svg" aria-label="Aire acondicionado Kempel Refrigeración">
               <defs>
                 <linearGradient id="acGrad" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="0%" stop-color="#1a3a5c"/>
@@ -368,7 +380,7 @@
               <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
               <i class="fas fa-star"></i><i class="fas fa-star"></i>
             </div>
-            <small>+300 trabajos realizados</small>
+            <small>+400 trabajos realizados</small>
           </div>
           <div class="float-card float-c" data-parallax="0.08">
             <i class="fas fa-shield-halved" style="color:var(--wa-green)"></i>
@@ -530,7 +542,43 @@
       </div>
     </section>
 
-    <!-- IA DIAGNÓSTICO (WIZARD) -->
+    <!-- TESTIMONIOS -->
+    <section class="section testimonios-section">
+      <div class="container">
+        <div class="section-header scroll-reveal">
+          <span class="tag">Lo que dicen nuestros clientes</span>
+          <h2 class="section-title">Personas reales,<br/><em>experiencias reales</em></h2>
+        </div>
+        <div class="testimonios-grid">
+          <div class="testimonial-card scroll-reveal">
+            <div class="testimonial-stars">★★★★★</div>
+            <p>"Vinieron rápido, diagnosticaron el problema y lo solucionaron en el día. Muy recomendables."</p>
+            <div class="testimonial-author">
+              <span>Carlos G.</span>
+              <small>Fray Luis Beltrán</small>
+            </div>
+          </div>
+          <div class="testimonial-card scroll-reveal">
+            <div class="testimonial-stars">★★★★★</div>
+            <p>"Excelente atención de Franco, muy claro y profesional. El aire quedó impecable."</p>
+            <div class="testimonial-author">
+              <span>Laura M.</span>
+              <small>San Lorenzo</small>
+            </div>
+          </div>
+          <div class="testimonial-card scroll-reveal">
+            <div class="testimonial-stars">★★★★★</div>
+            <p>"Me ayudaron con un freezer que no enfriaba. Rápidos y con precio justo. Gracias!"</p>
+            <div class="testimonial-author">
+              <span>Javier R.</span>
+              <small>Cap. Bermúdez</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- IA DIAGNÓSTICO (WIZARD) - 7 pasos con especificaciones -->
     <section class="section diag-section" id="diagnostico">
       <div class="diag-bg">
         <div class="hex-grid" id="hexGrid"></div>
@@ -551,10 +599,10 @@
                   <div class="ai-ring"></div>
                 </div>
                 <div>
-                  <strong>Asistente Kempel IA</strong>
+                  <strong>Asistente Kempel Refrigeración IA</strong>
                   <div class="ai-status-row">
                     <span class="ai-status-dot"></span>
-                    <span id="diagStatus">Paso 1 de 5</span>
+                    <span id="diagStatus">Paso 1 de 7</span>
                   </div>
                 </div>
               </div>
@@ -564,7 +612,7 @@
               </div>
             </div>
 
-            <!-- Step indicator (5 pasos) -->
+            <!-- Step indicator (7 pasos) -->
             <div class="diag-steps" id="diagSteps">
               <div class="diag-step-dot active" data-step="1" id="wStep1">
                 <span class="step-num">1</span>
@@ -573,167 +621,140 @@
               <div class="step-connector" id="wConn1"></div>
               <div class="diag-step-dot" data-step="2" id="wStep2">
                 <span class="step-num">2</span>
-                <span class="step-label">Tipo A/C</span>
+                <span class="step-label">Tus datos</span>
               </div>
               <div class="step-connector" id="wConn2"></div>
               <div class="diag-step-dot" data-step="3" id="wStep3">
                 <span class="step-num">3</span>
-                <span class="step-label">Técnico</span>
+                <span class="step-label">Equipo</span>
               </div>
               <div class="step-connector" id="wConn3"></div>
               <div class="diag-step-dot" data-step="4" id="wStep4">
                 <span class="step-num">4</span>
-                <span class="step-label">Diagnóstico</span>
+                <span class="step-label">Especificación</span>
               </div>
               <div class="step-connector" id="wConn4"></div>
               <div class="diag-step-dot" data-step="5" id="wStep5">
+                <span class="step-num">5</span>
+                <span class="step-label">Diagnóstico</span>
+              </div>
+              <div class="step-connector" id="wConn5"></div>
+              <div class="diag-step-dot" data-step="6" id="wStep6">
+                <span class="step-num">6</span>
+                <span class="step-label">Confirmar</span>
+              </div>
+              <div class="step-connector" id="wConn6"></div>
+              <div class="diag-step-dot" data-step="7" id="wStep7">
                 <span class="step-num"><i class="fab fa-whatsapp" style="font-size:.7rem"></i></span>
-                <span class="step-label">WhatsApp</span>
+                <span class="step-label">Enviar</span>
               </div>
             </div>
 
             <!-- PANEL 1: Localidad -->
             <div class="wizard-panel" id="panelLocation" role="region" aria-label="Seleccionar localidad">
-              <p class="wizard-q"><i class="fas fa-map-marker-alt"></i> ¿En qué localidad se encuentra el equipo?</p>
+              <p class="wizard-q"><i class="fas fa-map-marker-alt"></i> ¿En qué localidad estás?</p>
               <div class="wizard-opts">
-                <button class="wizard-opt" data-loc="Rosario"><span class="opt-emoji">🌆</span> Rosario</button>
-                <button class="wizard-opt" data-loc="Funes"><span class="opt-emoji">🏡</span> Funes</button>
-                <button class="wizard-opt" data-loc="Roldán"><span class="opt-emoji">🏘️</span> Roldán</button>
-                <button class="wizard-opt" data-loc="Granadero Baigorria"><span class="opt-emoji">📍</span> Granadero Baigorria</button>
-                <button class="wizard-opt" data-loc="Cap. Bermúdez"><span class="opt-emoji">📍</span> Cap. Bermúdez</button>
                 <button class="wizard-opt" data-loc="Fray Luis Beltrán"><span class="opt-emoji">📍</span> Fray Luis Beltrán</button>
                 <button class="wizard-opt" data-loc="San Lorenzo"><span class="opt-emoji">📍</span> San Lorenzo</button>
+                <button class="wizard-opt" data-loc="Capitán Bermúdez"><span class="opt-emoji">📍</span> Capitán Bermúdez</button>
+                <button class="wizard-opt" data-loc="Rosario"><span class="opt-emoji">🌆</span> Rosario</button>
+                <button class="wizard-opt" data-loc="Baigorria"><span class="opt-emoji">🏡</span> Baigorria</button>
                 <button class="wizard-opt" data-loc="otra"><span class="opt-emoji">✏️</span> Otra localidad</button>
               </div>
               <input type="text" class="wizard-custom-input" id="customLocationInput" placeholder="Escribí tu localidad..." />
+              <button class="btn btn-primary btn-next" id="nextToCustomerData" disabled>Siguiente paso</button>
             </div>
 
-            <!-- PANEL 2: Tipo de A/C -->
-            <div class="wizard-panel hidden" id="panelACType" role="region" aria-label="Seleccionar tipo de aire acondicionado">
+            <!-- PANEL 2: Datos del cliente -->
+            <div class="wizard-panel hidden" id="panelCustomerData" role="region" aria-label="Datos del cliente">
               <button class="wizard-back" id="backToLocation"><i class="fas fa-arrow-left"></i> Volver</button>
-              <p class="wizard-q"><i class="fas fa-snowflake"></i> ¿Qué tipo de aire acondicionado tenés?</p>
+              <p class="wizard-q"><i class="fas fa-user"></i> Así podemos conocerte mejor y ofrecerte una atención más personalizada.</p>
+              <div class="wizard-fields">
+                <input type="text" id="custName" placeholder="Nombre *" class="wizard-field">
+                <input type="text" id="custLastName" placeholder="Apellido *" class="wizard-field">
+                <input type="text" id="custStreet" placeholder="Calle *" class="wizard-field">
+                <input type="text" id="custNumber" placeholder="Altura *" class="wizard-field">
+              </div>
+              <button class="btn btn-primary btn-next" id="nextToEquipment" disabled>Continuemos</button>
+            </div>
+
+            <!-- PANEL 3: Tipo de equipo -->
+            <div class="wizard-panel hidden" id="panelEquipment" role="region" aria-label="Tipo de equipo">
+              <button class="wizard-back" id="backToCustomerData"><i class="fas fa-arrow-left"></i> Volver</button>
+              <p class="wizard-q"><i class="fas fa-snowflake"></i> ¿Qué equipo tenés?</p>
               <div class="wizard-opts">
-                <button class="wizard-opt" data-ac="Split"><span class="opt-emoji">🌬️</span> Split</button>
-                <button class="wizard-opt" data-ac="Ventana"><span class="opt-emoji">🪟</span> Ventana</button>
-                <button class="wizard-opt" data-ac="Piso techo"><span class="opt-emoji">🏢</span> Piso techo</button>
-                <button class="wizard-opt" data-ac="Portátil"><span class="opt-emoji">🧳</span> Portátil</button>
+                <button class="wizard-opt" data-eq="Aire acondicionado split"><span class="opt-emoji">🌬️</span> Aire split</button>
+                <button class="wizard-opt" data-eq="Aire de ventana"><span class="opt-emoji">🪟</span> Aire de ventana</button>
+                <button class="wizard-opt" data-eq="Aire industrial"><span class="opt-emoji">🏭</span> Aire industrial</button>
+                <button class="wizard-opt" data-eq="Heladera"><span class="opt-emoji">🧊</span> Heladera</button>
+                <button class="wizard-opt" data-eq="Freezer"><span class="opt-emoji">❄️</span> Freezer</button>
+                <button class="wizard-opt" data-eq="otro"><span class="opt-emoji">🔧</span> Otro</button>
+              </div>
+              <input type="text" class="wizard-custom-input" id="customEquipmentInput" placeholder="¿Cuál? (ej: cámara frigorífica)" />
+              <button class="btn btn-primary btn-next" id="nextToSpecs" disabled>Siguiente paso</button>
+            </div>
+
+            <!-- PANEL 4: Especificaciones (dinámico) -->
+            <div class="wizard-panel hidden" id="panelSpecs" role="region" aria-label="Especificaciones del equipo">
+              <button class="wizard-back" id="backToEquipment"><i class="fas fa-arrow-left"></i> Volver</button>
+              <p class="wizard-q" id="specsQuestion"><i class="fas fa-sliders-h"></i> Seleccioná las características:</p>
+              <div class="wizard-opts" id="specsOptions"></div>
+              <input type="text" class="wizard-custom-input" id="customSpecsInput" placeholder="Especificá..." />
+              <button class="btn btn-primary btn-next" id="nextToDiagnosis" disabled>Siguiente paso</button>
+            </div>
+
+            <!-- PANEL 5: Diagnóstico (chips + texto) -->
+            <div class="wizard-panel hidden" id="panelDiagnosis" role="region" aria-label="Diagnóstico">
+              <button class="wizard-back" id="backToSpecs"><i class="fas fa-arrow-left"></i> Volver</button>
+              <p class="wizard-q"><i class="fas fa-stethoscope"></i> Describí el problema con tus palabras, nosotros te entendemos.</p>
+              <div class="chips-row" id="diagChips">
+                <button class="chip" data-symptom="No enfría">❄️ No enfría</button>
+                <button class="chip" data-symptom="Hace ruido">🔊 Hace ruido</button>
+                <button class="chip" data-symptom="Pierde agua">💧 Pierde agua</button>
+                <button class="chip" data-symptom="No enciende">⚡ No enciende</button>
+                <button class="chip" data-symptom="Falla eléctrica">🔌 Falla eléctrica</button>
+              </div>
+              <textarea id="diagFreeText" class="wizard-textarea" placeholder="Contanos con más detalle (opcional)"></textarea>
+              <button class="btn btn-primary btn-next" id="nextToConfirm">Revisar y confirmar</button>
+            </div>
+
+            <!-- PANEL 6: Confirmación -->
+            <div class="wizard-panel hidden" id="panelConfirm" role="region" aria-label="Confirmar datos">
+              <button class="wizard-back" id="backToDiagnosis"><i class="fas fa-arrow-left"></i> Volver</button>
+              <p class="wizard-q"><i class="fas fa-check-circle"></i> ¿Está todo correcto? Vamos a enviarlo con mucho cuidado a tu técnico de confianza.</p>
+              <div class="confirm-card" id="confirmSummary"></div>
+              <div class="confirm-actions">
+                <button class="btn btn-ghost" id="editData">Editar algo</button>
+                <button class="btn btn-wa" id="confirmSend">Todo bien, enviar</button>
               </div>
             </div>
 
-            <!-- PANEL 3: Técnico (nuevo) -->
-            <div class="wizard-panel hidden" id="panelTechnician" role="region" aria-label="Seleccionar técnico">
-              <button class="wizard-back" id="backToACType"><i class="fas fa-arrow-left"></i> Volver</button>
-              <p class="wizard-q"><i class="fas fa-user-tie"></i> ¿Con qué técnico querés hablar?</p>
-              <div class="wizard-opts technician-opts">
-                <button class="wizard-opt wizard-opt-tech" data-tech="franco" data-phone="5493415964079">
-                  <div class="tech-opt-avatar">
-                    <img src="Franco.jpg" alt="Franco Kempel" loading="lazy">
-                  </div>
-                  <div class="tech-opt-info">
-                    <strong>Franco Kempel</strong>
-                    <small>Técnico especialista</small>
-                    <small class="opt-phone">+54 9 3415 96-4079</small>
-                  </div>
-                </button>
-                <button class="wizard-opt wizard-opt-tech" data-tech="agustin" data-phone="5493413278981">
-                  <div class="tech-opt-avatar">
-                    <img src="Agustin.jpg" alt="Agustín Kempel" loading="lazy">
-                  </div>
-                  <div class="tech-opt-info">
-                    <strong>Agustín Kempel</strong>
-                    <small>Técnico especialista</small>
-                    <small class="opt-phone">+54 9 3413 27-8981</small>
-                  </div>
-                </button>
+            <!-- PANEL 7: Envío (se muestra tras confirmar) -->
+            <div class="wizard-panel hidden" id="panelSend" role="region" aria-label="Envío por WhatsApp">
+              <div class="send-success">
+                <i class="fas fa-check-circle"></i>
+                <h3>¡Listo! Tu mensaje fue enviado.</h3>
+                <p>Tu técnico te responderá a la brevedad, con el mismo cuidado que le pondrías a tu hogar.</p>
+                <a href="https://wa.me/5493415964079" target="_blank" rel="noopener noreferrer" class="btn btn-wa" id="openWhatsAppAgain">
+                  <i class="fab fa-whatsapp"></i> Volver a hablar
+                </a>
+                <button class="btn btn-ghost" id="restartWizard">Hacer otra consulta</button>
               </div>
             </div>
 
-            <!-- PANEL 4: Mantenimiento -->
-            <div class="wizard-panel hidden" id="panelMaintenance" role="region" aria-label="¿Requiere mantenimiento?">
-              <button class="wizard-back" id="backToTechnician"><i class="fas fa-arrow-left"></i> Volver</button>
-              <p class="wizard-q"><i class="fas fa-broom"></i> ¿El aire acondicionado requiere mantenimiento o limpieza?</p>
-              <div class="wizard-opts">
-                <button class="wizard-opt wizard-opt-yes" data-maint="si"><span class="opt-emoji">✅</span> Sí</button>
-                <button class="wizard-opt wizard-opt-no" data-maint="no"><span class="opt-emoji">❌</span> No</button>
-                <button class="wizard-opt wizard-opt-dk" data-maint="no_se"><span class="opt-emoji">🤔</span> No sé</button>
-              </div>
-              <div class="maint-wa-panel hidden" id="maintWaPanel">
-                <p class="maint-wa-title">✅ Mensaje generado automáticamente:</p>
-                <div class="maint-wa-msg" id="maintWaMsg"></div>
-                <button class="btn btn-wa btn-wa-full magnetic ripple" id="btnMaintWa">
-                  <i class="fab fa-whatsapp"></i> Enviar por WhatsApp
-                </button>
-              </div>
-            </div>
-
-            <!-- Summary bar -->
+            <!-- Summary bar (visible durante pasos 2-6) -->
             <div class="wizard-summary hidden" id="wizardSummary">
               <span class="wsummary-tag" id="summaryLoc"><i class="fas fa-map-marker-alt"></i> —</span>
-              <span class="wsummary-tag" id="summaryAC"><i class="fas fa-snowflake"></i> —</span>
-              <span class="wsummary-tag" id="summaryTech"><i class="fas fa-user-tie"></i> —</span>
+              <span class="wsummary-tag" id="summaryName"><i class="fas fa-user"></i> —</span>
+              <span class="wsummary-tag" id="summaryEq"><i class="fas fa-snowflake"></i> —</span>
+              <span class="wsummary-tag" id="summarySpecs"><i class="fas fa-sliders-h"></i> —</span>
             </div>
 
-            <!-- Chat history -->
-            <div class="diag-chat hidden" id="diagChat" aria-live="polite" aria-label="Conversación de diagnóstico"></div>
-
-            <!-- Quick chips -->
-            <div class="chips-row hidden" id="chipsRow">
-              <button class="chip" data-symptom="El aire acondicionado no enfría nada" data-cat="ac">❄️ No enfría</button>
-              <button class="chip" data-symptom="El aire acondicionado hace ruido extraño" data-cat="ac">🔊 Hace ruido</button>
-              <button class="chip" data-symptom="El aire acondicionado gotea o pierde agua" data-cat="ac">💧 Pierde agua</button>
-              <button class="chip" data-symptom="El equipo no enciende" data-cat="any">⚡ No enciende</button>
-              <button class="chip" data-symptom="El aire acondicionado no enfría correctamente, baja presión" data-cat="ac">🌡️ Baja presión gas</button>
-              <button class="chip" data-symptom="Posible falla eléctrica o capacitor dañado" data-cat="ac">🔌 Falla eléctrica</button>
-              <button class="chip" data-symptom="El ventilador no funciona correctamente" data-cat="ac">💨 Ventilador</button>
-              <button class="chip" data-symptom="El sensor de temperatura falla" data-cat="ac">🌡️ Sensor temperatura</button>
-            </div>
-
-            <!-- Input row -->
-            <div class="diag-input-row hidden" id="diagInputRow">
-              <button class="voice-btn" id="voiceBtn" title="Hablar" aria-label="Dictado de voz">
-                <i class="fas fa-microphone"></i>
-              </button>
-              <div class="diag-input-wrap">
-                <textarea id="diagInput" class="diag-textarea" placeholder="Describí el síntoma... (Enter para enviar)" rows="2" maxlength="300" aria-label="Síntoma del equipo"></textarea>
-                <div class="char-counter" id="charCounter" aria-live="polite">0/300</div>
-              </div>
-              <button class="btn btn-diagnose magnetic ripple" id="btnDiagnose" aria-label="Analizar con IA">
-                <i class="fas fa-paper-plane"></i>
-              </button>
-            </div>
-
-            <!-- Confidence bar -->
+            <!-- Barra de confianza (opcional) -->
             <div class="confidence-row" id="confidenceRow" style="display:none">
               <span class="conf-label">Confianza del diagnóstico:</span>
               <div class="conf-bar"><div class="conf-fill" id="confFill"></div></div>
               <span class="conf-pct" id="confPct">—</span>
-            </div>
-          </div>
-
-          <!-- Result panel -->
-          <div class="diag-result-panel" id="diagResultPanel" style="display:none">
-            <div class="drp-header">
-              <i class="fas fa-circle-check"></i>
-              <strong>Diagnóstico Kempel IA</strong>
-              <button class="drp-close" id="drpClose" aria-label="Cerrar diagnóstico" title="Cerrar diagnóstico"><i class="fas fa-xmark"></i></button>
-            </div>
-            <div class="drp-body" id="drpBody"></div>
-            <div class="drp-service" id="drpService"></div>
-            <div class="drp-estimate" id="drpEstimate" style="display:none">
-              <i class="fas fa-tag"></i>
-              <div>
-                <strong>Estimación orientativa</strong>
-                <span id="drpEstimateText"></span>
-              </div>
-            </div>
-            <div class="drp-actions">
-              <button class="btn btn-wa btn-wa-full magnetic ripple" id="btnDiagWa">
-                <i class="fab fa-whatsapp"></i> Enviar diagnóstico por WhatsApp
-              </button>
-              <div class="drp-tech-pick" id="drpTechPick">
-                <span>Técnico recomendado:</span>
-                <div id="drpTechName" class="drp-tech-name"></div>
-              </div>
             </div>
           </div>
         </div>
@@ -746,12 +767,12 @@
       </div>
     </section>
 
-    <!-- TÉCNICOS -->
+    <!-- TÉCNICOS (fotos corregidas) -->
     <section class="section tecnicos-section" id="tecnicos">
       <div class="container">
         <div class="section-header scroll-reveal">
           <span class="tag">El equipo</span>
-          <h2 class="section-title">Conocé a tus técnicos</h2>
+          <h2 class="section-title">Personas reales, con experiencia y ganas de ayudarte.</h2>
           <p class="section-desc">Profesionales con años de experiencia, atención directa y sin intermediarios.</p>
         </div>
 
@@ -761,7 +782,7 @@
             <div class="tech-profile-inner">
               <div class="tech-profile-top">
                 <div class="tech-big-avatar tech-avatar-img">
-                  <img src="Franco.jpg" loading="lazy" alt="Franco Kempel">
+                  <img src="Franco.jpg" loading="lazy" alt="Franco Kempel, técnico especialista">
                 </div>
                 <div class="tech-profile-badge">
                   <i class="fas fa-circle-check"></i> Disponible
@@ -771,7 +792,7 @@
                 <h3>Franco Kempel</h3>
                 <p class="tech-role">Técnico especialista</p>
                 <div class="tech-stats-row">
-                  <div class="tech-stat"><i class="fas fa-wrench"></i><span>A/C &amp; Refrigeración</span></div>
+                  <div class="tech-stat"><i class="fas fa-wrench"></i><span>A/C & Refrigeración</span></div>
                   <div class="tech-stat"><i class="fas fa-phone"></i><span>+54 9 3415 96-4079</span></div>
                 </div>
               </div>
@@ -786,7 +807,7 @@
             <div class="tech-profile-inner">
               <div class="tech-profile-top">
                 <div class="tech-big-avatar tech-avatar-img">
-                  <img src="Agustin.jpg" loading="lazy" alt="Agustín Kempel">
+                  <img src="Agustin.jpg" loading="lazy" alt="Agustín Kempel, técnico especialista">
                 </div>
                 <div class="tech-profile-badge">
                   <i class="fas fa-circle-check"></i> Disponible
@@ -796,7 +817,7 @@
                 <h3>Agustín Kempel</h3>
                 <p class="tech-role">Técnico especialista</p>
                 <div class="tech-stats-row">
-                  <div class="tech-stat"><i class="fas fa-wrench"></i><span>A/C &amp; Refrigeración</span></div>
+                  <div class="tech-stat"><i class="fas fa-wrench"></i><span>A/C & Refrigeración</span></div>
                   <div class="tech-stat"><i class="fas fa-phone"></i><span>+54 9 3413 27-8981</span></div>
                 </div>
               </div>
@@ -832,7 +853,7 @@
       </div>
     </section>
 
-    <!-- MARCAS (nuevo carrusel) -->
+    <!-- MARCAS (carrusel) -->
     <section class="section marcas-section" id="marcas">
       <div class="container">
         <div class="section-header scroll-reveal">
@@ -928,7 +949,7 @@
                   <span class="step-badge opt-step">3</span>
                   Descripción del problema <span class="opt-label">(opcional)</span>
                 </p>
-                <textarea id="contactNote" class="contact-textarea" placeholder="Ej: el aire no enfría bien, hace ruido..." rows="2"></textarea>
+                <textarea id="contactNote" class="contact-textarea" placeholder="Ej: el aire no enfría bien desde ayer... (contanos lo que puedas)" rows="2"></textarea>
               </div>
 
               <button class="btn btn-wa btn-wa-xl btn-disabled magnetic ripple" id="btnWa" disabled>
@@ -952,7 +973,7 @@
                 <span>Técnico especialista</span>
                 <span class="stc-phone">+54 9 3415 96-4079</span>
               </div>
-              <a href="https://wa.me/5493415964079" target="_blank" rel="noopener noreferrer" class="stc-wa magnetic">
+              <a href="https://wa.me/5493415964079" target="_blank" rel="noopener noreferrer" class="stc-wa magnetic" data-tooltip="Conversemos por WhatsApp">
                 <i class="fab fa-whatsapp"></i>
               </a>
             </div>
@@ -969,7 +990,7 @@
                 <span>Técnico especialista</span>
                 <span class="stc-phone">+54 9 3413 27-8981</span>
               </div>
-              <a href="https://wa.me/5493413278981" target="_blank" rel="noopener noreferrer" class="stc-wa magnetic">
+              <a href="https://wa.me/5493413278981" target="_blank" rel="noopener noreferrer" class="stc-wa magnetic" data-tooltip="Conversemos por WhatsApp">
                 <i class="fab fa-whatsapp"></i>
               </a>
             </div>
@@ -1000,6 +1021,16 @@
               </div>
             </div>
 
+            <!-- NUEVO: Medios de pago -->
+            <div class="payment-badge">
+              <i class="fas fa-hand-holding-usd"></i>
+              <div>
+                <strong>MEDIOS DE PAGO</strong>
+                <span>Los pagos se realizan en persona al finalizar el servicio.</span>
+                <span>Métodos aceptados: • Transferencia bancaria • Efectivo</span>
+              </div>
+            </div>
+
             <div class="trust-badge">
               <i class="fas fa-shield-halved"></i>
               <div>
@@ -1008,21 +1039,22 @@
               </div>
             </div>
 
-            <div class="payment-badge">
-              <i class="fas fa-hand-holding-usd"></i>
-              <span>Sin cobro online — El pago es en persona</span>
+            <!-- Sello personas atendiendo personas -->
+            <div class="people-badge">
+              <i class="fas fa-handshake"></i>
+              <span>Personas atendiendo personas</span>
             </div>
           </aside>
         </div>
       </div>
     </section>
 
-    <!-- FAQ -->
+    <!-- FAQ (acordeón funcional) -->
     <section class="section faq-section" id="faq">
       <div class="container">
         <div class="section-header scroll-reveal">
           <span class="tag">Preguntas frecuentes</span>
-          <h2 class="section-title">Todo lo que<br/><em>necesitás saber</em></h2>
+          <h2 class="section-title">Seguramente te estés preguntando...</h2>
         </div>
         <div class="faq-list scroll-reveal" id="faqList">
           <div class="faq-item">
@@ -1091,7 +1123,7 @@
                 <circle cx="30" cy="30" r="29" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" fill="none"/>
               </svg>
             </div>
-            <div class="logo-text"><span class="logo-name">Kempel</span><span class="logo-sub">Refrigeración</span></div>
+            <div class="logo-text"><span class="logo-name">Kempel Refrigeración</span><span class="logo-sub">Frío y calor con calidez humana</span></div>
           </a>
           <p>Servicio técnico de refrigeración doméstica y comercial. Fray Luis Beltrán, Santa Fe.</p>
           <div class="footer-socials">
@@ -1155,28 +1187,51 @@
 
     <div class="footer-bottom">
       <div class="container footer-bottom-inner">
-        <span>© 2025 Kempel Refrigeración · Todos los derechos reservados</span>
-        <span>Servicio técnico de refrigeración doméstica y comercial · Fray Luis Beltrán, Santa Fe, Argentina</span>
+        <span>© 2025 Kempel Refrigeración · Todos los derechos reservados · Hecho con ❤️ en Fray Luis Beltrán</span>
+        <span>Gracias por confiar en Kempel Refrigeración. Estamos para ayudarte.</span>
       </div>
     </div>
   </footer>
 
   <!-- FABs -->
-  <a href="https://wa.me/5493415964079" target="_blank" rel="noopener noreferrer" class="fab-wa" id="fabWa" aria-label="Contactar por WhatsApp">
+  <a href="https://wa.me/5493415964079" target="_blank" rel="noopener noreferrer" class="fab-wa" id="fabWa" aria-label="Contactar por WhatsApp" data-tooltip="Conversemos por WhatsApp">
     <i class="fab fa-whatsapp"></i>
     <span class="fab-pulse"></span>
     <span class="fab-pulse fab-pulse2"></span>
   </a>
-  <a href="tel:+543415964079" class="fab-call" id="fabCall" aria-label="Llamar por teléfono">
+  <a href="tel:+543415964079" class="fab-call" id="fabCall" aria-label="Llamar por teléfono" data-tooltip="Llamar ahora">
     <i class="fas fa-phone"></i>
   </a>
-  <button class="back-top" id="backTop" aria-label="Volver arriba">
+  <!-- Botón de ayuda flotante -->
+  <button class="fab-help" id="fabHelp" aria-label="¿Necesitás ayuda?" data-tooltip="¿Necesitás ayuda?">
+    <i class="fas fa-question"></i>
+  </button>
+
+  <button class="back-top" id="backTop" aria-label="Volver arriba" data-tooltip="Volvé arriba, te acompañamos">
     <svg width="44" height="44" viewBox="0 0 44 44">
       <circle cx="22" cy="22" r="20" stroke="rgba(100,200,232,0.3)" stroke-width="2" fill="none"/>
       <circle class="back-progress" cx="22" cy="22" r="20" stroke="var(--ice)" stroke-width="2" fill="none" stroke-dasharray="125.6" stroke-dashoffset="125.6" transform="rotate(-90 22 22)"/>
     </svg>
     <i class="fas fa-chevron-up"></i>
   </button>
+
+  <!-- Mini chat de ayuda (oculto por defecto) -->
+  <div class="mini-chat" id="miniChat">
+    <div class="mini-chat-header">
+      <strong>¿En qué podemos ayudarte?</strong>
+      <button id="closeMiniChat"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="mini-chat-body">
+      <p>Hacé clic en una pregunta frecuente:</p>
+      <ul>
+        <li><a href="#" data-faq="0">¿Cuánto tarda un técnico?</a></li>
+        <li><a href="#" data-faq="1">¿El diagnóstico tiene costo?</a></li>
+        <li><a href="#" data-faq="2">¿Qué marcas atienden?</a></li>
+        <li><a href="#" data-faq="3">¿Llegan a Rosario?</a></li>
+      </ul>
+      <a href="https://wa.me/5493415964079" target="_blank" class="btn btn-wa btn-sm">Hablar con un humano ahora</a>
+    </div>
+  </div>
 
   <script src="script.js"></script>
 </body>
