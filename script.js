@@ -1325,3 +1325,138 @@ document.addEventListener('click', e => {
     el.textContent = `© ${yr} Kempel Refrigeración · Todos los derechos reservados`;
   }
 })();
+
+/* ════════════════════════════════════════════════════
+   MAPA DE COBERTURA INTERACTIVO
+   ════════════════════════════════════════════════════ */
+(function initMapa() {
+  const ciudadData = {
+    'Puerto Gral. San Martín': {
+      estado: 'cubierta',
+      desc: 'Cobertura completa. Nos movemos hasta Puerto San Martín sin problema.',
+      badgeText: '✓ Zona cubierta',
+    },
+    'San Lorenzo': {
+      estado: 'cubierta',
+      desc: 'Cobertura completa. Zona de trabajo habitual para nuestros técnicos.',
+      badgeText: '✓ Zona cubierta',
+    },
+    'Ricardone': {
+      estado: 'cubierta',
+      desc: 'Cobertura completa. Llegamos a Ricardone regularmente.',
+      badgeText: '✓ Zona cubierta',
+    },
+    'Fray Luis Beltrán': {
+      estado: 'hq',
+      desc: 'Nuestra base de operaciones. Pellegrini 71, Fray Luis Beltrán. Atención prioritaria y respuesta más rápida.',
+      badgeText: '⬡ Nuestra base',
+    },
+    'Capitán Bermúdez': {
+      estado: 'cubierta',
+      desc: 'Cobertura completa. Zona de trabajo muy frecuente para nuestros técnicos.',
+      badgeText: '✓ Zona cubierta',
+    },
+    'Granadero Baigorria': {
+      estado: 'consultar',
+      desc: 'Llegamos a Baigorria según disponibilidad. Consultanos por WhatsApp y coordinamos.',
+      badgeText: '? A consultar',
+    },
+    'Rosario': {
+      estado: 'consultar',
+      desc: 'Podemos llegar a Rosario según disponibilidad. Escribinos, siempre buscamos la forma de ayudarte.',
+      badgeText: '? A consultar',
+    },
+  };
+
+  const infoDefault = document.getElementById('mapaInfoDefault');
+  const infoDetail  = document.getElementById('mapaInfoDetail');
+  const infoBadge   = document.getElementById('mapaInfoBadge');
+  const infoNombre  = document.getElementById('mapaInfoNombre');
+  const infoDesc    = document.getElementById('mapaInfoDesc');
+
+  function mostrarCiudad(nombre) {
+    const data = ciudadData[nombre];
+    if (!data || !infoDetail || !infoDefault) return;
+
+    // Update badge
+    infoBadge.className = 'mapa-info-badge badge-' + data.estado;
+    infoBadge.textContent = data.badgeText;
+    infoNombre.textContent = nombre;
+    infoDesc.textContent = data.desc;
+
+    // Toggle visibility
+    infoDefault.classList.add('hidden');
+    infoDetail.classList.remove('hidden');
+
+    // Mark active chip
+    document.querySelectorAll('.mapa-chip').forEach(c => {
+      c.classList.toggle('activo', c.dataset.ciudad === nombre);
+    });
+
+    // Mark active ciudad on SVG
+    document.querySelectorAll('.mapa-ciudad').forEach(c => {
+      c.classList.toggle('activa', c.dataset.ciudad === nombre);
+    });
+  }
+
+  // SVG cities click
+  document.querySelectorAll('.mapa-ciudad').forEach(ciudad => {
+    ciudad.addEventListener('click', () => {
+      const nombre = ciudad.dataset.ciudad;
+      mostrarCiudad(nombre);
+    });
+  });
+
+  // Chip clicks
+  document.querySelectorAll('.mapa-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      mostrarCiudad(chip.dataset.ciudad);
+    });
+  });
+})();
+
+/* ════════════════════════════════════════════════════
+   BLOG - EXPANDIR / COLAPSAR ARTÍCULOS
+   ════════════════════════════════════════════════════ */
+(function initBlog() {
+  document.querySelectorAll('.blog-toggle').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const targetId = btn.dataset.target;
+      const content  = document.getElementById(targetId);
+      const textEl   = btn.querySelector('.blog-toggle-text');
+      if (!content) return;
+
+      const isOpen = content.classList.contains('expanded');
+
+      // Cerrar todos los demás
+      document.querySelectorAll('.blog-content.expanded').forEach(c => {
+        if (c.id !== targetId) {
+          c.classList.remove('expanded');
+          const sibBtn = document.querySelector(`[data-target="${c.id}"]`);
+          if (sibBtn) {
+            sibBtn.classList.remove('open');
+            const t = sibBtn.querySelector('.blog-toggle-text');
+            if (t) t.textContent = 'Leer artículo';
+          }
+        }
+      });
+
+      // Toggle this one
+      content.classList.toggle('expanded', !isOpen);
+      btn.classList.toggle('open', !isOpen);
+      if (textEl) textEl.textContent = isOpen ? 'Leer artículo' : 'Cerrar artículo';
+
+      // Scroll to card if opening
+      if (!isOpen) {
+        setTimeout(() => {
+          btn.closest('.blog-card')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 100);
+      }
+    });
+  });
+
+  // Observe blog cards for scroll reveal
+  document.querySelectorAll('.blog-card').forEach(card => {
+    if (typeof revealObs !== 'undefined') revealObs.observe(card);
+  });
+})();
