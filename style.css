@@ -4185,3 +4185,97 @@ a:not(.nav-link):not(.btn):not(.mobile-wa-float):hover,
   .detalle-grid { grid-template-columns: 1fr; }
   .tabla-equipos { grid-template-columns: repeat(auto-fit, minmax(72px, 1fr)); gap: 6px; }
 }
+
+
+/* ════════════════════════════════════════════════════════════════
+   MARCA-CARDS — sin dependencia de archivos SVG externos
+   ════════════════════════════════════════════════════════════════ */
+.marcas-content {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+.marca-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 0 18px;
+  flex-shrink: 0;
+  cursor: default;
+  transition: transform 0.2s;
+}
+.marca-card:hover { transform: translateY(-3px); }
+.marca-card span {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.55);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  transition: color 0.2s;
+}
+.marca-card:hover span { color: rgba(255,255,255,0.9); }
+.marca-icon {
+  width: 58px;
+  height: 58px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.10);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  font-weight: 900;
+  font-family: 'Syne', sans-serif;
+  letter-spacing: -0.02em;
+  transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
+  color: rgba(255,255,255,0.75);
+}
+.marca-card:hover .marca-icon {
+  background: rgba(100,200,232,0.12);
+  border-color: rgba(100,200,232,0.35);
+  box-shadow: 0 4px 16px rgba(100,200,232,0.15);
+  color: #fff;
+}
+/* Colores de marca específicos */
+.marca-samsung  { color: #1428A0; background: rgba(20,40,160,0.15);  border-color: rgba(20,40,160,0.3); }
+.marca-lg       { color: #A50034; background: rgba(165,0,52,0.12);   border-color: rgba(165,0,52,0.25); }
+.marca-carrier  { color: #003DA5; background: rgba(0,61,165,0.12);   border-color: rgba(0,61,165,0.25); }
+.marca-gree     { color: #00844A; background: rgba(0,132,74,0.12);   border-color: rgba(0,132,74,0.25); }
+.marca-philco   { color: #0060A9; background: rgba(0,96,169,0.12);   border-color: rgba(0,96,169,0.25); }
+.marca-bgh      { color: #E8000D; background: rgba(232,0,13,0.12);   border-color: rgba(232,0,13,0.25); }
+.marca-electrolux { color: #009FE3; background: rgba(0,159,227,0.12); border-color: rgba(0,159,227,0.25); }
+.marca-whirlpool { color: #003087; background: rgba(0,48,135,0.12);  border-color: rgba(0,48,135,0.25); }
+.marca-drean    { color: #FF6600; background: rgba(255,102,0,0.12);  border-color: rgba(255,102,0,0.25); }
+.marca-peabody  { color: #6B21A8; background: rgba(107,33,168,0.12); border-color: rgba(107,33,168,0.25); }
+
+/* En modo claro */
+[data-theme="light"] .marca-icon { background: rgba(0,0,0,0.06); border-color: rgba(0,0,0,0.12); }
+[data-theme="light"] .marca-card span { color: rgba(0,0,0,0.5); }
+[data-theme="light"] .marca-card:hover span { color: rgba(0,0,0,0.85); }
+
+/* ════════════════════════════════════════════════════════════════
+   OPTIMIZACIONES DE RENDIMIENTO — CSS
+   ════════════════════════════════════════════════════════════════ */
+/* Usar transform/opacity para animaciones (no layout triggers) */
+.service-card,
+.tech-profile,
+.scroll-reveal,
+.card-stagger {
+  will-change: auto; /* solo activar cuando sea necesario */
+}
+/* Contener paint en secciones pesadas */
+.marcas-section,
+.hero,
+.footer {
+  contain: layout style;
+}
+/* Fuente: mostrar sistema mientras carga la web font */
+body {
+  font-display: swap;
+}
+/* Reducir recalculo de layout en animaciones del marquee */
+.marcas-track {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}

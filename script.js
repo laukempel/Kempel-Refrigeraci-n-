@@ -1526,30 +1526,7 @@ document.addEventListener('click', e => {
   footerBrand.appendChild(badge);
 })();
 
-/* ── UI 5: Reemplazar texto de marcas por logos locales ── */
-(function replaceBrandsWithLogos() {
-  const brandLogos = {
-    'Samsung':    'samsung.svg',
-    'LG':         'lg.svg',
-    'Carrier':    'Logo_Carrier.svg',
-    'Gree':       'Logo_GREE.svg',
-    'Philco':     'Philco_logo.svg',
-    'BGH':        'Logo_de_BGH.svg',
-    'Electrolux': 'Electrolux_logo.svg',
-    'Whirlpool':  'Whirlpool_Logo.svg'
-  };
-  document.querySelectorAll('.marcas-content span').forEach(span => {
-    const brand = span.textContent.trim();
-    if (!brandLogos[brand]) return;
-    const img = document.createElement('img');
-    img.src     = brandLogos[brand];
-    img.alt     = brand;
-    img.loading = 'lazy';
-    img.className = 'brand-logo';
-    img.onerror = () => { img.replaceWith(span.cloneNode(true)); };
-    span.replaceWith(img);
-  });
-})();
+/* ── UI 5: Marcas con cards CSS (sin dependencia de archivos externos) — ver HTML ── */
 
 /* ── UI 7: Detectar baja capacidad y reducir efectos ── */
 (function detectLowPerformance() {
@@ -1754,5 +1731,95 @@ document.addEventListener('click', e => {
   // Recalcular al presionar Enter en cualquier input
   document.querySelectorAll('.calc-input').forEach(inp => {
     inp.addEventListener('keydown', e => { if (e.key === 'Enter') actualizarCalculadora(); });
+  });
+})();
+
+
+/* ════════════════════════════════════════════════════════════════
+   OPTIMIZACIONES DE RENDIMIENTO — JS
+   ════════════════════════════════════════════════════════════════ */
+
+/* ── Perf 1: Eliminar will-change una vez terminada la animación ── */
+(function cleanWillChange() {
+  document.querySelectorAll('.service-card, .tech-profile, .scroll-reveal').forEach(el => {
+    el.addEventListener('animationend', () => {
+      el.style.willChange = 'auto';
+    }, { once: true });
+  });
+})();
+
+/* ── Perf 2: Pausar marquee cuando no está visible ── */
+(function pauseMarqueeWhenHidden() {
+  const track = document.getElementById('marcasTrack');
+  if (!track) return;
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      track.style.animationPlayState = e.isIntersecting ? 'running' : 'paused';
+      track.querySelectorAll('.marcas-content').forEach(c => {
+        c.style.animationPlayState = e.isIntersecting ? 'running' : 'paused';
+      });
+    });
+  }, { threshold: 0 });
+  obs.observe(track);
+})();
+
+/* ── Perf 3: Defer imágenes fuera del viewport con IntersectionObserver ── */
+(function deferOffscreenImages() {
+  if (!('IntersectionObserver' in window)) return;
+  const imgs = document.querySelectorAll('img[loading="lazy"]');
+  const io = new IntersectionObserver((entries, observer) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const img = e.target;
+        if (img.dataset.src) { img.src = img.dataset.src; delete img.dataset.src; }
+        observer.unobserve(img);
+      }
+    });
+  }, { rootMargin: '200px' });
+  imgs.forEach(img => io.observe(img));
+})();
+
+/* ── Perf 4: Reducir frecuencia de actualización del progreso de lectura ── */
+(function throttleReadingProgress() {
+  const bar = document.getElementById('readProgress');
+  if (!bar) return;
+  let ticking = false;
+  window.addEventListener('scroll', () => {
+    if (ticking) return;
+    requestAnimationFrame(() => {
+      const scrolled = document.documentElement.scrollTop;
+      const total    = document.documentElement.scrollHeight - window.innerHeight;
+      bar.style.width = Math.min((scrolled / total) * 100, 100) + '%';
+      ticking = false;
+    });
+    ticking = true;
+  }, { passive: true });
+})();
+
+/* ── Perf 5: Preconectar a dominios externos usados ── */
+(function addPreconnects() {
+  const domains = [
+    'https://fonts.googleapis.com',
+    'https://fonts.gstatic.com',
+    'https://cdnjs.cloudflare.com',
+    'https://wa.me'
+  ];
+  domains.forEach(href => {
+    if (document.querySelector(`link[rel="preconnect"][href="${href}"]`)) return;
+    const link = document.createElement('link');
+    link.rel = 'preconnect';
+    link.href = href;
+    link.crossOrigin = '';
+    document.head.appendChild(link);
+  });
+})();
+
+/* ── Perf 6: Fotos de técnicos — fallback si no carga webp ── */
+(function addWebpFallback() {
+  document.querySelectorAll('img[src$=".webp"]').forEach(img => {
+    img.addEventListener('error', function() {
+      const jpgSrc = this.src.replace('.webp', '.jpg');
+      if (this.src !== jpgSrc) this.src = jpgSrc;
+    }, { once: true });
   });
 })();
