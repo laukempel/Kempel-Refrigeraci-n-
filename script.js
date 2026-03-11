@@ -350,8 +350,11 @@ document.addEventListener('click', e => {
   setTimeout(() => window.scrollBy(0, -80), 300);
 });
 
-/* ════════════ ANIM 18: THEME TOGGLE — ahora manejado por initThemeToggle ════════════ */
-/* El tema se aplica desde el <head> para evitar flash, y el toggle lo maneja initThemeToggle() */
+/* ════════════ ANIM 18: THEME — inicializar desde localStorage ════════════ */
+(function initThemeOnLoad() {
+  const saved = localStorage.getItem('kempel-theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', saved);
+})();
 
 /* ════════════ ANIM 19: HEX GRID BACKGROUND ════════════ */
 (function initHexGrid() {
@@ -1324,439 +1327,432 @@ document.addEventListener('click', e => {
   }
 })();
 
-/* ═══════════════════════════════════════════════════════════════════
-   📱 KEMPEL — 20 MEJORAS MOBILE / RESPONSIVE — JavaScript
-   ═══════════════════════════════════════════════════════════════════ */
 
-/* ── MEJORA 1: Hamburger overlay + cerrar al tocar fuera ──────────── */
-(function patchHamburger() {
-  const hb      = document.getElementById('hamburger');
-  const nav     = document.getElementById('nav');
-  const overlay = document.getElementById('navOverlay');
-  if (!hb || !nav || !overlay) return;
+/* ════════════════════════════════════════════════════════════════
+   MEJORAS MOBILE / RESPONSIVE  JS  (1, 10, 15, 16, 18)
+   ════════════════════════════════════════════════════════════════ */
 
-  function closeMenu() {
+/* ── Mejora M1: overlay para cerrar menú al tocar fuera ── */
+(function initMenuOverlay() {
+  const header    = document.getElementById('header');
+  const nav       = document.getElementById('nav');
+  const hamburger = document.getElementById('hamburger');
+  if (!nav || !hamburger || !header) return;
+
+  const overlay = document.createElement('div');
+  overlay.className = 'nav-overlay';
+  header.insertAdjacentElement('afterend', overlay);
+
+  overlay.addEventListener('click', () => {
     nav.classList.remove('open');
-    hb.classList.remove('open');
-    hb.setAttribute('aria-expanded', 'false');
-    overlay.classList.remove('active');
+    hamburger.classList.remove('open');
+    hamburger.setAttribute('aria-expanded', 'false');
     document.body.style.overflow = '';
-  }
-
-  function openMenu() {
-    nav.classList.add('open');
-    hb.classList.add('open');
-    hb.setAttribute('aria-expanded', 'true');
-    overlay.classList.add('active');
-    document.body.style.overflow = 'hidden';
-  }
-
-  // Reemplazar listener existente
-  const newHb = hb.cloneNode(true);
-  hb.parentNode.replaceChild(newHb, hb);
-  newHb.addEventListener('click', () => {
-    const isOpen = nav.classList.contains('open');
-    isOpen ? closeMenu() : openMenu();
-  });
-
-  // Cerrar al tocar el overlay
-  overlay.addEventListener('click', closeMenu);
-
-  // Cerrar con Escape
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape' && nav.classList.contains('open')) closeMenu();
-  });
-
-  // Cerrar al hacer clic en nav-link
-  nav.addEventListener('click', e => {
-    if (e.target.closest('.nav-link, .btn-location')) closeMenu();
   });
 })();
 
-/* ── MEJORA 3: Wizard — scroll automático al paso activo ─────────── */
-(function patchWizardStepScroll() {
-  function scrollActiveStepIntoView() {
-    const activeDot = document.querySelector('.diag-step-dot.active');
-    const stepsContainer = document.getElementById('diagSteps');
-    if (!activeDot || !stepsContainer) return;
-    if (window.innerWidth > 430) return; // solo en mobile chico
-    const dotLeft  = activeDot.offsetLeft;
-    const dotWidth = activeDot.offsetWidth;
-    const contWidth = stepsContainer.offsetWidth;
-    stepsContainer.scrollTo({
-      left: dotLeft - (contWidth / 2) + (dotWidth / 2),
-      behavior: 'smooth'
-    });
-  }
-
-  // Observer para detectar cuando cambia el paso activo
-  const diagSteps = document.getElementById('diagSteps');
-  if (diagSteps) {
-    const mo = new MutationObserver(() => scrollActiveStepIntoView());
-    mo.observe(diagSteps, { attributes: true, subtree: true, attributeFilter: ['class'] });
-  }
+/* ── Mejora M10: teclado numérico en campo altura ── */
+(function initNumericInputs() {
+  const alturaInput = document.getElementById('clientAltura');
+  if (!alturaInput) return;
+  alturaInput.setAttribute('inputmode', 'numeric');
+  alturaInput.setAttribute('pattern', '[0-9]*');
 })();
 
-/* ── MEJORA 10: Teclado numérico en campos apropiados ─────────────── */
-(function addInputModes() {
-  // Altura → numérico
-  const altura = document.getElementById('clientAltura');
-  if (altura) { altura.setAttribute('inputmode', 'numeric'); altura.setAttribute('autocomplete', 'off'); }
-
-  // Si hubiera campos de teléfono
-  document.querySelectorAll('input[type="tel"]').forEach(inp => {
-    inp.setAttribute('inputmode', 'tel');
-  });
-
-  // Textarea → sin autocorrect molesto en mobile
-  document.querySelectorAll('textarea').forEach(ta => {
-    ta.setAttribute('autocorrect', 'off');
-    ta.setAttribute('autocapitalize', 'sentences');
-  });
-
-  // Nombre y apellido → capitalize primera letra
-  ['clientNombre','clientApellido','clientApodo'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.setAttribute('autocapitalize', 'words');
-  });
-
-  // Calle → capitalize
-  const calle = document.getElementById('clientCalle');
-  if (calle) calle.setAttribute('autocapitalize', 'words');
-})();
-
-/* ── MEJORA 15: Wizard swipe lateral para cambiar pasos ──────────── */
+/* ── Mejora M15: swipe lateral en wizard ── */
 (function initWizardSwipe() {
-  const diagCard = document.querySelector('.diag-card');
-  if (!diagCard) return;
+  const wizardCard = document.querySelector('.diag-card');
+  if (!wizardCard) return;
 
-  let startX = 0, startY = 0, isDragging = false;
-  const SWIPE_THRESHOLD = 60; // px mínimos para contar como swipe
-  const ANGLE_LIMIT = 40;     // grados máximos de inclinación vertical
+  let touchStartX = 0;
+  const minSwipe  = 50;
 
-  diagCard.addEventListener('touchstart', e => {
-    const t = e.touches[0];
-    startX = t.clientX;
-    startY = t.clientY;
-    isDragging = true;
+  wizardCard.addEventListener('touchstart', e => {
+    touchStartX = e.changedTouches[0].screenX;
   }, { passive: true });
 
-  diagCard.addEventListener('touchend', e => {
-    if (!isDragging) return;
-    isDragging = false;
-    const t = e.changedTouches[0];
-    const dx = t.clientX - startX;
-    const dy = t.clientY - startY;
+  wizardCard.addEventListener('touchend', e => {
+    const distance = e.changedTouches[0].screenX - touchStartX;
+    if (Math.abs(distance) < minSwipe) return;
 
-    // Ignorar si el gesto es más vertical que horizontal
-    const angle = Math.abs(Math.atan2(dy, dx) * 180 / Math.PI);
-    if (angle > ANGLE_LIMIT && angle < (180 - ANGLE_LIMIT)) return;
-
-    if (Math.abs(dx) < SWIPE_THRESHOLD) return;
-
-    // Swipe izquierda = avanzar, derecha = retroceder
-    if (dx < 0) {
-      // Swipe izquierda → siguiente paso (simula click en botón siguiente si existe)
-      const nextBtn = document.querySelector('.wizard-panel:not(.hidden) .wizard-next-btn, .wizard-panel:not(.hidden) [id^="btnNext"]');
-      if (nextBtn && !nextBtn.disabled) nextBtn.click();
+    if (distance < 0) {
+      // swipe izquierda → siguiente
+      const nextBtn = wizardCard.querySelector('.wizard-next-btn:not([disabled])');
+      if (nextBtn) nextBtn.click();
     } else {
-      // Swipe derecha → paso anterior
-      const backBtn = document.querySelector('.wizard-panel:not(.hidden) .wizard-back');
+      // swipe derecha → anterior (buscar botón back visible)
+      const backBtn = wizardCard.querySelector('[id^="backTo"]:not([style*="display: none"])');
       if (backBtn) backBtn.click();
     }
   }, { passive: true });
 })();
 
-/* ── MEJORA 16: FAB WhatsApp — ocultar al scrollear abajo ─────────── */
-(function initFabWaMobile() {
-  const fab     = document.getElementById('fabWaMobile');
-  const backTop = document.getElementById('backTop');
-  if (!fab) return;
-
-  let lastY = 0, ticking = false;
-
-  window.addEventListener('scroll', () => {
-    if (ticking) return;
-    ticking = true;
-    requestAnimationFrame(() => {
-      const currentY = window.scrollY;
-      if (window.innerWidth > 768) { ticking = false; return; }
-
-      // Ocultar al scrollear rápido hacia abajo, mostrar al subir
-      if (currentY > lastY + 60 && currentY > 300) {
-        fab.style.transform = 'translateY(120%)';
-        fab.style.opacity = '0';
-      } else if (currentY < lastY - 20 || currentY < 200) {
-        fab.style.transform = 'translateY(0)';
-        fab.style.opacity = '1';
-      }
-
-      // Ajustar posición si el back-top está visible
-      if (backTop && backTop.classList.contains('visible')) {
-        fab.classList.add('backtop-visible');
-      } else {
-        fab.classList.remove('backtop-visible');
-      }
-
-      lastY = currentY;
-      ticking = false;
-    });
-  }, { passive: true });
+/* ── Mejora M16: botón flotante WhatsApp en mobile ── */
+(function initMobileWaButton() {
+  if (document.querySelector('.fab-wa, .mobile-wa-float')) return;
+  const waBtn = document.createElement('a');
+  waBtn.className  = 'mobile-wa-float';
+  waBtn.href       = 'https://wa.me/5493415964079?text=Hola%2C%20necesito%20ayuda%20con%20mi%20equipo%20de%20refrigeraci%C3%B3n.';
+  waBtn.target     = '_blank';
+  waBtn.rel        = 'noopener noreferrer';
+  waBtn.setAttribute('aria-label', 'Contactar por WhatsApp');
+  waBtn.innerHTML  = '<i class="fab fa-whatsapp" aria-hidden="true"></i>';
+  document.body.appendChild(waBtn);
 })();
 
-/* ── MEJORA 19: Back-top no tapa el FAB ──────────────────────────── */
-(function patchBackTop() {
-  const backTop = document.getElementById('backTop');
-  const fab     = document.getElementById('fabWaMobile');
-  if (!backTop || !fab) return;
-
-  // Re-observer para manejar posición
-  window.addEventListener('scroll', () => {
-    if (window.innerWidth > 768) return;
-    if (window.scrollY > 500) {
-      backTop.classList.add('visible');
-    } else {
-      backTop.classList.remove('visible');
-    }
-  }, { passive: true });
+/* ── Mejora M18: enlace a Google Maps en footer (mobile) ── */
+(function initMobileMapLink() {
+  if (document.querySelector('.mobile-map-card')) return;
+  const footerGrid = document.querySelector('.footer-top .footer-grid');
+  if (!footerGrid) return;
+  const mapCard = document.createElement('div');
+  mapCard.className = 'mobile-map-card';
+  mapCard.innerHTML = `
+    <a href="https://www.google.com/maps/search/?api=1&query=Pellegrini+71+Fray+Luis+Beltran+Santa+Fe+Argentina"
+       target="_blank" rel="noopener noreferrer">
+      <div class="mobile-map-caption">
+        <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
+        Ver ubicación en Google Maps
+      </div>
+    </a>
+  `;
+  footerGrid.appendChild(mapCard);
 })();
 
-/* ── MEJORA 20: Landscape — ajustes dinámicos ────────────────────── */
-(function handleLandscape() {
-  function checkOrientation() {
-    const isLandscape = window.innerWidth > window.innerHeight && window.innerHeight < 500;
-    document.body.classList.toggle('is-landscape-mobile', isLandscape);
 
-    // En landscape, reducir el canvas de nieve para performance
-    const canvas = document.getElementById('heroCanvas');
-    if (canvas && isLandscape) {
-      canvas.style.opacity = '0.2';
-    } else if (canvas) {
-      canvas.style.opacity = '';
-    }
-  }
+/* ════════════════════════════════════════════════════════════════
+   MEJORAS DISEÑO Y UI  JS  (1-5, 7, 14, 18)
+   ════════════════════════════════════════════════════════════════ */
 
-  window.addEventListener('resize', checkOrientation, { passive: true });
-  window.addEventListener('orientationchange', () => {
-    setTimeout(checkOrientation, 200); // delay para que el resize se complete
-  }, { passive: true });
-
-  checkOrientation();
+/* ── UI 1: Favicon personalizado con SVG ── */
+(function addFavicon() {
+  if (document.querySelector('link[rel="icon"]')) return;
+  const svgFavicon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60" width="60" height="60">
+    <defs>
+      <clipPath id="fTL"><polygon points="0,0 60,0 0,60"/></clipPath>
+      <clipPath id="fBR"><polygon points="60,0 60,60 0,60"/></clipPath>
+    </defs>
+    <circle cx="30" cy="30" r="29" fill="#0e2a47" clip-path="url(#fTL)"/>
+    <circle cx="30" cy="30" r="29" fill="#ff6b35" clip-path="url(#fBR)"/>
+    <line x1="60" y1="0" x2="0" y2="60" stroke="white" stroke-width="2"/>
+    <g clip-path="url(#fTL)">
+      <circle cx="25" cy="22" r="1.5" fill="white"/>
+      <line x1="25" y1="17" x2="25" y2="27" stroke="white" stroke-width="2" stroke-linecap="round"/>
+      <line x1="20" y1="22" x2="30" y2="22" stroke="white" stroke-width="2" stroke-linecap="round"/>
+    </g>
+    <g clip-path="url(#fBR)">
+      <circle cx="37" cy="40" r="5" fill="white" opacity="0.95"/>
+      <line x1="37" y1="32" x2="37" y2="30" stroke="white" stroke-width="2" stroke-linecap="round"/>
+      <line x1="37" y1="50" x2="37" y2="48" stroke="white" stroke-width="2" stroke-linecap="round"/>
+      <line x1="29" y1="40" x2="27" y2="40" stroke="white" stroke-width="2" stroke-linecap="round"/>
+      <line x1="47" y1="40" x2="45" y2="40" stroke="white" stroke-width="2" stroke-linecap="round"/>
+    </g>
+  </svg>`;
+  const faviconUrl = 'data:image/svg+xml;base64,' + btoa(svgFavicon);
+  const link = document.createElement('link');
+  link.rel  = 'icon';
+  link.type = 'image/svg+xml';
+  link.href = faviconUrl;
+  document.head.appendChild(link);
+  const apple = document.createElement('link');
+  apple.rel  = 'apple-touch-icon';
+  apple.href = faviconUrl;
+  document.head.appendChild(apple);
 })();
 
-/* ── MEJORAS 2, 8, 11, 18 combinadas: Performance en mobile ─────── */
-(function mobilePerformance() {
-  if (window.innerWidth > 768) return;
-
-  // Pausar animaciones CSS pesadas en mobile
-  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const isMobile = window.innerWidth <= 768;
-
-  // Reducir animaciones en mobile de gama baja
-  if (isMobile) {
-    // Detectar si es dispositivo lento (hardware concurrency bajo)
-    const isLowEnd = navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 2;
-    if (isLowEnd || prefersReducedMotion) {
-      document.documentElement.style.setProperty('--spring', '.2s ease');
-      document.documentElement.style.setProperty('--trans', '.15s ease');
-      // Pausar canvas
-      const canvas = document.getElementById('heroCanvas');
-      if (canvas) canvas.style.display = 'none';
-    }
-  }
-
-  // Fix scroll horizontal por si algún elemento desborda
-  requestAnimationFrame(() => {
-    document.querySelectorAll('section, .section').forEach(el => {
-      if (el.scrollWidth > window.innerWidth) {
-        el.style.overflowX = 'hidden';
-      }
-    });
-  });
-})();
-
-/* ═══════════════════════════════════════════════════════════════════
-   🎨 KEMPEL — 20 MEJORAS DISEÑO Y UI — JavaScript
-   ═══════════════════════════════════════════════════════════════════ */
-
-/* ── MEJORA 2: Toggle modo claro/oscuro con persistencia ─────────── */
+/* ── UI 2: Toggle modo claro/oscuro con persistencia ── */
 (function initThemeToggle() {
-  const btn = document.getElementById('themeToggleBtn');
-  if (!btn) return;
+  const themeToggle = document.createElement('button');
+  themeToggle.className = 'theme-toggle-btn';
+  themeToggle.setAttribute('aria-label', 'Cambiar tema');
+  document.body.appendChild(themeToggle);
 
-  function applyTheme(theme) {
-    document.documentElement.setAttribute('data-theme', theme);
-    localStorage.setItem('kempel-theme', theme);
-    // Actualizar meta theme-color para mobile browser chrome
-    const mc = document.querySelector('meta[name="theme-color"]');
-    if (mc) mc.content = theme === 'light' ? '#eaf3fb' : '#06152b';
-    // Actualizar aria-label
-    btn.setAttribute('aria-label', theme === 'dark'
-      ? 'Cambiar a modo claro'
-      : 'Cambiar a modo oscuro');
+  const html = document.documentElement;
+  function updateIcon() {
+    const isDark = html.getAttribute('data-theme') !== 'light';
+    themeToggle.innerHTML = isDark
+      ? '<i class="fas fa-sun" aria-hidden="true"></i>'
+      : '<i class="fas fa-moon" aria-hidden="true"></i>';
   }
+  updateIcon();
 
-  btn.addEventListener('click', () => {
-    const current = document.documentElement.getAttribute('data-theme') || 'dark';
-    const next    = current === 'dark' ? 'light' : 'dark';
-    applyTheme(next);
-    // Toast informativo
+  themeToggle.addEventListener('click', () => {
+    const newTheme = html.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+    html.setAttribute('data-theme', newTheme);
+    localStorage.setItem('kempel-theme', newTheme);
+    updateIcon();
     if (typeof showToast === 'function') {
-      showToast(next === 'light' ? '☀️ Modo claro activado' : '🌙 Modo oscuro activado', 'info', 2000);
+      showToast('Modo ' + (newTheme === 'dark' ? 'oscuro' : 'claro') + ' activado', 'info', 2000);
     }
   });
+})();
 
-  // Sincronizar con preferencia del sistema si no hay guardado
-  if (!localStorage.getItem('kempel-theme')) {
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    applyTheme(prefersDark ? 'dark' : 'light');
+/* ── UI 3: Transformar lista "Por qué elegirnos" con iconos animados ── */
+(function enhanceWhyList() {
+  const whyList = document.querySelector('.why-list');
+  if (!whyList) return;
+  const newList = document.createElement('ul');
+  newList.className = 'why-list-modern';
+  const icons = ['fa-shield-alt','fa-clock','fa-star','fa-wrench','fa-map-marker-alt'];
+  whyList.querySelectorAll('li').forEach((item, index) => {
+    const li = document.createElement('li');
+    li.innerHTML = `
+      <div class="why-icon"><i class="fas ${icons[index % icons.length]}" aria-hidden="true"></i></div>
+      <span>${item.textContent.trim()}</span>
+    `;
+    newList.appendChild(li);
+  });
+  whyList.parentNode.replaceChild(newList, whyList);
+})();
+
+/* ── UI 4: Badge abierto/cerrado en footer ── */
+(function addFooterOpenBadge() {
+  const footerBrand = document.querySelector('.footer-brand');
+  if (!footerBrand || footerBrand.querySelector('.footer-open-badge')) return;
+  const now    = new Date();
+  const day    = now.getDay();
+  const hour   = now.getHours() + now.getMinutes() / 60;
+  const isOpen = day >= 1 && day <= 6 && hour >= 8 && hour < 20;
+  const badge  = document.createElement('div');
+  badge.className = 'footer-open-badge';
+  badge.innerHTML = isOpen
+    ? '<i class="fas fa-circle" aria-hidden="true"></i> Abierto ahora'
+    : '<i class="fas fa-circle" aria-hidden="true"></i> Cerrado ahora';
+  if (!isOpen) {
+    badge.style.color        = '#ef4444';
+    badge.style.background   = 'rgba(239,68,68,0.1)';
+    badge.style.borderColor  = 'rgba(239,68,68,0.3)';
   }
-
-  // Escuchar cambios del sistema
-  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
-    if (!localStorage.getItem('kempel-theme')) {
-      applyTheme(e.matches ? 'dark' : 'light');
-    }
-  });
+  footerBrand.appendChild(badge);
 })();
 
-/* ── MEJORA 3: Why-list animaciones en scroll ────────────────────── */
-(function initWhyList() {
-  const techWhy = document.querySelector('.tech-why');
-  if (!techWhy) return;
-  const obs = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        e.target.classList.add('visible');
-        obs.unobserve(e.target);
-      }
-    });
-  }, { threshold: 0.3 });
-  obs.observe(techWhy);
-})();
-
-/* ── MEJORA 4: Indicador Abierto/Cerrado dinámico ────────────────── */
-(function initOpenNowBadge() {
-  const badge = document.getElementById('openNowBadge');
-  if (!badge) return;
-
-  function updateBadge() {
-    const now  = new Date();
-    const day  = now.getDay();   // 0=Dom, 1=Lun, ..., 6=Sáb
-    const hour = now.getHours();
-    const min  = now.getMinutes();
-    const time = hour + min / 60;
-
-    const isWorkday = day >= 1 && day <= 6;
-    const isHours   = time >= 8 && time < 20;
-    const isOpen    = isWorkday && isHours;
-
-    if (isOpen) {
-      badge.className = 'open-now-badge is-open';
-      const closeHour = 20 - time;
-      const hoursLeft = Math.floor(closeHour);
-      const minsLeft  = Math.round((closeHour - hoursLeft) * 60);
-      let timeText = '';
-      if (hoursLeft > 0) timeText = ` · cierra en ${hoursLeft}h`;
-      else if (minsLeft > 0) timeText = ` · cierra en ${minsLeft}min`;
-      badge.innerHTML = `<span class="badge-dot"></span>Abierto ahora${timeText}`;
-    } else {
-      badge.className = 'open-now-badge is-closed';
-      let msg = 'Cerrado';
-      if (day === 0) msg = 'Cerrado · Abre Lun 8hs';
-      else if (!isHours && hour < 8) msg = 'Abre a las 8:00hs';
-      else if (!isHours && hour >= 20) msg = day < 6 ? 'Abre mañana 8hs' : 'Abre el Lunes 8hs';
-      badge.innerHTML = `<span class="badge-dot"></span>${msg}`;
-    }
-  }
-
-  updateBadge();
-  // Actualizar cada minuto
-  setInterval(updateBadge, 60000);
-
-  // Eliminar el badge que agrega el initOpenNow viejo (si existe)
-  const oldBadge = document.querySelector('.open-now:not(#openNowBadge)');
-  if (oldBadge) oldBadge.remove();
-})();
-
-/* ── MEJORA 7: Detectar dispositivos de gama baja ───────────────── */
-(function detectLowEndDevice() {
-  const cores   = navigator.hardwareConcurrency || 4;
-  const memory  = navigator.deviceMemory || 4; // GB, no disponible en todos
-  const prefRed = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  if (cores <= 2 || memory <= 1 || prefRed) {
-    document.body.classList.add('low-end-device');
-  }
-})();
-
-/* ── MEJORA 8: Sección in-view transition ───────────────────────── */
-(function initSectionTransitions() {
-  const sections = document.querySelectorAll('.section');
-  const obs = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        e.target.classList.add('section-in');
-        obs.unobserve(e.target);
-      }
-    });
-  }, { threshold: 0.05 });
-  sections.forEach(s => obs.observe(s));
-})();
-
-/* ── MEJORA 14: Skeleton en todas las fotos de técnicos ──────────── */
-(function initPhotoSkeletons() {
-  // Para fotos de técnicos que NO tienen el skeleton en HTML todavía
-  document.querySelectorAll('.tech-avatar-img img, .tech-big-avatar img, .stc-avatar-img img, .ftb-av-img img, .opt-avatar-img img').forEach(img => {
-    if (img.previousElementSibling?.classList.contains('img-skeleton')) return; // ya tiene
-    const skeleton = document.createElement('div');
-    skeleton.className = 'img-skeleton';
-    img.parentNode.insertBefore(skeleton, img);
-    img.addEventListener('load', () => {
-      skeleton.style.display = 'none';
-      img.classList.add('img-loaded');
-    });
-    // Si ya cargó (caché)
-    if (img.complete && img.naturalWidth > 0) {
-      skeleton.style.display = 'none';
-      img.classList.add('img-loaded');
-    }
-  });
-})();
-
-/* ── MEJORA 19: Logo micro-animación al hacer clic ───────────────── */
-(function initLogoClick() {
-  const logoIcon = document.getElementById('logoIcon');
-  if (!logoIcon) return;
-  logoIcon.parentElement?.addEventListener('click', (e) => {
-    // Solo si es el logo (no el texto)
-    if (!e.target.closest('.logo-icon')) return;
-    logoIcon.style.animation = 'none';
-    logoIcon.style.transform = 'rotate(360deg) scale(1.15)';
-    logoIcon.style.transition = 'transform .6s cubic-bezier(.34,1.56,.64,1), filter .3s ease';
-    logoIcon.style.filter = 'drop-shadow(0 0 16px rgba(100,200,232,.9))';
-    setTimeout(() => {
-      logoIcon.style.transform = '';
-      logoIcon.style.filter = '';
-      logoIcon.style.animation = '';
-    }, 700);
-  });
-})();
-
-/* ── MEJORA 20: showToast extendido con tipo 'error' ─────────────── */
-// Parchear el showToast existente para soportar el tipo 'error'
-(function patchToast() {
-  const origShowToast = window.showToast;
-  if (!origShowToast) return;
-  window.showToast = function(msg, type = 'info', dur = 3200) {
-    const icons = {
-      success: 'fa-circle-check',
-      info:    'fa-circle-info',
-      error:   'fa-circle-exclamation',
-      warn:    'fa-triangle-exclamation'
-    };
-    // Mapear 'warn' y 'error' si el original no los soporta
-    const safeType = ['success','info','error','warn'].includes(type) ? type : 'info';
-    return origShowToast(msg, safeType === 'warn' ? 'info' : safeType, dur);
+/* ── UI 5: Reemplazar texto de marcas por logos locales ── */
+(function replaceBrandsWithLogos() {
+  const brandLogos = {
+    'Samsung':    'samsung.svg',
+    'LG':         'lg.svg',
+    'Carrier':    'Logo_Carrier.svg',
+    'Gree':       'Logo_GREE.svg',
+    'Philco':     'Philco_logo.svg',
+    'BGH':        'Logo_de_BGH.svg',
+    'Electrolux': 'Electrolux_logo.svg',
+    'Whirlpool':  'Whirlpool_Logo.svg'
   };
+  document.querySelectorAll('.marcas-content span').forEach(span => {
+    const brand = span.textContent.trim();
+    if (!brandLogos[brand]) return;
+    const img = document.createElement('img');
+    img.src     = brandLogos[brand];
+    img.alt     = brand;
+    img.loading = 'lazy';
+    img.className = 'brand-logo';
+    img.onerror = () => { img.replaceWith(span.cloneNode(true)); };
+    span.replaceWith(img);
+  });
+})();
+
+/* ── UI 7: Detectar baja capacidad y reducir efectos ── */
+(function detectLowPerformance() {
+  const lowEnd = navigator.hardwareConcurrency <= 2;
+  if (!lowEnd) return;
+  document.documentElement.classList.add('low-performance');
+  const canvas = document.getElementById('heroCanvas');
+  if (canvas) canvas.style.display = 'none';
+})();
+
+/* ── UI 14: Skeleton loading para imágenes de técnicos ── */
+(function addSkeletonToTechImages() {
+  document.querySelectorAll(
+    '.tech-big-avatar img, .opt-avatar img, .stc-avatar img, .ftb-av img'
+  ).forEach(img => {
+    const parent = img.parentElement;
+    if (!img.complete) {
+      parent.classList.add('loading');
+      img.addEventListener('load',  () => parent.classList.remove('loading'), { once: true });
+      img.addEventListener('error', () => parent.classList.remove('loading'), { once: true });
+    }
+  });
+})();
+
+/* ── UI 18: Badge "Popular" en servicio destacado ── */
+(function addServiceBadges() {
+  const featured = document.querySelector('.service-card-featured');
+  if (!featured || featured.querySelector('.service-badge')) return;
+  const badge = document.createElement('span');
+  badge.className = 'service-badge';
+  badge.textContent = '⭐ Popular';
+  featured.style.position = 'relative';
+  featured.appendChild(badge);
+})();
+
+
+/* ════════════════════════════════════════════════════════════════
+   OPTIMIZACIONES ADICIONALES (3, 7, 15)
+   ════════════════════════════════════════════════════════════════ */
+
+/* ── Optimización 3: Enlazar manifest.json para PWA ── */
+(function linkManifest() {
+  if (document.querySelector('link[rel="manifest"]')) return;
+  const link = document.createElement('link');
+  link.rel  = 'manifest';
+  link.href = 'manifest.json';
+  document.head.appendChild(link);
+})();
+
+/* ── Optimización 7: Pausar canvas en dispositivos de bajo rendimiento ── */
+(function pauseCanvasOnLowEnd() {
+  const canvas = document.getElementById('heroCanvas');
+  if (!canvas) return;
+  const isMobile  = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  const isLowCore = navigator.hardwareConcurrency <= 2;
+  if (isMobile || isLowCore) {
+    canvas.style.display = 'none';
+  }
+})();
+
+/* ── Optimización 15: Año de copyright dinámico (refuerzo) ── */
+(function ensureCopyrightYear() {
+  const el = document.getElementById('copyrightYear');
+  if (el && !el.textContent.includes(new Date().getFullYear())) {
+    const yr = new Date().getFullYear();
+    el.textContent = `© ${yr} Kempel Refrigeración · Todos los derechos reservados`;
+  }
+})();
+
+
+/* ════════════════════════════════════════════════════════════════
+   CALCULADORA DE AIRE ACONDICIONADO (FRIGORÍAS) — VERSIÓN FINAL
+   ════════════════════════════════════════════════════════════════ */
+(function initFrigoriasCalculator() {
+  const commercialACCapacities = [2250, 3000, 3500, 4500, 5500, 6000, 7500, 9000, 12000, 18000];
+
+  const commercialCableSizes = [
+    { mm2: 1.5, maxAmperage: 10 },
+    { mm2: 2.5, maxAmperage: 16 },
+    { mm2: 4,   maxAmperage: 25 },
+    { mm2: 6,   maxAmperage: 32 },
+    { mm2: 10,  maxAmperage: 40 }
+  ];
+
+  function calcularFrigorias(largo, ancho, alto, personas, electro) {
+    const volumen   = largo * ancho * alto;
+    let frigorias   = volumen * 60;
+    frigorias      += personas * 100;
+    frigorias      += electro  * 100;
+    return Math.ceil(frigorias);
+  }
+
+  function getRecommendedCable(amperaje) {
+    return commercialCableSizes.find(c => amperaje <= c.maxAmperage)
+        || commercialCableSizes[commercialCableSizes.length - 1];
+  }
+
+  function getRecommendedAC(frigorias) {
+    const recommendedFrigories =
+      commercialACCapacities.find(cap => cap >= frigorias)
+      || commercialACCapacities[commercialACCapacities.length - 1];
+
+    const watts           = recommendedFrigories * 1.163;
+    const electricalPower = watts / 3;
+    const amperage        = electricalPower / 220;
+    const cable           = getRecommendedCable(amperage);
+
+    return {
+      recommendedFrigories,
+      watts:          Math.round(watts),
+      electricalPower: Math.round(electricalPower),
+      amperage:       amperage.toFixed(2),
+      cable
+    };
+  }
+
+  function setEl(id, val) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = val;
+  }
+
+  function actualizarCalculadora() {
+    const largo    = parseFloat(document.getElementById('calc-largo')?.value)    || 0;
+    const ancho    = parseFloat(document.getElementById('calc-ancho')?.value)    || 0;
+    const alto     = parseFloat(document.getElementById('calc-alto')?.value)     || 0;
+    const personas = parseInt(document.getElementById('calc-personas')?.value)   || 0;
+    const electro  = parseInt(document.getElementById('calc-electro')?.value)    || 0;
+
+    if (largo <= 0 || ancho <= 0 || alto <= 0) {
+      if (typeof showToast === 'function') showToast('Ingresá valores válidos en las dimensiones.', 'error', 3000);
+      return;
+    }
+
+    const frigorias = calcularFrigorias(largo, ancho, alto, personas, electro);
+    const acData    = getRecommendedAC(frigorias);
+
+    // Mostrar resultado con animación
+    const resultadoDiv = document.getElementById('calc-resultado');
+    if (!resultadoDiv) return;
+    resultadoDiv.style.display = 'none'; // reset para re-animar
+    requestAnimationFrame(() => { resultadoDiv.style.display = 'block'; });
+
+    // Equipo recomendado
+    setEl('recomendado-frigorias', acData.recommendedFrigories + ' fg/h');
+    setEl('recomendado-watts',     acData.watts + ' watts');
+
+    // Especificaciones eléctricas
+    setEl('calc-watts',    acData.watts);
+    setEl('calc-potencia', acData.electricalPower);
+    setEl('calc-amperaje', acData.amperage);
+    setEl('calc-cable',    acData.cable.mm2 + ' mm²');
+    setEl('calc-termica',  acData.cable.maxAmperage + ' A');
+
+    // Tabla de equipos comerciales
+    const tablaContainer = document.getElementById('tabla-equipos');
+    if (tablaContainer) {
+      tablaContainer.innerHTML = '';
+      commercialACCapacities.forEach(cap => {
+        const div = document.createElement('div');
+        div.className = 'equipo-item';
+        div.textContent = cap >= 1000 ? (cap / 1000).toFixed(cap % 1000 === 0 ? 0 : 1) + 'k fg' : cap + ' fg';
+
+        if (cap < frigorias) {
+          div.classList.add('inferior');
+        } else {
+          div.classList.add('suficiente');
+          if (cap === acData.recommendedFrigories) div.classList.add('recomendado');
+        }
+        tablaContainer.appendChild(div);
+      });
+    }
+
+    // Detalle del cálculo
+    const volumen       = largo * ancho * alto;
+    const cargaBase     = volumen * 60;
+    const aportePersonas = personas * 100;
+    const aporteElectro  = electro  * 100;
+    const detalleDiv    = document.getElementById('detalle-calculo');
+    if (detalleDiv) {
+      detalleDiv.innerHTML = `
+        <div>Volumen: <span>${volumen.toFixed(1)} m³</span></div>
+        <div>Carga base: <span>${Math.round(cargaBase)} fg/h</span></div>
+        <div>Personas: <span>+${aportePersonas} fg/h</span></div>
+        <div>Electrodomésticos: <span>+${aporteElectro} fg/h</span></div>
+        <div>Total necesario: <span>${frigorias} fg/h</span></div>
+      `;
+    }
+
+    if (typeof showToast === 'function') {
+      showToast('¡Cálculo listo! El equipo ideal es de ' + acData.recommendedFrigories + ' fg/h 🌡️', 'success', 3500);
+    }
+  }
+
+  // Vincular botón
+  const btn = document.getElementById('calc-button');
+  if (btn) {
+    btn.addEventListener('click', actualizarCalculadora);
+    // Calcular con valores por defecto al cargar
+    window.addEventListener('load', () => setTimeout(actualizarCalculadora, 300));
+  }
+
+  // Recalcular al presionar Enter en cualquier input
+  document.querySelectorAll('.calc-input').forEach(inp => {
+    inp.addEventListener('keydown', e => { if (e.key === 'Enter') actualizarCalculadora(); });
+  });
 })();
