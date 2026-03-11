@@ -350,10 +350,8 @@ document.addEventListener('click', e => {
   setTimeout(() => window.scrollBy(0, -80), 300);
 });
 
-/* ════════════ ANIM 18: THEME TOGGLE — localStorage persistence ════════════ */
-/* Theme is locked to dark — no toggle needed */
-document.documentElement.setAttribute('data-theme', 'dark');
-localStorage.removeItem('kempel-theme');
+/* ════════════ ANIM 18: THEME TOGGLE — ahora manejado por initThemeToggle ════════════ */
+/* El tema se aplica desde el <head> para evitar flash, y el toggle lo maneja initThemeToggle() */
 
 /* ════════════ ANIM 19: HEX GRID BACKGROUND ════════════ */
 (function initHexGrid() {
@@ -1326,137 +1324,439 @@ document.addEventListener('click', e => {
   }
 })();
 
-/* ════════════════════════════════════════════════════
-   MAPA DE COBERTURA INTERACTIVO
-   ════════════════════════════════════════════════════ */
-(function initMapa() {
-  const ciudadData = {
-    'Puerto Gral. San Martín': {
-      estado: 'cubierta',
-      desc: 'Cobertura completa. Nos movemos hasta Puerto San Martín sin problema.',
-      badgeText: '✓ Zona cubierta',
-    },
-    'San Lorenzo': {
-      estado: 'cubierta',
-      desc: 'Cobertura completa. Zona de trabajo habitual para nuestros técnicos.',
-      badgeText: '✓ Zona cubierta',
-    },
-    'Ricardone': {
-      estado: 'cubierta',
-      desc: 'Cobertura completa. Llegamos a Ricardone regularmente.',
-      badgeText: '✓ Zona cubierta',
-    },
-    'Fray Luis Beltrán': {
-      estado: 'hq',
-      desc: 'Nuestra base de operaciones. Pellegrini 71, Fray Luis Beltrán. Atención prioritaria y respuesta más rápida.',
-      badgeText: '⬡ Nuestra base',
-    },
-    'Capitán Bermúdez': {
-      estado: 'cubierta',
-      desc: 'Cobertura completa. Zona de trabajo muy frecuente para nuestros técnicos.',
-      badgeText: '✓ Zona cubierta',
-    },
-    'Granadero Baigorria': {
-      estado: 'consultar',
-      desc: 'Llegamos a Baigorria según disponibilidad. Consultanos por WhatsApp y coordinamos.',
-      badgeText: '? A consultar',
-    },
-    'Rosario': {
-      estado: 'consultar',
-      desc: 'Podemos llegar a Rosario según disponibilidad. Escribinos, siempre buscamos la forma de ayudarte.',
-      badgeText: '? A consultar',
-    },
-  };
+/* ═══════════════════════════════════════════════════════════════════
+   📱 KEMPEL — 20 MEJORAS MOBILE / RESPONSIVE — JavaScript
+   ═══════════════════════════════════════════════════════════════════ */
 
-  const infoDefault = document.getElementById('mapaInfoDefault');
-  const infoDetail  = document.getElementById('mapaInfoDetail');
-  const infoBadge   = document.getElementById('mapaInfoBadge');
-  const infoNombre  = document.getElementById('mapaInfoNombre');
-  const infoDesc    = document.getElementById('mapaInfoDesc');
+/* ── MEJORA 1: Hamburger overlay + cerrar al tocar fuera ──────────── */
+(function patchHamburger() {
+  const hb      = document.getElementById('hamburger');
+  const nav     = document.getElementById('nav');
+  const overlay = document.getElementById('navOverlay');
+  if (!hb || !nav || !overlay) return;
 
-  function mostrarCiudad(nombre) {
-    const data = ciudadData[nombre];
-    if (!data || !infoDetail || !infoDefault) return;
+  function closeMenu() {
+    nav.classList.remove('open');
+    hb.classList.remove('open');
+    hb.setAttribute('aria-expanded', 'false');
+    overlay.classList.remove('active');
+    document.body.style.overflow = '';
+  }
 
-    // Update badge
-    infoBadge.className = 'mapa-info-badge badge-' + data.estado;
-    infoBadge.textContent = data.badgeText;
-    infoNombre.textContent = nombre;
-    infoDesc.textContent = data.desc;
+  function openMenu() {
+    nav.classList.add('open');
+    hb.classList.add('open');
+    hb.setAttribute('aria-expanded', 'true');
+    overlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
 
-    // Toggle visibility
-    infoDefault.classList.add('hidden');
-    infoDetail.classList.remove('hidden');
+  // Reemplazar listener existente
+  const newHb = hb.cloneNode(true);
+  hb.parentNode.replaceChild(newHb, hb);
+  newHb.addEventListener('click', () => {
+    const isOpen = nav.classList.contains('open');
+    isOpen ? closeMenu() : openMenu();
+  });
 
-    // Mark active chip
-    document.querySelectorAll('.mapa-chip').forEach(c => {
-      c.classList.toggle('activo', c.dataset.ciudad === nombre);
-    });
+  // Cerrar al tocar el overlay
+  overlay.addEventListener('click', closeMenu);
 
-    // Mark active ciudad on SVG
-    document.querySelectorAll('.mapa-ciudad').forEach(c => {
-      c.classList.toggle('activa', c.dataset.ciudad === nombre);
+  // Cerrar con Escape
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && nav.classList.contains('open')) closeMenu();
+  });
+
+  // Cerrar al hacer clic en nav-link
+  nav.addEventListener('click', e => {
+    if (e.target.closest('.nav-link, .btn-location')) closeMenu();
+  });
+})();
+
+/* ── MEJORA 3: Wizard — scroll automático al paso activo ─────────── */
+(function patchWizardStepScroll() {
+  function scrollActiveStepIntoView() {
+    const activeDot = document.querySelector('.diag-step-dot.active');
+    const stepsContainer = document.getElementById('diagSteps');
+    if (!activeDot || !stepsContainer) return;
+    if (window.innerWidth > 430) return; // solo en mobile chico
+    const dotLeft  = activeDot.offsetLeft;
+    const dotWidth = activeDot.offsetWidth;
+    const contWidth = stepsContainer.offsetWidth;
+    stepsContainer.scrollTo({
+      left: dotLeft - (contWidth / 2) + (dotWidth / 2),
+      behavior: 'smooth'
     });
   }
 
-  // SVG cities click
-  document.querySelectorAll('.mapa-ciudad').forEach(ciudad => {
-    ciudad.addEventListener('click', () => {
-      const nombre = ciudad.dataset.ciudad;
-      mostrarCiudad(nombre);
-    });
+  // Observer para detectar cuando cambia el paso activo
+  const diagSteps = document.getElementById('diagSteps');
+  if (diagSteps) {
+    const mo = new MutationObserver(() => scrollActiveStepIntoView());
+    mo.observe(diagSteps, { attributes: true, subtree: true, attributeFilter: ['class'] });
+  }
+})();
+
+/* ── MEJORA 10: Teclado numérico en campos apropiados ─────────────── */
+(function addInputModes() {
+  // Altura → numérico
+  const altura = document.getElementById('clientAltura');
+  if (altura) { altura.setAttribute('inputmode', 'numeric'); altura.setAttribute('autocomplete', 'off'); }
+
+  // Si hubiera campos de teléfono
+  document.querySelectorAll('input[type="tel"]').forEach(inp => {
+    inp.setAttribute('inputmode', 'tel');
   });
 
-  // Chip clicks
-  document.querySelectorAll('.mapa-chip').forEach(chip => {
-    chip.addEventListener('click', () => {
-      mostrarCiudad(chip.dataset.ciudad);
+  // Textarea → sin autocorrect molesto en mobile
+  document.querySelectorAll('textarea').forEach(ta => {
+    ta.setAttribute('autocorrect', 'off');
+    ta.setAttribute('autocapitalize', 'sentences');
+  });
+
+  // Nombre y apellido → capitalize primera letra
+  ['clientNombre','clientApellido','clientApodo'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.setAttribute('autocapitalize', 'words');
+  });
+
+  // Calle → capitalize
+  const calle = document.getElementById('clientCalle');
+  if (calle) calle.setAttribute('autocapitalize', 'words');
+})();
+
+/* ── MEJORA 15: Wizard swipe lateral para cambiar pasos ──────────── */
+(function initWizardSwipe() {
+  const diagCard = document.querySelector('.diag-card');
+  if (!diagCard) return;
+
+  let startX = 0, startY = 0, isDragging = false;
+  const SWIPE_THRESHOLD = 60; // px mínimos para contar como swipe
+  const ANGLE_LIMIT = 40;     // grados máximos de inclinación vertical
+
+  diagCard.addEventListener('touchstart', e => {
+    const t = e.touches[0];
+    startX = t.clientX;
+    startY = t.clientY;
+    isDragging = true;
+  }, { passive: true });
+
+  diagCard.addEventListener('touchend', e => {
+    if (!isDragging) return;
+    isDragging = false;
+    const t = e.changedTouches[0];
+    const dx = t.clientX - startX;
+    const dy = t.clientY - startY;
+
+    // Ignorar si el gesto es más vertical que horizontal
+    const angle = Math.abs(Math.atan2(dy, dx) * 180 / Math.PI);
+    if (angle > ANGLE_LIMIT && angle < (180 - ANGLE_LIMIT)) return;
+
+    if (Math.abs(dx) < SWIPE_THRESHOLD) return;
+
+    // Swipe izquierda = avanzar, derecha = retroceder
+    if (dx < 0) {
+      // Swipe izquierda → siguiente paso (simula click en botón siguiente si existe)
+      const nextBtn = document.querySelector('.wizard-panel:not(.hidden) .wizard-next-btn, .wizard-panel:not(.hidden) [id^="btnNext"]');
+      if (nextBtn && !nextBtn.disabled) nextBtn.click();
+    } else {
+      // Swipe derecha → paso anterior
+      const backBtn = document.querySelector('.wizard-panel:not(.hidden) .wizard-back');
+      if (backBtn) backBtn.click();
+    }
+  }, { passive: true });
+})();
+
+/* ── MEJORA 16: FAB WhatsApp — ocultar al scrollear abajo ─────────── */
+(function initFabWaMobile() {
+  const fab     = document.getElementById('fabWaMobile');
+  const backTop = document.getElementById('backTop');
+  if (!fab) return;
+
+  let lastY = 0, ticking = false;
+
+  window.addEventListener('scroll', () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+      const currentY = window.scrollY;
+      if (window.innerWidth > 768) { ticking = false; return; }
+
+      // Ocultar al scrollear rápido hacia abajo, mostrar al subir
+      if (currentY > lastY + 60 && currentY > 300) {
+        fab.style.transform = 'translateY(120%)';
+        fab.style.opacity = '0';
+      } else if (currentY < lastY - 20 || currentY < 200) {
+        fab.style.transform = 'translateY(0)';
+        fab.style.opacity = '1';
+      }
+
+      // Ajustar posición si el back-top está visible
+      if (backTop && backTop.classList.contains('visible')) {
+        fab.classList.add('backtop-visible');
+      } else {
+        fab.classList.remove('backtop-visible');
+      }
+
+      lastY = currentY;
+      ticking = false;
+    });
+  }, { passive: true });
+})();
+
+/* ── MEJORA 19: Back-top no tapa el FAB ──────────────────────────── */
+(function patchBackTop() {
+  const backTop = document.getElementById('backTop');
+  const fab     = document.getElementById('fabWaMobile');
+  if (!backTop || !fab) return;
+
+  // Re-observer para manejar posición
+  window.addEventListener('scroll', () => {
+    if (window.innerWidth > 768) return;
+    if (window.scrollY > 500) {
+      backTop.classList.add('visible');
+    } else {
+      backTop.classList.remove('visible');
+    }
+  }, { passive: true });
+})();
+
+/* ── MEJORA 20: Landscape — ajustes dinámicos ────────────────────── */
+(function handleLandscape() {
+  function checkOrientation() {
+    const isLandscape = window.innerWidth > window.innerHeight && window.innerHeight < 500;
+    document.body.classList.toggle('is-landscape-mobile', isLandscape);
+
+    // En landscape, reducir el canvas de nieve para performance
+    const canvas = document.getElementById('heroCanvas');
+    if (canvas && isLandscape) {
+      canvas.style.opacity = '0.2';
+    } else if (canvas) {
+      canvas.style.opacity = '';
+    }
+  }
+
+  window.addEventListener('resize', checkOrientation, { passive: true });
+  window.addEventListener('orientationchange', () => {
+    setTimeout(checkOrientation, 200); // delay para que el resize se complete
+  }, { passive: true });
+
+  checkOrientation();
+})();
+
+/* ── MEJORAS 2, 8, 11, 18 combinadas: Performance en mobile ─────── */
+(function mobilePerformance() {
+  if (window.innerWidth > 768) return;
+
+  // Pausar animaciones CSS pesadas en mobile
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const isMobile = window.innerWidth <= 768;
+
+  // Reducir animaciones en mobile de gama baja
+  if (isMobile) {
+    // Detectar si es dispositivo lento (hardware concurrency bajo)
+    const isLowEnd = navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 2;
+    if (isLowEnd || prefersReducedMotion) {
+      document.documentElement.style.setProperty('--spring', '.2s ease');
+      document.documentElement.style.setProperty('--trans', '.15s ease');
+      // Pausar canvas
+      const canvas = document.getElementById('heroCanvas');
+      if (canvas) canvas.style.display = 'none';
+    }
+  }
+
+  // Fix scroll horizontal por si algún elemento desborda
+  requestAnimationFrame(() => {
+    document.querySelectorAll('section, .section').forEach(el => {
+      if (el.scrollWidth > window.innerWidth) {
+        el.style.overflowX = 'hidden';
+      }
     });
   });
 })();
 
-/* ════════════════════════════════════════════════════
-   BLOG - EXPANDIR / COLAPSAR ARTÍCULOS
-   ════════════════════════════════════════════════════ */
-(function initBlog() {
-  document.querySelectorAll('.blog-toggle').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const targetId = btn.dataset.target;
-      const content  = document.getElementById(targetId);
-      const textEl   = btn.querySelector('.blog-toggle-text');
-      if (!content) return;
+/* ═══════════════════════════════════════════════════════════════════
+   🎨 KEMPEL — 20 MEJORAS DISEÑO Y UI — JavaScript
+   ═══════════════════════════════════════════════════════════════════ */
 
-      const isOpen = content.classList.contains('expanded');
+/* ── MEJORA 2: Toggle modo claro/oscuro con persistencia ─────────── */
+(function initThemeToggle() {
+  const btn = document.getElementById('themeToggleBtn');
+  if (!btn) return;
 
-      // Cerrar todos los demás
-      document.querySelectorAll('.blog-content.expanded').forEach(c => {
-        if (c.id !== targetId) {
-          c.classList.remove('expanded');
-          const sibBtn = document.querySelector(`[data-target="${c.id}"]`);
-          if (sibBtn) {
-            sibBtn.classList.remove('open');
-            const t = sibBtn.querySelector('.blog-toggle-text');
-            if (t) t.textContent = 'Leer artículo';
-          }
-        }
-      });
+  function applyTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('kempel-theme', theme);
+    // Actualizar meta theme-color para mobile browser chrome
+    const mc = document.querySelector('meta[name="theme-color"]');
+    if (mc) mc.content = theme === 'light' ? '#eaf3fb' : '#06152b';
+    // Actualizar aria-label
+    btn.setAttribute('aria-label', theme === 'dark'
+      ? 'Cambiar a modo claro'
+      : 'Cambiar a modo oscuro');
+  }
 
-      // Toggle this one
-      content.classList.toggle('expanded', !isOpen);
-      btn.classList.toggle('open', !isOpen);
-      if (textEl) textEl.textContent = isOpen ? 'Leer artículo' : 'Cerrar artículo';
+  btn.addEventListener('click', () => {
+    const current = document.documentElement.getAttribute('data-theme') || 'dark';
+    const next    = current === 'dark' ? 'light' : 'dark';
+    applyTheme(next);
+    // Toast informativo
+    if (typeof showToast === 'function') {
+      showToast(next === 'light' ? '☀️ Modo claro activado' : '🌙 Modo oscuro activado', 'info', 2000);
+    }
+  });
 
-      // Scroll to card if opening
-      if (!isOpen) {
-        setTimeout(() => {
-          btn.closest('.blog-card')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }, 100);
+  // Sincronizar con preferencia del sistema si no hay guardado
+  if (!localStorage.getItem('kempel-theme')) {
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    applyTheme(prefersDark ? 'dark' : 'light');
+  }
+
+  // Escuchar cambios del sistema
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+    if (!localStorage.getItem('kempel-theme')) {
+      applyTheme(e.matches ? 'dark' : 'light');
+    }
+  });
+})();
+
+/* ── MEJORA 3: Why-list animaciones en scroll ────────────────────── */
+(function initWhyList() {
+  const techWhy = document.querySelector('.tech-why');
+  if (!techWhy) return;
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        obs.unobserve(e.target);
       }
     });
-  });
+  }, { threshold: 0.3 });
+  obs.observe(techWhy);
+})();
 
-  // Observe blog cards for scroll reveal
-  document.querySelectorAll('.blog-card').forEach(card => {
-    if (typeof revealObs !== 'undefined') revealObs.observe(card);
+/* ── MEJORA 4: Indicador Abierto/Cerrado dinámico ────────────────── */
+(function initOpenNowBadge() {
+  const badge = document.getElementById('openNowBadge');
+  if (!badge) return;
+
+  function updateBadge() {
+    const now  = new Date();
+    const day  = now.getDay();   // 0=Dom, 1=Lun, ..., 6=Sáb
+    const hour = now.getHours();
+    const min  = now.getMinutes();
+    const time = hour + min / 60;
+
+    const isWorkday = day >= 1 && day <= 6;
+    const isHours   = time >= 8 && time < 20;
+    const isOpen    = isWorkday && isHours;
+
+    if (isOpen) {
+      badge.className = 'open-now-badge is-open';
+      const closeHour = 20 - time;
+      const hoursLeft = Math.floor(closeHour);
+      const minsLeft  = Math.round((closeHour - hoursLeft) * 60);
+      let timeText = '';
+      if (hoursLeft > 0) timeText = ` · cierra en ${hoursLeft}h`;
+      else if (minsLeft > 0) timeText = ` · cierra en ${minsLeft}min`;
+      badge.innerHTML = `<span class="badge-dot"></span>Abierto ahora${timeText}`;
+    } else {
+      badge.className = 'open-now-badge is-closed';
+      let msg = 'Cerrado';
+      if (day === 0) msg = 'Cerrado · Abre Lun 8hs';
+      else if (!isHours && hour < 8) msg = 'Abre a las 8:00hs';
+      else if (!isHours && hour >= 20) msg = day < 6 ? 'Abre mañana 8hs' : 'Abre el Lunes 8hs';
+      badge.innerHTML = `<span class="badge-dot"></span>${msg}`;
+    }
+  }
+
+  updateBadge();
+  // Actualizar cada minuto
+  setInterval(updateBadge, 60000);
+
+  // Eliminar el badge que agrega el initOpenNow viejo (si existe)
+  const oldBadge = document.querySelector('.open-now:not(#openNowBadge)');
+  if (oldBadge) oldBadge.remove();
+})();
+
+/* ── MEJORA 7: Detectar dispositivos de gama baja ───────────────── */
+(function detectLowEndDevice() {
+  const cores   = navigator.hardwareConcurrency || 4;
+  const memory  = navigator.deviceMemory || 4; // GB, no disponible en todos
+  const prefRed = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (cores <= 2 || memory <= 1 || prefRed) {
+    document.body.classList.add('low-end-device');
+  }
+})();
+
+/* ── MEJORA 8: Sección in-view transition ───────────────────────── */
+(function initSectionTransitions() {
+  const sections = document.querySelectorAll('.section');
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('section-in');
+        obs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.05 });
+  sections.forEach(s => obs.observe(s));
+})();
+
+/* ── MEJORA 14: Skeleton en todas las fotos de técnicos ──────────── */
+(function initPhotoSkeletons() {
+  // Para fotos de técnicos que NO tienen el skeleton en HTML todavía
+  document.querySelectorAll('.tech-avatar-img img, .tech-big-avatar img, .stc-avatar-img img, .ftb-av-img img, .opt-avatar-img img').forEach(img => {
+    if (img.previousElementSibling?.classList.contains('img-skeleton')) return; // ya tiene
+    const skeleton = document.createElement('div');
+    skeleton.className = 'img-skeleton';
+    img.parentNode.insertBefore(skeleton, img);
+    img.addEventListener('load', () => {
+      skeleton.style.display = 'none';
+      img.classList.add('img-loaded');
+    });
+    // Si ya cargó (caché)
+    if (img.complete && img.naturalWidth > 0) {
+      skeleton.style.display = 'none';
+      img.classList.add('img-loaded');
+    }
   });
+})();
+
+/* ── MEJORA 19: Logo micro-animación al hacer clic ───────────────── */
+(function initLogoClick() {
+  const logoIcon = document.getElementById('logoIcon');
+  if (!logoIcon) return;
+  logoIcon.parentElement?.addEventListener('click', (e) => {
+    // Solo si es el logo (no el texto)
+    if (!e.target.closest('.logo-icon')) return;
+    logoIcon.style.animation = 'none';
+    logoIcon.style.transform = 'rotate(360deg) scale(1.15)';
+    logoIcon.style.transition = 'transform .6s cubic-bezier(.34,1.56,.64,1), filter .3s ease';
+    logoIcon.style.filter = 'drop-shadow(0 0 16px rgba(100,200,232,.9))';
+    setTimeout(() => {
+      logoIcon.style.transform = '';
+      logoIcon.style.filter = '';
+      logoIcon.style.animation = '';
+    }, 700);
+  });
+})();
+
+/* ── MEJORA 20: showToast extendido con tipo 'error' ─────────────── */
+// Parchear el showToast existente para soportar el tipo 'error'
+(function patchToast() {
+  const origShowToast = window.showToast;
+  if (!origShowToast) return;
+  window.showToast = function(msg, type = 'info', dur = 3200) {
+    const icons = {
+      success: 'fa-circle-check',
+      info:    'fa-circle-info',
+      error:   'fa-circle-exclamation',
+      warn:    'fa-triangle-exclamation'
+    };
+    // Mapear 'warn' y 'error' si el original no los soporta
+    const safeType = ['success','info','error','warn'].includes(type) ? type : 'info';
+    return origShowToast(msg, safeType === 'warn' ? 'info' : safeType, dur);
+  };
 })();

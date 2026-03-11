@@ -3240,3 +3240,1630 @@ input::placeholder, textarea::placeholder { color: var(--text-muted) !important;
   display: block !important;
   margin: 0 !important;
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   📱 KEMPEL — 20 MEJORAS MOBILE / RESPONSIVE
+   Integradas sin romper estilos existentes
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ─────────────────────────────────────────────────────
+   MEJORA 1 — Menú hamburger: overlay + animación fluida
+   ───────────────────────────────────────────────────── */
+.nav-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(3px);
+  z-index: 998;
+  opacity: 0;
+  transition: opacity .35s ease;
+}
+.nav-overlay.active {
+  display: block;
+  opacity: 1;
+}
+/* Animación de entrada más fluida para el nav */
+@media(max-width:768px) {
+  .nav {
+    transition: transform .38s cubic-bezier(.4,0,.2,1),
+                opacity .3s ease !important;
+  }
+  .nav.open {
+    transform: none !important;
+    opacity: 1 !important;
+    pointer-events: all !important;
+  }
+  /* Cada nav-link entra en cascada */
+  .nav .nav-link:nth-child(1) { transition-delay: 40ms; }
+  .nav .nav-link:nth-child(2) { transition-delay: 80ms; }
+  .nav .nav-link:nth-child(3) { transition-delay: 120ms; }
+  .nav .nav-link:nth-child(4) { transition-delay: 160ms; }
+  .nav .nav-link:nth-child(5) { transition-delay: 200ms; }
+  .nav .nav-link:nth-child(6) { transition-delay: 240ms; }
+  .nav.open .nav-link {
+    animation: navLinkIn .35s ease both;
+  }
+  @keyframes navLinkIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: none; }
+  }
+}
+
+/* ─────────────────────────────────────────────────────
+   MEJORA 2 — Hero simplificado en mobile
+   ───────────────────────────────────────────────────── */
+@media(max-width:480px) {
+  /* Ocultar orbes decorativos — alivian la pantalla chica */
+  .hero-orb { display: none !important; }
+  /* Ocultar mesh animado en pantallas muy chicas */
+  .hero-mesh { display: none !important; }
+  /* Título más legible */
+  .hero-title { font-size: 2.1rem !important; line-height: 1.2 !important; }
+  .hero-line-2 { font-size: 2.5rem !important; }
+  /* Descripción más corta */
+  .hero-desc { font-size: .92rem !important; }
+  /* Stats en 2x2 grid */
+  .hero-stats {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 10px !important;
+    width: 100% !important;
+  }
+  .stat-glass {
+    min-width: unset !important;
+    width: 100% !important;
+    padding: 12px !important;
+    flex-direction: column !important;
+    text-align: center !important;
+  }
+  /* Botones de acción en columna */
+  .hero-actions {
+    flex-direction: column !important;
+    gap: 10px !important;
+    width: 100% !important;
+  }
+  .hero-actions .btn {
+    width: 100% !important;
+    justify-content: center !important;
+    padding: 14px 20px !important;
+  }
+}
+
+/* ─────────────────────────────────────────────────────
+   MEJORA 3 — Wizard de diagnóstico en 360px
+   ───────────────────────────────────────────────────── */
+@media(max-width:430px) {
+  /* Steps con scroll horizontal suave */
+  .diag-steps {
+    overflow-x: auto !important;
+    justify-content: flex-start !important;
+    padding: 14px 16px 10px !important;
+    gap: 0 !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+  }
+  .diag-steps::-webkit-scrollbar { display: none !important; }
+  /* Punto activo siempre visible con scroll automático (lo maneja JS) */
+  .diag-step-dot {
+    min-width: 48px !important;
+    flex-shrink: 0 !important;
+  }
+  .step-num { width: 26px !important; height: 26px !important; font-size: .7rem !important; }
+  .step-label { font-size: .6rem !important; }
+  .step-connector { max-width: 20px !important; min-width: 12px !important; }
+  /* Wizard panel más compacto */
+  .wizard-panel { padding: 16px !important; }
+  .wizard-q { font-size: .88rem !important; }
+  .wizard-opts { gap: 8px !important; }
+  .wizard-opt { padding: 9px 12px !important; font-size: .82rem !important; }
+  /* Diag card sin padding lateral excesivo */
+  .diag-card { border-radius: 16px !important; }
+}
+
+/* ─────────────────────────────────────────────────────
+   MEJORA 4 — Botones mínimo 44px área táctil
+   ───────────────────────────────────────────────────── */
+@media(max-width:768px) {
+  /* Garantiza área táctil mínima en todos los elementos interactivos */
+  .btn,
+  .nav-link,
+  .wizard-opt,
+  .stab,
+  .chip,
+  .faq-q,
+  .opt-card,
+  .mapa-chip,
+  .blog-toggle,
+  .back-top,
+  .hamburger,
+  .social-btn,
+  .footer-tech-btn {
+    min-height: 44px !important;
+  }
+  /* Hamburger más grande y fácil de tocar */
+  .hamburger {
+    padding: 10px !important;
+    min-width: 44px !important;
+    min-height: 44px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+  /* FAQ — toda la fila es táctil */
+  .faq-q {
+    padding: 16px 20px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 12px !important;
+  }
+}
+
+/* ─────────────────────────────────────────────────────
+   MEJORA 5 — Sección Técnicos en mobile
+   ───────────────────────────────────────────────────── */
+@media(max-width:768px) {
+  .tecnicos-grid {
+    grid-template-columns: 1fr !important;
+    gap: 24px !important;
+    max-width: 480px !important;
+    margin: 0 auto !important;
+  }
+  .tech-profile {
+    width: 100% !important;
+  }
+  .tech-profile-inner {
+    padding: 24px 20px !important;
+  }
+  .tech-big-avatar {
+    width: 90px !important;
+    height: 90px !important;
+    margin: 0 auto 12px !important;
+  }
+  .tech-profile-info h3 {
+    text-align: center !important;
+    font-size: 1.2rem !important;
+  }
+  .tech-role { text-align: center !important; }
+  .tech-stats-row {
+    justify-content: center !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+  }
+  .tech-why {
+    padding: 24px 20px !important;
+    width: 100% !important;
+  }
+}
+
+/* ─────────────────────────────────────────────────────
+   MEJORA 6 — Footer mobile bien colapsado
+   ───────────────────────────────────────────────────── */
+@media(max-width:768px) {
+  .footer-grid {
+    grid-template-columns: 1fr !important;
+    gap: 32px !important;
+    text-align: center !important;
+  }
+  .footer-brand {
+    grid-column: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+  }
+  .footer-socials { justify-content: center !important; }
+  .footer-trust-seals {
+    justify-content: center !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 8px !important;
+  }
+  .footer-col { text-align: center !important; }
+  .footer-col ul {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 10px !important;
+  }
+  .footer-tech-btn {
+    max-width: 280px !important;
+    margin: 0 auto !important;
+  }
+  .footer-bottom-inner {
+    flex-direction: column !important;
+    text-align: center !important;
+    gap: 6px !important;
+    font-size: .78rem !important;
+  }
+  .payment-box {
+    text-align: center !important;
+  }
+  .payment-methods {
+    justify-content: center !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+  }
+}
+
+/* ─────────────────────────────────────────────────────
+   MEJORA 7 — Font 16px en inputs → evita zoom iOS
+   ───────────────────────────────────────────────────── */
+@media(max-width:768px) {
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"],
+  input[type="number"],
+  input[type="search"],
+  textarea,
+  select,
+  .wizard-input,
+  .diag-textarea,
+  .contact-textarea,
+  .wizard-custom-input {
+    font-size: 16px !important; /* iOS no hace zoom si es >= 16px */
+    -webkit-text-size-adjust: 100% !important;
+  }
+}
+
+/* ─────────────────────────────────────────────────────
+   MEJORA 8 — Scroll horizontal eliminado globalmente
+   ───────────────────────────────────────────────────── */
+html, body {
+  overflow-x: hidden !important;
+  max-width: 100vw !important;
+}
+/* Elementos que podrían romper el layout horizontal */
+.hero-canvas,
+.hero-mesh,
+.hex-grid,
+.marcas-track {
+  max-width: 100% !important;
+}
+@media(max-width:768px) {
+  /* Sections no desbordan */
+  section, .section, .container {
+    max-width: 100vw !important;
+    overflow-x: hidden !important;
+  }
+  /* Hero stats no se salen */
+  .hero-stats {
+    max-width: 100% !important;
+    flex-wrap: wrap !important;
+  }
+  /* Tabla de diagnóstico no desborda */
+  .diag-wrapper {
+    overflow: hidden !important;
+  }
+  /* Service grid sin desborde */
+  .services-grid {
+    overflow: hidden !important;
+  }
+}
+
+/* ─────────────────────────────────────────────────────
+   MEJORA 9 — Marquee velocidad ajustada en mobile
+   ───────────────────────────────────────────────────── */
+@media(max-width:768px) {
+  /* Más lento en mobile → más legible */
+  .marquee-track {
+    animation-duration: 18s !important;
+  }
+  .mq-item {
+    font-size: .75rem !important;
+  }
+  .mq-sep {
+    font-size: .7rem !important;
+    margin: 0 4px !important;
+  }
+  /* Pausa al tocar */
+  .marquee-strip:active .marquee-track {
+    animation-play-state: paused !important;
+  }
+}
+
+/* ─────────────────────────────────────────────────────
+   MEJORA 10 — Teclado numérico en campos numéricos
+   (También manejado por JS en script.js)
+   ───────────────────────────────────────────────────── */
+/* Los atributos inputmode los agrega el JS, acá solo el estilo */
+@media(max-width:768px) {
+  input[inputmode="numeric"],
+  input[inputmode="tel"],
+  input[inputmode="decimal"] {
+    letter-spacing: .05em !important;
+  }
+}
+
+/* ─────────────────────────────────────────────────────
+   MEJORA 11 — Imagen hero oculta en mobile muy chico
+   ───────────────────────────────────────────────────── */
+@media(max-width:480px) {
+  /* Ocultar la visual decorativa del hero para alivianar la carga */
+  .hero-visual {
+    display: none !important;
+  }
+  /* El hero ocupa toda la pantalla con el contenido */
+  .hero-inner {
+    grid-template-columns: 1fr !important;
+    padding: 32px 20px 60px !important;
+    text-align: center !important;
+    min-height: 90vh !important;
+    align-content: center !important;
+  }
+  .hero-content {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+  }
+  .hero-badge {
+    margin: 0 auto !important;
+  }
+}
+
+/* ─────────────────────────────────────────────────────
+   MEJORA 12 — Menú con scroll interno si hay muchos items
+   ───────────────────────────────────────────────────── */
+@media(max-width:768px) {
+  .nav {
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    padding: 24px 0 40px !important;
+    /* Permite scroll si la pantalla es muy baja (landscape) */
+    max-height: calc(100vh - 70px) !important;
+  }
+  .nav::-webkit-scrollbar { display: none; }
+  /* Separador visual antes del botón de ubicación */
+  .btn-location {
+    margin-top: 8px !important;
+    border-top: 1px solid rgba(100,200,232,.1) !important;
+    padding-top: 16px !important;
+  }
+}
+
+/* ─────────────────────────────────────────────────────
+   MEJORA 13 — Cards de servicios 1 columna < 480px
+   ───────────────────────────────────────────────────── */
+@media(max-width:480px) {
+  .services-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+  .service-card {
+    padding: 20px !important;
+  }
+  .service-card h3 {
+    font-size: 1rem !important;
+  }
+  /* Tabs de filtro más compactos */
+  .service-tabs {
+    gap: 6px !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+  }
+  .stab {
+    padding: 8px 14px !important;
+    font-size: .82rem !important;
+  }
+}
+
+/* ─────────────────────────────────────────────────────
+   MEJORA 14 — Sección de marcas legible en mobile
+   ───────────────────────────────────────────────────── */
+@media(max-width:768px) {
+  .marcas-content span {
+    font-size: 1rem !important;
+    font-weight: 700 !important;
+    padding: 0 16px !important;
+    letter-spacing: .04em !important;
+    color: rgba(255,255,255,.75) !important;
+  }
+  .marcas-track {
+    padding: 16px 0 !important;
+  }
+  /* Velocidad más lenta → se puede leer */
+  .marcas-content {
+    animation-duration: 22s !important;
+  }
+}
+
+/* ─────────────────────────────────────────────────────
+   MEJORA 15 — Wizard con indicador de swipe en touch
+   (El swipe real lo maneja el JS)
+   ───────────────────────────────────────────────────── */
+@media(max-width:768px) {
+  .wizard-panel {
+    /* Permite detectar swipe sin interferir con scroll */
+    touch-action: pan-y !important;
+    position: relative !important;
+  }
+  /* Hint visual de swipe solo en primer paso */
+  .wizard-swipe-hint {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px !important;
+    font-size: .72rem !important;
+    color: var(--muted) !important;
+    margin-top: 12px !important;
+    opacity: 0.7 !important;
+    animation: swipeHintFade 3s ease 1.5s both !important;
+  }
+  @keyframes swipeHintFade {
+    0%   { opacity: 0; }
+    20%  { opacity: 0.7; }
+    80%  { opacity: 0.7; }
+    100% { opacity: 0; }
+  }
+  .swipe-arrows {
+    letter-spacing: 4px !important;
+    color: var(--ice) !important;
+  }
+}
+/* En desktop el hint no existe */
+@media(min-width:769px) {
+  .wizard-swipe-hint { display: none !important; }
+}
+
+/* ─────────────────────────────────────────────────────
+   MEJORA 16 — WhatsApp flotante siempre visible mobile
+   ───────────────────────────────────────────────────── */
+.fab-wa-mobile {
+  display: none; /* Solo visible en mobile */
+  position: fixed;
+  bottom: 24px;
+  right: 20px;
+  z-index: 890;
+  background: linear-gradient(135deg, #25d366, #128c7e);
+  color: white;
+  border-radius: 50px;
+  padding: 12px 18px 12px 14px;
+  align-items: center;
+  gap: 8px;
+  font-size: .88rem;
+  font-weight: 700;
+  box-shadow: 0 4px 20px rgba(37,211,102,.55),
+              0 0 0 0 rgba(37,211,102,.4);
+  text-decoration: none;
+  animation: fabPulse 2.5s ease-in-out infinite;
+  transition: transform .3s var(--spring), box-shadow .3s ease;
+}
+.fab-wa-mobile i {
+  font-size: 1.3rem;
+  flex-shrink: 0;
+}
+.fab-wa-label {
+  font-size: .84rem;
+  white-space: nowrap;
+}
+.fab-wa-mobile:hover,
+.fab-wa-mobile:active {
+  transform: scale(1.06) translateY(-2px);
+  box-shadow: 0 8px 32px rgba(37,211,102,.7);
+}
+@keyframes fabPulse {
+  0%, 100% { box-shadow: 0 4px 20px rgba(37,211,102,.55), 0 0 0 0 rgba(37,211,102,.35); }
+  50%       { box-shadow: 0 4px 20px rgba(37,211,102,.55), 0 0 0 12px rgba(37,211,102,0); }
+}
+/* Solo en mobile */
+@media(max-width:768px) {
+  .fab-wa-mobile { display: flex !important; }
+  /* El back-top no choca con el FAB */
+  .back-top {
+    bottom: 90px !important;
+    right: 20px !important;
+  }
+  /* En mobile el botón WA del header puede quedarse pero el FAB es suficiente */
+}
+/* En desktop nunca aparece */
+@media(min-width:769px) {
+  .fab-wa-mobile { display: none !important; }
+  .back-top { bottom: 28px !important; right: 28px !important; }
+}
+/* Si el usuario scrollea y aparece el back-top, el FAB sube un poco */
+.fab-wa-mobile.backtop-visible {
+  bottom: 90px !important;
+}
+
+/* ─────────────────────────────────────────────────────
+   MEJORA 17 — FAQ área táctil completa
+   ───────────────────────────────────────────────────── */
+@media(max-width:768px) {
+  .faq-item {
+    border-radius: 12px !important;
+    overflow: hidden !important;
+  }
+  /* Toda la fila del faq-q es clickeable */
+  .faq-q {
+    width: 100% !important;
+    text-align: left !important;
+    padding: 18px 20px !important;
+    min-height: 56px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 16px !important;
+    background: none !important;
+    border: none !important;
+    cursor: pointer !important;
+    color: inherit !important;
+    font-size: .95rem !important;
+    font-weight: 600 !important;
+    line-height: 1.4 !important;
+  }
+  .faq-q span {
+    flex: 1 !important;
+    text-align: left !important;
+  }
+  .faq-icon {
+    flex-shrink: 0 !important;
+    width: 20px !important;
+    height: 20px !important;
+    font-size: .9rem !important;
+  }
+  .faq-a {
+    padding: 0 20px 18px !important;
+    font-size: .88rem !important;
+    line-height: 1.7 !important;
+  }
+}
+
+/* ─────────────────────────────────────────────────────
+   MEJORA 18 — Elementos SVG/decorativos táctiles
+   ───────────────────────────────────────────────────── */
+@media(max-width:768px) {
+  /* Hero canvas más liviano en mobile */
+  .hero-canvas {
+    opacity: 0.4 !important; /* Menos denso visualmente */
+  }
+  /* Hex grid del wizard oculto en mobile → performance */
+  .hex-grid {
+    display: none !important;
+  }
+  /* Float cards del hero ocultas */
+  .float-card {
+    display: none !important;
+  }
+  /* Scroll indicator visible y correctamente posicionado */
+  .scroll-indicator {
+    bottom: 20px !important;
+  }
+}
+
+/* ─────────────────────────────────────────────────────
+   MEJORA 19 — Back-to-top reposicionado correctamente
+   ───────────────────────────────────────────────────── */
+@media(max-width:768px) {
+  /* Con el FAB de WA presente, el back-top va arriba del fab */
+  .back-top {
+    bottom: 88px !important;
+    right: 20px !important;
+    width: 40px !important;
+    height: 40px !important;
+  }
+  .back-top svg {
+    width: 40px !important;
+    height: 40px !important;
+  }
+  .back-top i {
+    font-size: .85rem !important;
+  }
+}
+@media(max-width:380px) {
+  .back-top {
+    bottom: 84px !important;
+    right: 14px !important;
+  }
+  .fab-wa-mobile {
+    right: 14px !important;
+    bottom: 18px !important;
+    padding: 11px 14px 11px 12px !important;
+  }
+  .fab-wa-label { display: none !important; } /* Solo ícono en pantallas muy chicas */
+  .fab-wa-mobile {
+    border-radius: 50% !important;
+    padding: 13px !important;
+    width: 52px !important;
+    height: 52px !important;
+    justify-content: center !important;
+  }
+}
+
+/* ─────────────────────────────────────────────────────
+   MEJORA 20 — Landscape contemplada
+   ───────────────────────────────────────────────────── */
+@media(max-height:500px) and (orientation:landscape) {
+  /* Hero en landscape: menos altura */
+  .hero {
+    min-height: 100svh !important;
+    padding-top: 65px !important;
+    padding-bottom: 40px !important;
+  }
+  .hero-title { font-size: 1.7rem !important; }
+  .hero-stats { display: none !important; }
+  .hero-visual { display: none !important; }
+  .hero-inner {
+    grid-template-columns: 1fr !important;
+    padding: 20px 20px 30px !important;
+    text-align: center !important;
+  }
+
+  /* Nav en landscape: horizontal con scroll */
+  .nav {
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    padding: 16px !important;
+    gap: 8px !important;
+    align-items: center !important;
+    overflow-y: auto !important;
+  }
+  .nav .nav-link {
+    font-size: .9rem !important;
+    padding: 10px 16px !important;
+  }
+
+  /* Sections más compactas en landscape */
+  .section {
+    padding: 50px 0 !important;
+  }
+  .section-title {
+    font-size: 1.6rem !important;
+  }
+
+  /* Wizard más compacto */
+  .diag-card {
+    max-height: 90vh !important;
+    overflow-y: auto !important;
+  }
+
+  /* Footer compacto */
+  .footer-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 20px !important;
+  }
+
+  /* FAB reposicionado en landscape */
+  .fab-wa-mobile {
+    bottom: 14px !important;
+    right: 14px !important;
+  }
+  .back-top {
+    bottom: 72px !important;
+    right: 14px !important;
+  }
+}
+
+/* ─────────────────────────────────────────────────────
+   EXTRAS: Ajustes finos globales para mobile
+   ───────────────────────────────────────────────────── */
+@media(max-width:768px) {
+  /* Sección header — open-now badge visible */
+  .open-now {
+    font-size: .72rem !important;
+    padding: 3px 8px !important;
+  }
+  /* Contact layout en mobile */
+  .contact-layout {
+    grid-template-columns: 1fr !important;
+    gap: 24px !important;
+  }
+  .contact-form-card {
+    padding: 20px !important;
+  }
+  /* Sidebar al final en mobile */
+  .contact-sidebar {
+    order: 2 !important;
+  }
+  /* Opt grid en mobile */
+  .opt-grid {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+  /* Section headers más compactos */
+  .section-header {
+    margin-bottom: 36px !important;
+  }
+  .section-title {
+    font-size: 1.75rem !important;
+  }
+  .section-desc {
+    font-size: .9rem !important;
+  }
+  /* Features strip */
+  .features-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 16px !important;
+  }
+  .feat-item {
+    padding: 16px 12px !important;
+  }
+  /* Wizard client form */
+  .client-form-row {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+  /* Confirm summary más legible */
+  .confirm-row {
+    flex-direction: row !important;
+    align-items: flex-start !important;
+    gap: 10px !important;
+    padding: 10px 0 !important;
+  }
+}
+/* Pantallas muy chicas 360px */
+@media(max-width:380px) {
+  .container { padding: 0 16px !important; }
+  .section { padding: 56px 0 !important; }
+  .hero-title { font-size: 1.85rem !important; }
+  .features-grid { grid-template-columns: 1fr !important; }
+  .feat-item { border-right: none !important; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   🎨 KEMPEL — 20 MEJORAS DISEÑO Y UI
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ─────────────────────────────────────────────────────
+   MEJORA 1 — Favicon ya definido en HTML (SVG inline)
+   ─────────────────────────────────────────────────────  */
+
+/* ─────────────────────────────────────────────────────
+   MEJORA 2 — Modo claro/oscuro completo
+   ─────────────────────────────────────────────────────  */
+
+/* Variables tema CLARO */
+[data-theme="light"] {
+  --navy:        #eaf3fb;
+  --navy-mid:    #daeaf6;
+  --navy-light:  #cde0f2;
+  --ice:         #1a7fa8;
+  --ice-light:   #1565a0;
+  --ice-pale:    #0d4f80;
+  --amber:       #c97a00;
+  --orange:      #d95a1a;
+  --purple:      #5b21b6;
+  --bg:          #f0f7fd;
+  --bg-section:  #e4f0fa;
+  --bg-card:     #ffffff;
+  --text:        rgba(10,30,55,.88);
+  --text-mid:    rgba(10,30,55,.60);
+  --text-muted:  rgba(10,30,55,.40);
+  --light:       rgba(10,30,55,.95);
+  --muted:       rgba(10,30,55,.50);
+  --border:      rgba(26,127,168,0.18);
+  --shadow-sm:   0 2px 14px rgba(0,0,0,.08);
+  --shadow-md:   0 8px 36px rgba(0,0,0,.12);
+  --shadow-lg:   0 24px 64px rgba(0,0,0,.16);
+  --shadow-glow: 0 0 40px rgba(26,127,168,.15);
+}
+
+/* Ajustes específicos en modo claro */
+[data-theme="light"] body {
+  background: var(--bg);
+  color: var(--text);
+}
+[data-theme="light"] .header {
+  background: rgba(234,243,251,0.92) !important;
+  border-bottom-color: rgba(26,127,168,0.15) !important;
+}
+[data-theme="light"] .header.scrolled {
+  background: rgba(234,243,251,0.97) !important;
+  box-shadow: 0 2px 20px rgba(0,0,0,.10) !important;
+}
+[data-theme="light"] .hero {
+  background: linear-gradient(135deg, #daeaf6 0%, #eaf3fb 100%) !important;
+}
+[data-theme="light"] .hero-gradient {
+  background: radial-gradient(ellipse 90% 80% at 55% 40%, rgba(234,243,251,0.98) 0%, #eaf3fb 65%) !important;
+}
+[data-theme="light"] .hero-title,
+[data-theme="light"] .hero-title .hero-line,
+[data-theme="light"] .hero-line-1,
+[data-theme="light"] .hero-line-3 {
+  color: #0a1e37 !important;
+  -webkit-text-fill-color: #0a1e37 !important;
+}
+[data-theme="light"] .gradient-text {
+  background: linear-gradient(90deg, #1a7fa8, #1565a0, #c97a00, #1a7fa8) !important;
+  background-size: 200% auto !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+}
+[data-theme="light"] .service-card {
+  background: #ffffff !important;
+  border-color: rgba(26,127,168,.15) !important;
+  box-shadow: 0 4px 20px rgba(0,0,0,.07) !important;
+}
+[data-theme="light"] .service-card:hover {
+  box-shadow: 0 12px 40px rgba(26,127,168,.18) !important;
+}
+[data-theme="light"] .diag-card,
+[data-theme="light"] .tech-profile,
+[data-theme="light"] .contact-form-card,
+[data-theme="light"] .sidebar-tech-card,
+[data-theme="light"] .faq-item {
+  background: #ffffff !important;
+  border-color: rgba(26,127,168,.15) !important;
+}
+[data-theme="light"] .nav-link,
+[data-theme="light"] .logo-name,
+[data-theme="light"] .section-title,
+[data-theme="light"] h1, [data-theme="light"] h2,
+[data-theme="light"] h3, [data-theme="light"] h4 {
+  color: #0a1e37 !important;
+  -webkit-text-fill-color: #0a1e37 !important;
+}
+[data-theme="light"] .logo-sub { color: var(--ice) !important; -webkit-text-fill-color: var(--ice) !important; }
+[data-theme="light"] .tech-role,
+[data-theme="light"] .section-desc,
+[data-theme="light"] .hero-desc,
+[data-theme="light"] p { color: rgba(10,30,55,.65) !important; }
+[data-theme="light"] .feat-item,
+[data-theme="light"] .stat-glass { background: rgba(255,255,255,.8) !important; border-color: rgba(26,127,168,.2) !important; }
+[data-theme="light"] .stat-num { color: #0a1e37 !important; -webkit-text-fill-color: #0a1e37 !important; }
+[data-theme="light"] .marquee-strip { background: linear-gradient(90deg,#daeaf6,#cde0f2,#daeaf6) !important; }
+[data-theme="light"] .mq-item { color: rgba(10,30,55,.65) !important; }
+[data-theme="light"] .footer { background: #1a3a5c !important; }
+[data-theme="light"] .payment-section { background: rgba(20,50,80,0.95) !important; }
+[data-theme="light"] .why-list li { color: rgba(10,30,55,.75) !important; }
+[data-theme="light"] .faq-q { color: #0a1e37 !important; }
+[data-theme="light"] .read-progress { background: linear-gradient(90deg,#1a7fa8,#c97a00,#5b21b6) !important; }
+[data-theme="light"] .page-loader { background: #eaf3fb !important; }
+[data-theme="light"] .hero-canvas { opacity: 0.15 !important; }
+
+/* Toggle button */
+.theme-toggle-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border);
+  background: rgba(255,255,255,.08);
+  color: var(--ice);
+  cursor: pointer;
+  transition: var(--trans);
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+}
+.theme-toggle-btn:hover {
+  background: rgba(100,200,232,.15);
+  border-color: var(--ice);
+  transform: rotate(20deg) scale(1.1);
+}
+/* Mostrar solo el ícono del tema actual */
+[data-theme="dark"] .theme-icon-light  { display: none; }
+[data-theme="dark"] .theme-icon-dark   { display: flex; }
+[data-theme="light"] .theme-icon-dark  { display: none; }
+[data-theme="light"] .theme-icon-light { display: flex; color: #c97a00; }
+
+/* ─────────────────────────────────────────────────────
+   MEJORA 3 — "¿Por qué elegirnos?" iconos animados
+   ─────────────────────────────────────────────────────  */
+.why-list li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  font-size: .9rem;
+  transition: transform .25s ease, color .25s ease;
+  cursor: default;
+}
+.why-list li:hover {
+  transform: translateX(6px);
+  color: rgba(255,255,255,.95) !important;
+}
+.why-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--ice);
+  flex-shrink: 0;
+  transition: transform .3s var(--spring), box-shadow .3s;
+}
+.why-list li:hover .why-dot {
+  transform: scale(1.6);
+  box-shadow: 0 0 10px rgba(100,200,232,.7);
+}
+/* Animación stagger al entrar en viewport */
+.tech-why.visible .why-list li {
+  animation: whyItemIn .4s ease both;
+}
+.tech-why.visible .why-list li:nth-child(1) { animation-delay: 0ms; }
+.tech-why.visible .why-list li:nth-child(2) { animation-delay: 60ms; }
+.tech-why.visible .why-list li:nth-child(3) { animation-delay: 120ms; }
+.tech-why.visible .why-list li:nth-child(4) { animation-delay: 180ms; }
+.tech-why.visible .why-list li:nth-child(5) { animation-delay: 240ms; }
+@keyframes whyItemIn {
+  from { opacity: 0; transform: translateX(-12px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ─────────────────────────────────────────────────────
+   MEJORA 4 — Indicador Abierto/Cerrado en header
+   ─────────────────────────────────────────────────────  */
+.open-now-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 99px;
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+  white-space: nowrap;
+  border: 1px solid transparent;
+  transition: var(--trans);
+}
+.open-now-badge.is-open {
+  background: rgba(37,211,102,.12);
+  border-color: rgba(37,211,102,.35);
+  color: #2ecc71;
+}
+.open-now-badge.is-closed {
+  background: rgba(255,99,99,.1);
+  border-color: rgba(255,99,99,.3);
+  color: #ff6b6b;
+}
+.open-now-badge .badge-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.open-now-badge.is-open .badge-dot {
+  background: #2ecc71;
+  animation: dotPulseGreen 2s ease-in-out infinite;
+}
+.open-now-badge.is-closed .badge-dot {
+  background: #ff6b6b;
+}
+@keyframes dotPulseGreen {
+  0%,100% { box-shadow: 0 0 0 0 rgba(46,204,113,.6); }
+  50%      { box-shadow: 0 0 0 5px rgba(46,204,113,0); }
+}
+/* También visible en mobile */
+@media(max-width:768px) {
+  .open-now-badge {
+    font-size: .68rem !important;
+    padding: 3px 8px !important;
+    order: -1 !important;
+  }
+}
+
+/* ─────────────────────────────────────────────────────
+   MEJORA 5 — Carrusel de marcas con visual cards
+   ─────────────────────────────────────────────────────  */
+.marcas-content {
+  display: flex !important;
+  align-items: center !important;
+  gap: 16px !important;
+  padding: 0 16px !important;
+}
+.marca-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 14px 20px;
+  min-width: 90px;
+  transition: var(--trans);
+  cursor: default;
+  white-space: nowrap;
+}
+.marca-card:hover {
+  background: rgba(100,200,232,.08);
+  border-color: rgba(100,200,232,.3);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0,0,0,.2);
+}
+.marca-initial {
+  width: 38px; height: 38px;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--mc, #1a7fa8) 80%, #0a1e37);
+  color: white;
+  font-weight: 800;
+  font-size: .75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: .02em;
+  font-family: 'Syne', sans-serif;
+  box-shadow: 0 2px 8px rgba(0,0,0,.3);
+}
+.marca-card > span:last-child {
+  font-size: .75rem;
+  font-weight: 600;
+  color: rgba(255,255,255,.7);
+}
+[data-theme="light"] .marca-card {
+  background: rgba(255,255,255,.8) !important;
+  border-color: rgba(26,127,168,.15) !important;
+}
+[data-theme="light"] .marca-card > span:last-child {
+  color: rgba(10,30,55,.65) !important;
+}
+
+/* ─────────────────────────────────────────────────────
+   MEJORA 6 — Colores de estado consistentes
+   ─────────────────────────────────────────────────────  */
+:root {
+  --success:      #2ecc71;
+  --success-bg:   rgba(46,204,113,.12);
+  --success-border: rgba(46,204,113,.3);
+  --danger:       #ff6b6b;
+  --danger-bg:    rgba(255,107,107,.1);
+  --danger-border: rgba(255,107,107,.28);
+  --warn:         #f5a623;
+  --warn-bg:      rgba(245,166,35,.1);
+  --warn-border:  rgba(245,166,35,.3);
+}
+/* Disponible = verde consistente */
+.avail-dot {
+  display: inline-block;
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--success);
+  margin-right: 4px;
+  animation: dotPulseGreen 2s ease-in-out infinite;
+}
+.tech-profile-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 99px;
+  font-size: .72rem;
+  font-weight: 700;
+  background: var(--success-bg);
+  border: 1px solid var(--success-border);
+  color: var(--success);
+}
+/* Errores de formulario en rojo consistente */
+.form-error {
+  background: var(--danger-bg) !important;
+  border: 1px solid var(--danger-border) !important;
+  color: var(--danger) !important;
+  border-radius: 8px;
+  padding: 8px 12px;
+}
+.form-error i { color: var(--danger) !important; }
+
+/* ─────────────────────────────────────────────────────
+   MEJORA 7 — Animaciones reducidas en gama baja
+   ─────────────────────────────────────────────────────  */
+@media (prefers-reduced-motion: reduce) {
+  .hero-orb, .hero-mesh, .hex-grid,
+  .city-pulse-ring, .ai-ring,
+  .avail-dot, .badge-dot,
+  .gradient-text, .logo-ring,
+  .marquee-track, .marcas-track > * {
+    animation: none !important;
+    transition: none !important;
+  }
+  .scroll-reveal, .card-stagger {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
+/* Dispositivos con pocos núcleos: clase agregada por JS */
+body.low-end-device * {
+  animation-duration: .01ms !important;
+  transition-duration: .1s !important;
+}
+body.low-end-device .hero-canvas { display: none !important; }
+body.low-end-device .hex-grid    { display: none !important; }
+body.low-end-device .hero-orb    { display: none !important; }
+
+/* ─────────────────────────────────────────────────────
+   MEJORA 8 — Transiciones más suaves entre secciones
+   ─────────────────────────────────────────────────────  */
+.section {
+  position: relative;
+}
+/* Fade suave al entrar */
+.section.section-in {
+  animation: sectionFadeIn .5s ease both;
+}
+@keyframes sectionFadeIn {
+  from { opacity: 0.85; }
+  to   { opacity: 1; }
+}
+/* Hover cards con transición más natural */
+.service-card,
+.tech-profile,
+.faq-item,
+.contact-form-card,
+.sidebar-tech-card,
+.stat-glass {
+  transition: transform .32s cubic-bezier(.4,0,.2,1),
+              box-shadow .32s cubic-bezier(.4,0,.2,1),
+              border-color .25s ease,
+              background .25s ease !important;
+}
+
+/* ─────────────────────────────────────────────────────
+   MEJORA 9 — Sombras y depth mejorados en cards
+   ─────────────────────────────────────────────────────  */
+.service-card {
+  box-shadow: 0 2px 12px rgba(0,0,0,.25),
+              0 0 0 0 rgba(100,200,232,0) !important;
+}
+.service-card:hover {
+  box-shadow: 0 16px 48px rgba(0,0,0,.4),
+              0 0 0 1px rgba(100,200,232,.15),
+              inset 0 1px 0 rgba(255,255,255,.06) !important;
+}
+.service-card-featured {
+  box-shadow: 0 4px 24px rgba(0,0,0,.35),
+              0 0 0 1.5px rgba(100,200,232,.3),
+              0 0 40px rgba(100,200,232,.08) !important;
+}
+.service-card-featured:hover {
+  box-shadow: 0 20px 60px rgba(0,0,0,.45),
+              0 0 0 1.5px rgba(100,200,232,.5),
+              0 0 50px rgba(100,200,232,.15) !important;
+}
+.tech-profile {
+  box-shadow: 0 4px 20px rgba(0,0,0,.3) !important;
+}
+.tech-profile:hover {
+  box-shadow: 0 20px 56px rgba(0,0,0,.45),
+              0 0 0 1px rgba(100,200,232,.2) !important;
+}
+.diag-card {
+  box-shadow: 0 8px 40px rgba(0,0,0,.45),
+              inset 0 1px 0 rgba(100,200,232,.08) !important;
+}
+.contact-form-card {
+  box-shadow: 0 6px 32px rgba(0,0,0,.3) !important;
+}
+.contact-form-card:focus-within {
+  box-shadow: 0 6px 32px rgba(0,0,0,.35),
+              0 0 0 2px rgba(100,200,232,.2) !important;
+}
+
+/* ─────────────────────────────────────────────────────
+   MEJORA 10 — Tipografía mínima 16px en párrafos
+   ─────────────────────────────────────────────────────  */
+.section-desc {
+  font-size: 1.02rem !important;
+  line-height: 1.8 !important;
+}
+.service-card p {
+  font-size: .92rem !important;
+  line-height: 1.7 !important;
+}
+.hero-desc {
+  font-size: 1.05rem !important;
+  line-height: 1.8 !important;
+}
+.faq-a {
+  font-size: .95rem !important;
+  line-height: 1.75 !important;
+}
+.tech-profile p,
+.tech-profile small,
+.tech-stat span {
+  font-size: .88rem !important;
+}
+.wizard-q {
+  font-size: 1rem !important;
+}
+.wizard-subtitle {
+  font-size: .88rem !important;
+  line-height: 1.65 !important;
+}
+/* Mínimo absoluto para texto de interfaz */
+small, .stat-label, .svc-tag,
+.badge-live + span, .hero-badge span {
+  font-size: max(.72rem, 11px) !important;
+}
+
+/* ─────────────────────────────────────────────────────
+   MEJORA 11 — Separadores visuales entre secciones
+   ─────────────────────────────────────────────────────  */
+.section-divider {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0 24px;
+  max-width: 1160px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+.divider-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent,
+    rgba(100,200,232,.25) 30%,
+    rgba(100,200,232,.25) 70%,
+    transparent);
+}
+.divider-icon {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: var(--bg-card);
+  border: 1px solid rgba(100,200,232,.2);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--ice);
+  font-size: .75rem;
+  flex-shrink: 0;
+  animation: dividerSpin 12s linear infinite;
+  box-shadow: 0 0 12px rgba(100,200,232,.1);
+}
+@keyframes dividerSpin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+[data-theme="light"] .divider-icon { background: white !important; }
+
+/* ─────────────────────────────────────────────────────
+   MEJORA 12 — Hover states en TODOS los clickeables
+   ─────────────────────────────────────────────────────  */
+/* Tags de sección */
+.tag {
+  transition: var(--trans);
+  cursor: default;
+}
+/* Coverage tags */
+.cov-tags span, .cov-tags-sm span {
+  transition: var(--trans);
+  cursor: default;
+}
+.cov-tags span:hover, .cov-tags-sm span:hover {
+  background: rgba(100,200,232,.18) !important;
+  border-color: rgba(100,200,232,.4) !important;
+  transform: translateY(-1px);
+}
+/* Stat glass ya tiene hover, reforzar */
+.stat-glass:hover {
+  cursor: default;
+  transform: translateY(-4px) scale(1.02) !important;
+}
+/* Footer links */
+.footer-col ul a {
+  position: relative;
+  display: inline-block;
+}
+.footer-col ul a::after {
+  content: '';
+  position: absolute;
+  bottom: -1px; left: 0;
+  width: 0; height: 1px;
+  background: var(--ice);
+  transition: width .25s ease;
+}
+.footer-col ul a:hover::after { width: 100%; }
+/* Social buttons */
+.social-btn {
+  transition: transform .3s var(--spring), background .25s ease !important;
+}
+.social-btn:hover {
+  transform: scale(1.15) rotate(-5deg) !important;
+}
+/* Sidebar tech cards */
+.stc-wa {
+  transition: transform .3s var(--spring), box-shadow .25s !important;
+}
+.stc-wa:hover {
+  transform: scale(1.12) !important;
+  box-shadow: 0 4px 16px rgba(37,211,102,.4) !important;
+}
+/* Why-list items con pointer cuando hay hover */
+.why-list li { cursor: default; }
+/* Footer tech buttons */
+.footer-tech-btn {
+  transition: var(--trans) !important;
+}
+.footer-tech-btn:hover {
+  transform: translateX(4px) !important;
+}
+
+/* ─────────────────────────────────────────────────────
+   MEJORA 13 — Gradientes más sutiles
+   ─────────────────────────────────────────────────────  */
+/* Hero gradient menos agresivo */
+.hero-gradient {
+  background: radial-gradient(ellipse 90% 80% at 55% 40%,
+    rgba(14,42,71,.95) 0%,
+    rgba(10,30,55,.98) 50%,
+    var(--navy) 75%) !important;
+}
+/* Hero orbs más sutiles */
+.hero-orb-cold {
+  opacity: 0.4 !important;
+  filter: blur(70px) !important;
+}
+.hero-orb-warm {
+  opacity: 0.25 !important;
+  filter: blur(80px) !important;
+}
+.hero-orb-purple {
+  opacity: 0.2 !important;
+  filter: blur(90px) !important;
+}
+/* Background section menos contrastado */
+.bg-section, [class*="-section"] {
+  /* Transición suave entre bg-section y bg */
+}
+/* Botón primario más suave */
+.btn-primary {
+  background: linear-gradient(135deg, #5ac8e6, #2eadd4) !important;
+  box-shadow: 0 4px 18px rgba(100,200,232,.3) !important;
+}
+.btn-primary:hover {
+  background: linear-gradient(135deg, #64c8e8, #38b4d8) !important;
+  box-shadow: 0 6px 26px rgba(100,200,232,.45) !important;
+}
+/* Diag section bg menos saturado */
+.diag-section {
+  background: linear-gradient(180deg, var(--bg-section) 0%, var(--bg) 100%) !important;
+}
+
+/* ─────────────────────────────────────────────────────
+   MEJORA 14 — Loading skeleton en fotos de técnicos
+   ─────────────────────────────────────────────────────  */
+.img-skeleton {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    90deg,
+    rgba(255,255,255,.04) 0%,
+    rgba(100,200,232,.1) 40%,
+    rgba(255,255,255,.04) 80%
+  );
+  background-size: 200% 100%;
+  animation: skeletonShimmer 1.6s ease-in-out infinite;
+  z-index: 1;
+}
+@keyframes skeletonShimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+/* Foto con fade-in al cargar */
+img.img-loaded {
+  animation: imgFadeIn .5s ease both;
+}
+@keyframes imgFadeIn {
+  from { opacity: 0; transform: scale(1.03); }
+  to   { opacity: 1; transform: none; }
+}
+/* Contenedor relativo para el skeleton */
+.tech-avatar-img,
+.tech-big-avatar {
+  position: relative !important;
+  overflow: hidden !important;
+}
+.tech-avatar-img img,
+.tech-big-avatar img {
+  position: relative;
+  z-index: 2;
+}
+
+/* ─────────────────────────────────────────────────────
+   MEJORA 15 — Logo SVG: micro-animación mejorada
+   (ya existía rotate básico, mejoramos con efecto glow)
+   ─────────────────────────────────────────────────────  */
+.logo-icon {
+  transition: transform .5s var(--spring), filter .4s ease !important;
+  will-change: transform, filter;
+}
+.logo:hover .logo-icon {
+  transform: rotate(25deg) scale(1.12) !important;
+  filter: drop-shadow(0 0 10px rgba(100,200,232,.6)) !important;
+}
+/* Logo text slide al hover */
+.logo:hover .logo-name {
+  color: var(--ice) !important;
+  -webkit-text-fill-color: var(--ice) !important;
+  transition: color .3s ease;
+}
+.logo-name {
+  transition: color .3s ease, -webkit-text-fill-color .3s ease;
+}
+/* Logo ring más visible */
+.logo-ring {
+  animation: ringRotate 8s linear infinite !important;
+}
+@keyframes ringRotate {
+  from { transform: rotate(0deg); transform-origin: center; }
+  to   { transform: rotate(360deg); transform-origin: center; }
+}
+
+/* ─────────────────────────────────────────────────────
+   MEJORA 16 — Contraste WCAG AA corregido
+   ─────────────────────────────────────────────────────  */
+/* Textos que no pasaban ratio 4.5:1 */
+.text-muted, .muted,
+.stat-label,
+.wizard-subtitle,
+.form-hint,
+.section-desc,
+.hero-desc,
+.tech-role,
+.footer-sublema {
+  color: rgba(255,255,255,.65) !important; /* era .38 o .45 — ahora .65 pasa WCAG AA */
+}
+.nav-link {
+  color: rgba(255,255,255,.82) !important; /* era .70 */
+}
+.svc-link {
+  color: var(--ice-light) !important; /* mejor contraste */
+}
+.mq-item {
+  color: rgba(255,255,255,.75) !important; /* era .65 */
+}
+.step-label {
+  color: rgba(255,255,255,.55) !important; /* era .30 */
+}
+.diag-step-dot.done .step-label {
+  color: rgba(100,200,232,.8) !important; /* era .6 */
+}
+/* En modo claro los valores oscuros ya tienen buen contraste */
+[data-theme="light"] .text-muted,
+[data-theme="light"] .muted { color: rgba(10,30,55,.6) !important; }
+
+/* ─────────────────────────────────────────────────────
+   MEJORA 17 — Espaciado vertical más consistente
+   ─────────────────────────────────────────────────────  */
+:root {
+  --space-xs:  8px;
+  --space-sm:  16px;
+  --space-md:  24px;
+  --space-lg:  40px;
+  --space-xl:  64px;
+  --space-2xl: 100px;
+}
+.section { padding: var(--space-2xl) 0 !important; }
+.section-header { margin-bottom: var(--space-xl) !important; }
+.section-header .tag { margin-bottom: var(--space-sm) !important; }
+.section-title { margin-bottom: var(--space-md) !important; line-height: 1.25 !important; }
+.section-desc { margin-bottom: 0 !important; }
+.service-card { gap: var(--space-sm) !important; }
+.service-card h3 { margin-bottom: 4px !important; }
+.tech-profile-info h3 { margin-bottom: 4px !important; }
+.tech-stats-row { margin-top: var(--space-sm) !important; }
+.hero-badge  { margin-bottom: 20px !important; }
+.hero-title  { margin-bottom: 20px !important; }
+.hero-desc   { margin-bottom: var(--space-lg) !important; }
+.hero-actions { margin-bottom: var(--space-lg) !important; }
+@media(max-width:768px) {
+  .section { padding: 72px 0 !important; }
+  .section-header { margin-bottom: 40px !important; }
+}
+@media(max-width:480px) {
+  .section { padding: 56px 0 !important; }
+  .section-header { margin-bottom: 32px !important; }
+}
+
+/* ─────────────────────────────────────────────────────
+   MEJORA 18 — Badge "Nuevo" y "Popular" mejorados
+   ─────────────────────────────────────────────────────  */
+/* Badge Popular (ya existe, se mejora) */
+.svc-badge-top {
+  background: linear-gradient(135deg, var(--amber), #e8920a) !important;
+  box-shadow: 0 4px 16px rgba(245,166,35,.5) !important;
+  animation: badgeBounce 3s ease-in-out infinite !important;
+  letter-spacing: .08em !important;
+}
+@keyframes badgeBounce {
+  0%,100% { transform: translateX(-50%) translateY(0); }
+  50%      { transform: translateX(-50%) translateY(-3px); }
+}
+/* Badge Nuevo — estilo diferente al Popular */
+.svc-badge-new {
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  background: linear-gradient(135deg, #2ecc71, #27ae60);
+  color: white;
+  font-size: .66rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  padding: 5px 14px;
+  border-radius: 99px;
+  white-space: nowrap;
+  box-shadow: 0 4px 14px rgba(46,204,113,.45);
+  animation: badgeBounce 3.5s ease-in-out infinite;
+}
+/* Service card con badge: necesita overflow visible y posición relativa */
+.service-card {
+  position: relative !important;
+  overflow: visible !important;
+}
+
+/* ─────────────────────────────────────────────────────
+   MEJORA 19 — Micro-animación logo completa
+   (refuerza la MEJORA 15 con estados adicionales)
+   ─────────────────────────────────────────────────────  */
+/* Idle state: logo respira sutilmente */
+.logo-icon {
+  animation: logoBreath 4s ease-in-out infinite;
+}
+@keyframes logoBreath {
+  0%,100% { transform: scale(1); }
+  50%      { transform: scale(1.03); }
+}
+/* Hover cancela breath y hace rotate+glow */
+.logo:hover .logo-icon {
+  animation: none !important;
+}
+/* Logo text con gradiente al hover */
+.logo-text {
+  transition: transform .3s ease;
+}
+.logo:hover .logo-text {
+  transform: translateX(2px);
+}
+
+/* ─────────────────────────────────────────────────────
+   MEJORA 20 — Paleta extendida: éxito, alerta, peligro
+   (variables ya declaradas en mejora 6, acá los usos UI)
+   ─────────────────────────────────────────────────────  */
+
+/* Toast de éxito con verde consistente */
+.toast-success {
+  border-color: var(--success-border) !important;
+}
+.toast-success::after {
+  background: var(--success) !important;
+}
+.toast-success i { color: var(--success) !important; }
+
+/* Toast de error */
+.toast-error {
+  border-color: var(--danger-border) !important;
+}
+.toast-error i { color: var(--danger) !important; }
+.toast-error::after { background: var(--danger) !important; }
+
+/* Contador de chars: warning y limit */
+.char-counter.warn  { color: var(--warn) !important; font-weight: 600 !important; }
+.char-counter.limit { color: var(--danger) !important; font-weight: 700 !important; }
+
+/* Input focus con color semántico */
+.wizard-input:focus,
+.diag-textarea:focus,
+.contact-textarea:focus,
+.wizard-custom-input:focus {
+  border-color: var(--ice) !important;
+  box-shadow: 0 0 0 3px rgba(100,200,232,.15),
+              0 0 0 1px rgba(100,200,232,.4) !important;
+  outline: none !important;
+}
+
+/* Tags de servicio con colores de paleta */
+.svc-tag { background: rgba(100,200,232,.12) !important; color: var(--ice-light) !important; }
+.svc-tag-orange { background: rgba(255,107,53,.12) !important; color: var(--orange) !important; }
+
+/* Indicador step activo con paleta */
+.diag-step-dot.active .step-num {
+  box-shadow: 0 0 0 3px rgba(100,200,232,.2),
+              0 0 14px rgba(100,200,232,.5) !important;
+}
+
+/* Estado del wizard: éxito al llegar al último paso */
+.send-icon {
+  background: var(--success-bg) !important;
+  border-color: var(--success-border) !important;
+  color: var(--success) !important;
+  box-shadow: 0 0 30px rgba(46,204,113,.2) !important;
+}
+
+/* Consistencia en step connectors */
+.step-connector.done {
+  background: linear-gradient(90deg, rgba(100,200,232,.5), rgba(100,200,232,.3)) !important;
+}
