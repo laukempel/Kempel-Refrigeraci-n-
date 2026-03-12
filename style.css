@@ -4426,3 +4426,18 @@ body {
 .tech-why h3 {
   color: #0a192f !important;       /* Título oscuro */
 }
+/* ===== CORRECCIÓN DEFINITIVA: TEXTO OSCURO EN ¿POR QUÉ ELEGIRNOS? ===== */
+#tecnicos .tech-why {
+  background: #eaf3fb !important;
+}
+#tecnicos .tech-why h3 {
+  color: #0a192f !important;
+}
+#tecnicos .tech-why ul.why-list li {
+  color: #000000 !important; /* Negro puro (cambiar a #1d3f60 si prefieres azul oscuro) */
+}
+#tecnicos .tech-why .why-coverage strong,
+#tecnicos .tech-why .why-coverage small,
+#tecnicos .tech-why .why-coverage span {
+  color: #0a192f !important;
+}
