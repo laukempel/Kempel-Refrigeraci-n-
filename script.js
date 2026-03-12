@@ -18,15 +18,11 @@ function makeObserver(cb, opts = {}) {
   const loader = $('pageLoader');
   const fill   = $('loaderFill');
   if (!loader) return;
-  let pct = 0;
-  const iv = setInterval(() => {
-    pct = Math.min(pct + (Math.random() * 18 + 5), 95);
-    if (fill) fill.style.width = pct + '%';
-  }, 80);
+  // Fill instantly to 80%, then complete on load
+  if (fill) fill.style.width = '80%';
   window.addEventListener('load', () => {
-    clearInterval(iv);
     if (fill) fill.style.width = '100%';
-    setTimeout(() => loader.classList.add('done'), 300);
+    setTimeout(() => loader.classList.add('done'), 150);
   });
 })();
 
@@ -136,18 +132,14 @@ document.addEventListener('visibilitychange', () => {
 
 /* ════════════ ANIM 5: HERO LINE REVEAL ════════════ */
 window.addEventListener('load', () => {
-  setTimeout(() => {
-    /* Reveal hero title lines */
-    $$('.hero-line').forEach((el, i) => {
-      setTimeout(() => el.classList.add('revealed'), i * 130);
-    });
-    setTimeout(() => {
-      $$('.hero-badge,.hero-desc,.hero-actions,.hero-stats').forEach((el, i) => {
-        el.style.cssText += `opacity:0;transform:translateY(20px);transition:opacity .6s ease,transform .6s ease;transition-delay:${i * 100 + 200}ms`;
-        requestAnimationFrame(() => { el.style.opacity = 1; el.style.transform = 'none'; });
-      });
-    }, 300);
-  }, 200);
+  // Reveal hero immediately after loader
+  $$('.hero-line').forEach((el, i) => {
+    setTimeout(() => el.classList.add('revealed'), i * 80);
+  });
+  $$('.hero-badge,.hero-desc,.hero-actions,.hero-stats').forEach((el, i) => {
+    el.style.cssText += `opacity:0;transform:translateY(16px);transition:opacity .45s ease,transform .45s ease;transition-delay:${i * 70 + 100}ms`;
+    requestAnimationFrame(() => { el.style.opacity = 1; el.style.transform = 'none'; });
+  });
 });
 
 /* 6.3: Passive touch/wheel events for better scroll performance */
@@ -350,11 +342,9 @@ document.addEventListener('click', e => {
   setTimeout(() => window.scrollBy(0, -80), 300);
 });
 
-/* ════════════ ANIM 18: THEME — inicializar desde localStorage ════════════ */
-(function initThemeOnLoad() {
-  const saved = localStorage.getItem('kempel-theme') || 'dark';
-  document.documentElement.setAttribute('data-theme', saved);
-})();
+/* ════════════ ANIM 18: THEME — solo dark mode ════════════ */
+document.documentElement.setAttribute('data-theme', 'dark');
+localStorage.removeItem('kempel-theme');
 
 /* ════════════ ANIM 19: HEX GRID BACKGROUND ════════════ */
 (function initHexGrid() {
@@ -1460,32 +1450,7 @@ document.addEventListener('click', e => {
   document.head.appendChild(apple);
 })();
 
-/* ── UI 2: Toggle modo claro/oscuro con persistencia ── */
-(function initThemeToggle() {
-  const themeToggle = document.createElement('button');
-  themeToggle.className = 'theme-toggle-btn';
-  themeToggle.setAttribute('aria-label', 'Cambiar tema');
-  document.body.appendChild(themeToggle);
-
-  const html = document.documentElement;
-  function updateIcon() {
-    const isDark = html.getAttribute('data-theme') !== 'light';
-    themeToggle.innerHTML = isDark
-      ? '<i class="fas fa-sun" aria-hidden="true"></i>'
-      : '<i class="fas fa-moon" aria-hidden="true"></i>';
-  }
-  updateIcon();
-
-  themeToggle.addEventListener('click', () => {
-    const newTheme = html.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
-    html.setAttribute('data-theme', newTheme);
-    localStorage.setItem('kempel-theme', newTheme);
-    updateIcon();
-    if (typeof showToast === 'function') {
-      showToast('Modo ' + (newTheme === 'dark' ? 'oscuro' : 'claro') + ' activado', 'info', 2000);
-    }
-  });
-})();
+/* Modo claro eliminado — solo dark mode */
 
 /* ── UI 3: Transformar lista "Por qué elegirnos" con iconos animados ── */
 (function enhanceWhyList() {
@@ -1526,49 +1491,7 @@ document.addEventListener('click', e => {
   footerBrand.appendChild(badge);
 })();
 
-/* ── UI 5: Logos SVG reales de marcas (archivos en el servidor) ── */
-(function replaceBrandsWithSVGLogos() {
-  // Mapeo exacto según archivos en el repo GitHub
-  const brandLogos = {
-    'Samsung':    'samsung.svg',
-    'LG':         'lg.svg',
-    'Carrier':    'Logo_Carrier.svg',
-    'Gree':       'Logo_GREE.svg',
-    'Philco':     'Philco_logo.svg',
-    'BGH':        'Logo_de_BGH.svg',
-    'Electrolux': 'Electrolux_logo.svg.svg',
-    'Whirlpool':  'Whirlpool_Logo.svg'
-  };
-
-  document.querySelectorAll('.marca-card').forEach(card => {
-    const nameEl = card.querySelector('span');
-    const iconEl = card.querySelector('.marca-icon');
-    if (!nameEl || !iconEl) return;
-    const brand = nameEl.textContent.trim();
-    if (!brandLogos[brand]) return;
-
-    const img = document.createElement('img');
-    img.src     = brandLogos[brand];
-    img.alt     = brand;
-    img.loading = 'lazy';
-    img.className = 'brand-logo-svg';
-    img.width   = 52;
-    img.height  = 36;
-
-    // Si el SVG carga correctamente, reemplazar el icono de letra
-    img.onload = () => { iconEl.innerHTML = ''; iconEl.appendChild(img); iconEl.classList.add('has-logo'); };
-    // Si falla (ej. Drean/Peabody sin SVG), mantener la letra
-    img.onerror = () => {};
-
-    // Precargar (iniciar carga)
-    const test = new Image();
-    test.onload  = () => { iconEl.innerHTML = ''; iconEl.appendChild(img.cloneNode()); iconEl.classList.add('has-logo'); };
-    test.onerror = () => {};
-    test.src = brandLogos[brand];
-  });
-})();
-
-/* ── UI 7: Detectar baja capacidad y reducir efectos ── */
+/* ── UI 5: Marcas solo texto (pills) ── *//* ── UI 7: Detectar baja capacidad y reducir efectos ── */
 (function detectLowPerformance() {
   const lowEnd = navigator.hardwareConcurrency <= 2;
   if (!lowEnd) return;
@@ -1591,16 +1514,7 @@ document.addEventListener('click', e => {
   });
 })();
 
-/* ── UI 18: Badge "Popular" en servicio destacado ── */
-(function addServiceBadges() {
-  const featured = document.querySelector('.service-card-featured');
-  if (!featured || featured.querySelector('.service-badge')) return;
-  const badge = document.createElement('span');
-  badge.className = 'service-badge';
-  badge.textContent = '⭐ Popular';
-  featured.style.position = 'relative';
-  featured.appendChild(badge);
-})();
+/* ── UI 18: Badge Popular en HTML directamente ── */
 
 
 /* ════════════════════════════════════════════════════════════════
@@ -1782,7 +1696,7 @@ document.addEventListener('click', e => {
   if (btn) {
     btn.addEventListener('click', () => actualizarCalculadora(false));
     // Auto-calcular en carga sin toast ni animación de reset
-    window.addEventListener('load', () => setTimeout(() => actualizarCalculadora(true), 400));
+    // No auto-calcular al cargar — usuario inicia manualmente
   }
 
   // Enter en cualquier input
