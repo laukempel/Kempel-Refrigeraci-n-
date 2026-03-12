@@ -4414,5 +4414,15 @@ body {
 }
 
 /* ¿Por qué elegirnos? — texto oscuro sobre fondo claro */
-.tech-why .why-list li { color: #1e293b !important; }
-.tech-why h3 { color: #0e2a47 !important; }
+.tech-why .why-list li { color: #1d3f60 !important; }
+.tech-why h3 { color: #0a192f !important; }
+/* ===== CORRECCIÓN: TEXTO OSCURO EN SECCIÓN ¿POR QUÉ ELEGIRNOS? ===== */
+.tech-why {
+  background: #eaf3fb !important;  /* Fondo claro */
+}
+.tech-why .why-list li {
+  color: #1d3f60 !important;       /* Texto oscuro */
+}
+.tech-why h3 {
+  color: #0a192f !important;       /* Título oscuro */
+}
