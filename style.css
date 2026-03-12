@@ -915,10 +915,7 @@ body {
   color: var(--text-mid);
   white-space: nowrap;
 }
-@keyframes marcasScroll {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
-}
+/* marcasScroll replaced by marcasPillScroll */
 
 /* ── TÉCNICOS ────────────────────────────────────────── */
 .tecnicos-section{background:var(--bg-section)}
@@ -981,7 +978,7 @@ body {
 .tech-why h3{font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;color:var(--navy);display:flex;align-items:center;gap:8px;margin-bottom:16px}
 .tech-why h3 i{color:var(--ice)}
 .why-list{display:flex;flex-direction:column;gap:10px;margin-bottom:20px}
-.why-list li{display:flex;align-items:center;gap:10px;font-size:.87rem;color:rgba(255,255,255,0.88)}
+.why-list li{display:flex;align-items:center;gap:10px;font-size:.87rem;color:#1e293b}
 .why-dot{width:8px;height:8px;border-radius:50%;background:var(--ice);flex-shrink:0}
 .why-coverage{display:flex;align-items:flex-start;gap:10px;padding-top:16px;border-top:1px solid rgba(100,200,232,.1)}
 .why-coverage > i{color:var(--amber);margin-top:2px;flex-shrink:0}
@@ -1079,8 +1076,8 @@ body {
 /* Contact sidebar */
 .contact-sidebar{display:flex;flex-direction:column;gap:14px}
 .sidebar-tech-card{
-  background:var(--bg-card);border-radius:var(--radius);padding:18px 20px;
-  border:1px solid rgba(100,200,232,.12);box-shadow:var(--shadow-sm);
+  background:#ffffff;border-radius:var(--radius);padding:18px 20px;
+  border:1px solid rgba(0,0,0,.08);box-shadow:0 2px 12px rgba(0,0,0,.12);
   display:flex;align-items:center;gap:14px;transition:var(--trans);
 }
 .sidebar-tech-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-md);border-color:var(--ice-light)}
@@ -1091,20 +1088,20 @@ body {
 .stc-blue{background:linear-gradient(135deg,var(--navy),var(--navy-mid));border:2px solid var(--ice)}
 .stc-orange{background:linear-gradient(135deg,#7c2d12,#c2410c);border:2px solid var(--amber)}
 /* ANIM 16: Online indicator */
-.stc-online{position:absolute;bottom:1px;right:1px;width:11px;height:11px;background:var(--wa-green);border-radius:50%;border:2px solid var(--bg-card);animation:stcPulse 3s ease-in-out infinite}
+.stc-online{position:absolute;bottom:1px;right:1px;width:11px;height:11px;background:var(--wa-green);border-radius:50%;border:2px solid #ffffff;animation:stcPulse 3s ease-in-out infinite}
 @keyframes stcPulse{0%,100%{box-shadow:0 0 0 0 rgba(37,211,102,.5)}50%{box-shadow:0 0 0 4px rgba(37,211,102,0)}}
 .stc-info{display:flex;flex-direction:column;gap:2px;flex:1}
-.stc-info strong{font-size:.9rem;font-weight:700;color:var(--navy)}
-.stc-info span{font-size:.78rem;color:var(--text-mid)}
+.stc-info strong{font-size:.9rem;font-weight:700;color:#0a192f}
+.stc-info span{font-size:.78rem;color:#2a4a6b}
 .stc-phone{font-weight:600!important;color:var(--text)!important}
 .stc-wa{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--wa-green),var(--wa-dark));display:flex;align-items:center;justify-content:center;color:white;font-size:1rem;flex-shrink:0;transition:var(--spring)}
 .stc-wa:hover{transform:scale(1.15) rotate(-5deg)}
 
-.sidebar-note{background:var(--bg-card);border-radius:var(--radius);padding:14px 18px;border:1px solid rgba(100,200,232,.1);box-shadow:var(--shadow-sm);display:flex;align-items:flex-start;gap:12px}
+.sidebar-note{background:#ffffff;border-radius:var(--radius);padding:14px 18px;border:1px solid rgba(0,0,0,.08);box-shadow:0 2px 12px rgba(0,0,0,.1);display:flex;align-items:flex-start;gap:12px}
 .sidebar-note > i{font-size:1rem;color:var(--ice);margin-top:2px;flex-shrink:0}
 .sidebar-note > div{display:flex;flex-direction:column;gap:4px}
-.sidebar-note strong{font-size:.85rem;color:var(--navy)}
-.sidebar-note span{font-size:.8rem;color:var(--text-mid)}
+.sidebar-note strong{font-size:.85rem;color:#0a192f}
+.sidebar-note span{font-size:.8rem;color:#2a4a6b}
 .cov-tags-sm span{font-size:.7rem;padding:2px 7px}
 
 /* ESTÉTICA 20: Trust badge */
@@ -1114,8 +1111,8 @@ body {
   padding:14px 18px;display:flex;align-items:center;gap:12px;
 }
 .trust-badge > i{font-size:1.3rem;color:var(--ice)}
-.trust-badge strong{display:block;font-size:.85rem;color:#0a192f}
-.trust-badge span{font-size:.78rem;color:#2a4a6b}
+.trust-badge strong{display:block;font-size:.85rem;color:#0a192f !important}
+.trust-badge span{font-size:.78rem;color:#2a4a6b !important}
 
 /* ─── PAYMENT BADGE ──────────────────────────────────── */
 .payment-badge {
@@ -1127,7 +1124,7 @@ body {
   align-items: center;
   gap: 10px;
   font-size: 0.85rem;
-  color: #1d3f60;
+  color: #0a192f !important;
 }
 .payment-badge i {
   color: #1d3f60;
@@ -2705,10 +2702,10 @@ body { overflow-x: hidden; }
 .tech-profile-inner { background: var(--bg-card) !important; }
 
 /* Contact sidebar */
-.stc-info strong { color: var(--light) !important; }
-.stc-info span { color: var(--text-mid) !important; }
+.stc-info strong { color: #0a192f !important; }
+.stc-info span { color: #2a4a6b !important; }
 .stc-phone { color: var(--light) !important; }
-.sidebar-note strong { color: var(--light) !important; }
+.sidebar-note strong { color: #0a192f !important; }
 .sidebar-note span { color: var(--text-mid) !important; }
 .trust-badge strong { color: #0a192f !important; }
 .trust-badge span { color: #2a4a6b !important; }
@@ -4304,20 +4301,27 @@ body {
 
 /* Marcas — solo texto como pills */
 .marcas-track {
+  display: flex;
   overflow: hidden;
   width: 100%;
-  mask-image: linear-gradient(90deg, transparent, black 8%, black 92%, transparent);
-  -webkit-mask-image: linear-gradient(90deg, transparent, black 8%, black 92%, transparent);
+  /* Fade edges for polish */
+  mask-image: linear-gradient(90deg, transparent 0%, black 5%, black 95%, transparent 100%);
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, black 5%, black 95%, transparent 100%);
 }
 .marcas-content {
   display: flex;
   align-items: center;
-  gap: 16px;
-  animation: marqueeScroll 28s linear infinite;
-  width: max-content;
-  padding: 8px 0;
+  gap: 20px;
+  flex-shrink: 0;
+  min-width: 100%;
+  animation: marcasPillScroll 30s linear infinite;
+  padding: 8px 10px;
 }
 .marcas-track:hover .marcas-content { animation-play-state: paused; }
+@keyframes marcasPillScroll {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-100%); }
+}
 .marca-pill {
   display: inline-flex;
   align-items: center;
@@ -4378,20 +4382,18 @@ body {
    FIX MODO OSCURO — cards con fondo claro forzado
    ════════════════════════════════════════════════════════════════ */
 /* Asegurar fondo oscuro en dark mode para elementos que tenían !important claro */
-[data-theme="dark"] .trust-badge {
-  background: rgba(100,200,232,0.08) !important;
-  border-color: rgba(100,200,232,0.2) !important;
+/* Sidebar cards — siempre fondo blanco con texto oscuro */
+.trust-badge, .payment-badge, .sidebar-tech-card, .sidebar-note {
+  background: #ffffff !important;
+  border-color: rgba(0,0,0,0.08) !important;
 }
-[data-theme="dark"] .trust-badge strong { color: rgba(255,255,255,0.9) !important; }
-[data-theme="dark"] .trust-badge span   { color: rgba(255,255,255,0.65) !important; }
-[data-theme="dark"] .payment-badge {
-  background: rgba(100,200,232,0.08) !important;
-  border-color: rgba(100,200,232,0.2) !important;
-  color: rgba(255,255,255,0.85) !important;
-}
-[data-theme="dark"] .payment-badge i { color: var(--ice) !important; }
-[data-theme="dark"] .contact-form-card { background: var(--bg-card, rgba(14,42,71,0.7)) !important; }
-[data-theme="dark"] .sidebar-tech-card { background: var(--bg-card, rgba(14,42,71,0.5)) !important; }
+.trust-badge strong, .trust-badge span,
+.sidebar-note strong, .sidebar-note span,
+.stc-info strong, .stc-phone { color: #0a192f !important; }
+.stc-info span, .sidebar-note span { color: #2a4a6b !important; }
+.payment-badge { color: #0a192f !important; }
+.payment-badge i, .trust-badge > i { color: #0284c7 !important; }
+.sidebar-note > i { color: #0284c7 !important; }
 
 
 /* ════════════════════════════════════════════════════════════════
@@ -4410,3 +4412,7 @@ body {
 .marca-card:hover {
   will-change: transform;
 }
+
+/* ¿Por qué elegirnos? — texto oscuro sobre fondo claro */
+.tech-why .why-list li { color: #1e293b !important; }
+.tech-why h3 { color: #0e2a47 !important; }
