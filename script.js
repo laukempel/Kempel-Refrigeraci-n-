@@ -1526,7 +1526,47 @@ document.addEventListener('click', e => {
   footerBrand.appendChild(badge);
 })();
 
-/* ── UI 5: Marcas con cards CSS (sin dependencia de archivos externos) — ver HTML ── */
+/* ── UI 5: Logos SVG reales de marcas (archivos en el servidor) ── */
+(function replaceBrandsWithSVGLogos() {
+  // Mapeo exacto según archivos en el repo GitHub
+  const brandLogos = {
+    'Samsung':    'samsung.svg',
+    'LG':         'lg.svg',
+    'Carrier':    'Logo_Carrier.svg',
+    'Gree':       'Logo_GREE.svg',
+    'Philco':     'Philco_logo.svg',
+    'BGH':        'Logo_de_BGH.svg',
+    'Electrolux': 'Electrolux_logo.svg.svg',
+    'Whirlpool':  'Whirlpool_Logo.svg'
+  };
+
+  document.querySelectorAll('.marca-card').forEach(card => {
+    const nameEl = card.querySelector('span');
+    const iconEl = card.querySelector('.marca-icon');
+    if (!nameEl || !iconEl) return;
+    const brand = nameEl.textContent.trim();
+    if (!brandLogos[brand]) return;
+
+    const img = document.createElement('img');
+    img.src     = brandLogos[brand];
+    img.alt     = brand;
+    img.loading = 'lazy';
+    img.className = 'brand-logo-svg';
+    img.width   = 52;
+    img.height  = 36;
+
+    // Si el SVG carga correctamente, reemplazar el icono de letra
+    img.onload = () => { iconEl.innerHTML = ''; iconEl.appendChild(img); iconEl.classList.add('has-logo'); };
+    // Si falla (ej. Drean/Peabody sin SVG), mantener la letra
+    img.onerror = () => {};
+
+    // Precargar (iniciar carga)
+    const test = new Image();
+    test.onload  = () => { iconEl.innerHTML = ''; iconEl.appendChild(img.cloneNode()); iconEl.classList.add('has-logo'); };
+    test.onerror = () => {};
+    test.src = brandLogos[brand];
+  });
+})();
 
 /* ── UI 7: Detectar baja capacidad y reducir efectos ── */
 (function detectLowPerformance() {
@@ -1602,7 +1642,6 @@ document.addEventListener('click', e => {
    ════════════════════════════════════════════════════════════════ */
 (function initFrigoriasCalculator() {
   const commercialACCapacities = [2250, 3000, 3500, 4500, 5500, 6000, 7500, 9000, 12000, 18000];
-
   const commercialCableSizes = [
     { mm2: 1.5, maxAmperage: 10 },
     { mm2: 2.5, maxAmperage: 16 },
@@ -1612,11 +1651,7 @@ document.addEventListener('click', e => {
   ];
 
   function calcularFrigorias(largo, ancho, alto, personas, electro) {
-    const volumen   = largo * ancho * alto;
-    let frigorias   = volumen * 60;
-    frigorias      += personas * 100;
-    frigorias      += electro  * 100;
-    return Math.ceil(frigorias);
+    return Math.ceil(largo * ancho * alto * 60 + personas * 100 + electro * 100);
   }
 
   function getRecommendedCable(amperaje) {
@@ -1628,18 +1663,15 @@ document.addEventListener('click', e => {
     const recommendedFrigories =
       commercialACCapacities.find(cap => cap >= frigorias)
       || commercialACCapacities[commercialACCapacities.length - 1];
-
     const watts           = recommendedFrigories * 1.163;
     const electricalPower = watts / 3;
     const amperage        = electricalPower / 220;
-    const cable           = getRecommendedCable(amperage);
-
     return {
       recommendedFrigories,
       watts:          Math.round(watts),
       electricalPower: Math.round(electricalPower),
       amperage:       amperage.toFixed(2),
-      cable
+      cable:          getRecommendedCable(amperage)
     };
   }
 
@@ -1648,89 +1680,114 @@ document.addEventListener('click', e => {
     if (el) el.textContent = val;
   }
 
-  function actualizarCalculadora() {
-    const largo    = parseFloat(document.getElementById('calc-largo')?.value)    || 0;
-    const ancho    = parseFloat(document.getElementById('calc-ancho')?.value)    || 0;
-    const alto     = parseFloat(document.getElementById('calc-alto')?.value)     || 0;
-    const personas = parseInt(document.getElementById('calc-personas')?.value)   || 0;
-    const electro  = parseInt(document.getElementById('calc-electro')?.value)    || 0;
+  function fmtFg(cap) {
+    return cap >= 1000 ? (cap / 1000).toFixed(cap % 1000 === 0 ? 0 : 1) + 'k fg' : cap + ' fg';
+  }
+
+  let _firstRun = true; // no mostrar toast en el auto-cálculo inicial
+
+  function actualizarCalculadora(silent) {
+    const largo    = parseFloat(document.getElementById('calc-largo')?.value)  || 0;
+    const ancho    = parseFloat(document.getElementById('calc-ancho')?.value)  || 0;
+    const alto     = parseFloat(document.getElementById('calc-alto')?.value)   || 0;
+    const personas = parseInt(document.getElementById('calc-personas')?.value) || 0;
+    const electro  = parseInt(document.getElementById('calc-electro')?.value)  || 0;
 
     if (largo <= 0 || ancho <= 0 || alto <= 0) {
-      if (typeof showToast === 'function') showToast('Ingresá valores válidos en las dimensiones.', 'error', 3000);
+      if (!silent && typeof showToast === 'function')
+        showToast('Ingresá valores válidos en las dimensiones.', 'error', 3000);
       return;
     }
 
     const frigorias = calcularFrigorias(largo, ancho, alto, personas, electro);
     const acData    = getRecommendedAC(frigorias);
 
-    // Mostrar resultado con animación
     const resultadoDiv = document.getElementById('calc-resultado');
     if (!resultadoDiv) return;
-    resultadoDiv.style.display = 'none'; // reset para re-animar
-    requestAnimationFrame(() => { resultadoDiv.style.display = 'block'; });
+
+    // Mostrar con fade
+    resultadoDiv.style.opacity  = '0';
+    resultadoDiv.style.display  = 'block';
+    requestAnimationFrame(() => {
+      resultadoDiv.style.transition = 'opacity 0.35s ease';
+      resultadoDiv.style.opacity    = '1';
+    });
 
     // Equipo recomendado
     setEl('recomendado-frigorias', acData.recommendedFrigories + ' fg/h');
     setEl('recomendado-watts',     acData.watts + ' watts');
 
     // Especificaciones eléctricas
-    setEl('calc-watts',    acData.watts);
-    setEl('calc-potencia', acData.electricalPower);
-    setEl('calc-amperaje', acData.amperage);
+    setEl('calc-watts',    acData.watts + ' W');
+    setEl('calc-potencia', acData.electricalPower + ' W');
+    setEl('calc-amperaje', acData.amperage + ' A');
     setEl('calc-cable',    acData.cable.mm2 + ' mm²');
     setEl('calc-termica',  acData.cable.maxAmperage + ' A');
 
     // Tabla de equipos comerciales
-    const tablaContainer = document.getElementById('tabla-equipos');
-    if (tablaContainer) {
-      tablaContainer.innerHTML = '';
+    const tablaEl = document.getElementById('tabla-equipos');
+    if (tablaEl) {
+      tablaEl.innerHTML = '';
       commercialACCapacities.forEach(cap => {
         const div = document.createElement('div');
         div.className = 'equipo-item';
-        div.textContent = cap >= 1000 ? (cap / 1000).toFixed(cap % 1000 === 0 ? 0 : 1) + 'k fg' : cap + ' fg';
-
+        div.textContent = fmtFg(cap);
         if (cap < frigorias) {
           div.classList.add('inferior');
         } else {
           div.classList.add('suficiente');
           if (cap === acData.recommendedFrigories) div.classList.add('recomendado');
         }
-        tablaContainer.appendChild(div);
+        tablaEl.appendChild(div);
+      });
+    }
+
+    // Tabla de cables comerciales
+    const cablesEl = document.getElementById('tabla-cables');
+    if (cablesEl) {
+      cablesEl.innerHTML = '';
+      commercialCableSizes.forEach(cable => {
+        const div = document.createElement('div');
+        div.className = 'cable-item';
+        div.innerHTML = `<span class="cable-mm">${cable.mm2} mm²</span><span class="cable-amp">${cable.maxAmperage} A</span>`;
+        if (acData.cable.mm2 === cable.mm2) div.classList.add('recomendado-cable');
+        cablesEl.appendChild(div);
       });
     }
 
     // Detalle del cálculo
-    const volumen       = largo * ancho * alto;
-    const cargaBase     = volumen * 60;
-    const aportePersonas = personas * 100;
-    const aporteElectro  = electro  * 100;
-    const detalleDiv    = document.getElementById('detalle-calculo');
-    if (detalleDiv) {
-      detalleDiv.innerHTML = `
+    const volumen         = largo * ancho * alto;
+    const cargaBase       = Math.round(volumen * 60);
+    const aportePersonas  = personas * 100;
+    const aporteElectro   = electro  * 100;
+    const detalleEl = document.getElementById('detalle-calculo');
+    if (detalleEl) {
+      detalleEl.innerHTML = `
         <div>Volumen: <span>${volumen.toFixed(1)} m³</span></div>
-        <div>Carga base: <span>${Math.round(cargaBase)} fg/h</span></div>
+        <div>Carga base: <span>${cargaBase} fg/h</span></div>
         <div>Personas: <span>+${aportePersonas} fg/h</span></div>
         <div>Electrodomésticos: <span>+${aporteElectro} fg/h</span></div>
         <div>Total necesario: <span>${frigorias} fg/h</span></div>
       `;
     }
 
-    if (typeof showToast === 'function') {
-      showToast('¡Cálculo listo! El equipo ideal es de ' + acData.recommendedFrigories + ' fg/h 🌡️', 'success', 3500);
+    // Toast solo cuando el usuario hace clic (no en auto-cálculo)
+    if (!silent && typeof showToast === 'function') {
+      showToast('Equipo ideal: ' + acData.recommendedFrigories + ' fg/h — Cable ' + acData.cable.mm2 + ' mm² ✅', 'success', 3500);
     }
   }
 
-  // Vincular botón
+  // Vincular botón (muestra toast)
   const btn = document.getElementById('calc-button');
   if (btn) {
-    btn.addEventListener('click', actualizarCalculadora);
-    // Calcular con valores por defecto al cargar
-    window.addEventListener('load', () => setTimeout(actualizarCalculadora, 300));
+    btn.addEventListener('click', () => actualizarCalculadora(false));
+    // Auto-calcular en carga sin toast ni animación de reset
+    window.addEventListener('load', () => setTimeout(() => actualizarCalculadora(true), 400));
   }
 
-  // Recalcular al presionar Enter en cualquier input
+  // Enter en cualquier input
   document.querySelectorAll('.calc-input').forEach(inp => {
-    inp.addEventListener('keydown', e => { if (e.key === 'Enter') actualizarCalculadora(); });
+    inp.addEventListener('keydown', e => { if (e.key === 'Enter') actualizarCalculadora(false); });
   });
 })();
 

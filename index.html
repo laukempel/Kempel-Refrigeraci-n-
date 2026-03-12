@@ -1132,27 +1132,36 @@
               </button>
             </div>
             <div class="calculadora-resultado" id="calc-resultado" style="display:none;">
+              <!-- Equipo recomendado -->
               <div class="resultado-equipo-recomendado">
                 <div class="recomendado-header"><i class="fas fa-check-circle"></i> Equipo recomendado</div>
                 <div class="recomendado-valores">
-                  <span class="recomendado-frigorias" id="recomendado-frigorias">0</span>
-                  <span class="recomendado-watts" id="recomendado-watts">0 watts</span>
+                  <span class="recomendado-frigorias" id="recomendado-frigorias">–</span>
+                  <span class="recomendado-watts" id="recomendado-watts">– watts</span>
                 </div>
               </div>
+              <!-- Tabla de equipos comerciales -->
               <div class="resultado-tabla-container">
-                <h4>Equipos comerciales</h4>
+                <h4>Equipos Comerciales</h4>
                 <div class="tabla-equipos" id="tabla-equipos"></div>
               </div>
+              <!-- Cables comerciales -->
+              <div class="resultado-cables-container">
+                <h4>Cables Comerciales</h4>
+                <div class="tabla-cables" id="tabla-cables"></div>
+              </div>
+              <!-- Especificaciones eléctricas -->
               <div class="resultado-electrico">
-                <h4>Especificaciones eléctricas</h4>
+                <h4>Recomendación eléctrica</h4>
                 <div class="electrico-grid">
-                  <div><span class="label">Watts del equipo:</span> <span id="calc-watts">0</span> W</div>
-                  <div><span class="label">Potencia eléctrica:</span> <span id="calc-potencia">0</span> W</div>
-                  <div><span class="label">Amperaje estimado:</span> <span id="calc-amperaje">0</span> A</div>
-                  <div><span class="label">Cable recomendado:</span> <span id="calc-cable">-</span></div>
-                  <div><span class="label">Térmica recomendada:</span> <span id="calc-termica">-</span> A</div>
+                  <div><span class="label">Watts del equipo:</span> <span id="calc-watts">–</span> W</div>
+                  <div><span class="label">Potencia eléctrica:</span> <span id="calc-potencia">–</span> W</div>
+                  <div><span class="label">Amperaje estimado:</span> <span id="calc-amperaje">–</span> A</div>
+                  <div><span class="label">Cable recomendado:</span> <span id="calc-cable">–</span></div>
+                  <div><span class="label">Térmica recomendada:</span> <span id="calc-termica">–</span> A</div>
                 </div>
               </div>
+              <!-- Detalle del cálculo -->
               <div class="resultado-detalle">
                 <h4>Detalle del cálculo</h4>
                 <div class="detalle-grid" id="detalle-calculo"></div>
