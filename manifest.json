@@ -1,27 +1,57 @@
 {
   "name": "Kempel Refrigeración",
   "short_name": "Kempel",
-  "description": "Servicio técnico de refrigeración en Fray Luis Beltrán y zona",
-  "start_url": "/",
+  "description": "Servicio técnico de refrigeración en Fray Luis Beltrán y zona. A/C, heladeras y freezers.",
+  "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
   "background_color": "#06152b",
   "theme_color": "#06152b",
   "orientation": "portrait-primary",
+  "lang": "es-AR",
+  "dir": "ltr",
+  "prefer_related_applications": false,
+  "related_applications": [],
+  "categories": ["business", "home-repair", "utilities"],
   "icons": [
     {
-      "src": "favicon.ico",
-      "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
-    },
-    {
-      "src": "icon-192.png",
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='24' fill='%2306152b'/%3E%3Ccircle cx='96' cy='96' r='70' fill='%230e2a47'/%3E%3Cline x1='96' y1='50' x2='96' y2='142' stroke='%2364c8e8' stroke-width='6' stroke-linecap='round'/%3E%3Cline x1='52' y1='96' x2='140' y2='96' stroke='%2364c8e8' stroke-width='6' stroke-linecap='round'/%3E%3Cline x1='63' y1='63' x2='129' y2='129' stroke='%2364c8e8' stroke-width='4' stroke-linecap='round' opacity='.6'/%3E%3Cline x1='129' y1='63' x2='63' y2='129' stroke='%2364c8e8' stroke-width='4' stroke-linecap='round' opacity='.6'/%3E%3Ccircle cx='96' cy='96' r='10' fill='%2364c8e8'/%3E%3C/svg%3E",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/svg+xml",
+      "purpose": "any"
     },
     {
-      "src": "icon-512.png",
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='64' fill='%2306152b'/%3E%3Ccircle cx='256' cy='256' r='185' fill='%230e2a47'/%3E%3Cline x1='256' y1='135' x2='256' y2='377' stroke='%2364c8e8' stroke-width='16' stroke-linecap='round'/%3E%3Cline x1='135' y1='256' x2='377' y2='256' stroke='%2364c8e8' stroke-width='16' stroke-linecap='round'/%3E%3Cline x1='166' y1='166' x2='346' y2='346' stroke='%2364c8e8' stroke-width='10' stroke-linecap='round' opacity='.6'/%3E%3Cline x1='346' y1='166' x2='166' y2='346' stroke='%2364c8e8' stroke-width='10' stroke-linecap='round' opacity='.6'/%3E%3Ccircle cx='256' cy='256' r='26' fill='%2364c8e8'/%3E%3C/svg%3E",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Diagnóstico IA",
+      "short_name": "Diagnóstico",
+      "description": "Describí tu problema al asistente",
+      "url": "./index.html#diagnostico"
+    },
+    {
+      "name": "Contactar Franco",
+      "short_name": "Franco",
+      "description": "WhatsApp directo con Franco",
+      "url": "https://wa.me/5493415964079?text=Hola%20Franco%2C%20me%20contacto%20desde%20la%20app"
+    },
+    {
+      "name": "Contactar Agustín",
+      "short_name": "Agustín",
+      "description": "WhatsApp directo con Agustín",
+      "url": "https://wa.me/5493413278981?text=Hola%20Agust%C3%ADn%2C%20me%20contacto%20desde%20la%20app"
+    },
+    {
+      "name": "Ver ubicación",
+      "short_name": "Mapa",
+      "description": "Taller en Fray Luis Beltrán",
+      "url": "https://maps.google.com/?q=Pellegrini+71+Fray+Luis+Beltran+Santa+Fe+Argentina"
     }
   ]
 }

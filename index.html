@@ -2,9 +2,19 @@
 <html lang="es-AR" data-theme="dark">
 <head>
   <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <!-- M14+M108: viewport-fit=cover para notch de iPhone -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
   <meta name="description" content="Kempel Refrigeración – Servicio técnico de aires acondicionados, heladeras y freezers. Fray Luis Beltrán, Santa Fe → Pto. Gral. San Martín. A domicilio, rápido y confiable."/>
-  <meta name="theme-color" content="#06152b"/>
+  <!-- M107: theme-color dinámico por tema -->
+  <meta name="theme-color" content="#06152b" media="(prefers-color-scheme: dark)"/>
+  <meta name="theme-color" content="#eaf3fb" media="(prefers-color-scheme: light)"/>
+  <!-- M9+M11: iOS PWA meta tags -->
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <meta name="apple-mobile-web-app-title" content="Kempel"/>
+  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='24' fill='%2306152b'/%3E%3Ccircle cx='96' cy='96' r='70' fill='%230e2a47'/%3E%3Cline x1='96' y1='50' x2='96' y2='142' stroke='%2364c8e8' stroke-width='6' stroke-linecap='round'/%3E%3Cline x1='52' y1='96' x2='140' y2='96' stroke='%2364c8e8' stroke-width='6' stroke-linecap='round'/%3E%3Ccircle cx='96' cy='96' r='10' fill='%2364c8e8'/%3E%3C/svg%3E"/>
+  <!-- M1: Manifest PWA -->
+  <link rel="manifest" href="manifest.json"/>
 
 
   <!-- Open Graph -->
@@ -253,7 +263,8 @@
           <div class="hero-badge" id="heroBadge">
             <span class="badge-live"></span>
             <i class="fas fa-map-marker-alt"></i>
-            <span>Cap. Bermúdez → Pto. Gral. San Martín</span>
+            <span class="badge-desktop-txt">Cap. Bermúdez → Pto. Gral. San Martín</span>
+            <span class="badge-mobile-txt">Fray Luis Beltrán y zona</span>
           </div>
 
           <h1 class="hero-title" id="heroTitle">
@@ -538,6 +549,8 @@
 
         <div class="diag-wrapper scroll-reveal" style="--d:200ms">
           <div class="diag-card">
+            <!-- M50: Headline de paso prominente -->
+            <div id="wizardStepHeadline" class="wizard-step-headline" aria-hidden="true"></div>
             <div class="diag-topbar">
               <div class="diag-ai-id">
                 <div class="ai-avatar">
@@ -781,7 +794,7 @@
                 <p class="tech-role">Técnico especialista</p>
                 <div class="tech-stats-row">
                   <div class="tech-stat"><i class="fas fa-wrench"></i><span>A/C &amp; Refrigeración</span></div>
-                  <div class="tech-stat"><i class="fas fa-phone"></i><span>+54 9 3415 96-4079</span></div>
+                  <div class="tech-stat"><i class="fas fa-phone"></i><span>+54 9 3415 96-4079</span><button class="copy-phone-btn" data-phone="+5493415964079" aria-label="Copiar número de Franco"><i class="fas fa-copy"></i></button></div>
                 </div>
               </div>
               <a href="https://wa.me/5493415964079?text=Hola%20Franco%2C%20me%20contacto%20desde%20la%20p%C3%A1gina%20de%20Kempel%20Refrigeraci%C3%B3n." target="_blank" rel="noopener noreferrer" class="btn btn-wa btn-tech-wa magnetic ripple">
@@ -806,7 +819,7 @@
                 <p class="tech-role">Técnico especialista</p>
                 <div class="tech-stats-row">
                   <div class="tech-stat"><i class="fas fa-wrench"></i><span>A/C &amp; Refrigeración</span></div>
-                  <div class="tech-stat"><i class="fas fa-phone"></i><span>+54 9 3413 27-8981</span></div>
+                  <div class="tech-stat"><i class="fas fa-phone"></i><span>+54 9 3413 27-8981</span><button class="copy-phone-btn" data-phone="+5493413278981" aria-label="Copiar número de Agustín"><i class="fas fa-copy"></i></button></div>
                 </div>
               </div>
               <a href="https://wa.me/5493413278981?text=Hola%20Agust%C3%ADn%2C%20me%20contacto%20desde%20la%20p%C3%A1gina%20de%20Kempel%20Refrigeraci%C3%B3n." target="_blank" rel="noopener noreferrer" class="btn btn-wa btn-tech-wa magnetic ripple">
@@ -1023,9 +1036,11 @@
               <i class="fas fa-location-dot"></i>
               <div>
                 <strong>Dirección</strong>
-                <span>Pellegrini 71</span>
-                <span>Fray Luis Beltrán, Santa Fe</span>
-                <span>Argentina · CP 2156</span>
+                <a href="https://maps.google.com/?q=Pellegrini+71+Fray+Luis+Beltran+Santa+Fe+Argentina" target="_blank" rel="noopener noreferrer" class="sidebar-maps-link">
+                  <span>Pellegrini 71</span>
+                  <span>Fray Luis Beltrán, Santa Fe</span>
+                  <span>Argentina · CP 2156 <i class="fas fa-external-link-alt" style="font-size:.65rem;margin-left:3px;opacity:.6"></i></span>
+                </a>
               </div>
             </div>
 
@@ -1230,6 +1245,9 @@
             <a href="#diagnostico" class="social-btn" aria-label="Diagnóstico con ayuda IA">
               <i class="fas fa-robot"></i>
             </a>
+            <button class="social-btn share-btn" id="shareBtn" aria-label="Compartir página" data-tooltip="Compartir Kempel">
+              <i class="fas fa-share-nodes"></i>
+            </button>
           </div>
           <!-- MEJORA CLIENTE: Sellos de confianza -->
           <div class="footer-trust-seals">
@@ -1300,6 +1318,63 @@
     </svg>
     <i class="fas fa-chevron-up"></i>
   </button>
+
+  <!-- M75: Banner modo offline -->
+  <div id="offlineBanner" class="offline-banner hidden" role="alert" aria-live="assertive">
+    <i class="fas fa-wifi-slash"></i>
+    <span>Sin conexión — mostrando versión guardada</span>
+    <button class="offline-close" onclick="this.parentElement.classList.add('hidden')" aria-label="Cerrar">✕</button>
+  </div>
+
+  <!-- M5: Banner de instalación PWA personalizado -->
+  <div id="installBanner" class="install-banner hidden" role="dialog" aria-label="Instalar app Kempel">
+    <div class="install-banner-inner">
+      <div class="install-banner-icon">
+        <svg viewBox="0 0 60 60" fill="none" width="44" height="44">
+          <rect width="60" height="60" rx="12" fill="#0e2a47"/>
+          <line x1="30" y1="14" x2="30" y2="46" stroke="#64c8e8" stroke-width="4" stroke-linecap="round"/>
+          <line x1="14" y1="30" x2="46" y2="30" stroke="#64c8e8" stroke-width="4" stroke-linecap="round"/>
+          <circle cx="30" cy="30" r="6" fill="#64c8e8"/>
+        </svg>
+      </div>
+      <div class="install-banner-text">
+        <strong>Instalá Kempel en tu celular</strong>
+        <span>Acceso rápido · Sin internet · Como una app</span>
+      </div>
+      <button id="installButton" class="install-btn-accept">Instalar</button>
+      <button id="installClose" class="install-btn-close" aria-label="Cerrar">✕</button>
+    </div>
+  </div>
+
+  <!-- M83: Bottom Navigation Bar (solo mobile) -->
+  <nav class="bottom-nav" id="bottomNav" aria-label="Navegación principal">
+    <a href="#inicio" class="bnav-item" data-section="inicio">
+      <i class="fas fa-home"></i><span>Inicio</span>
+    </a>
+    <a href="#servicios" class="bnav-item" data-section="servicios">
+      <i class="fas fa-wrench"></i><span>Servicios</span>
+    </a>
+    <a href="#diagnostico" class="bnav-item bnav-center" data-section="diagnostico">
+      <div class="bnav-center-dot"><i class="fas fa-robot"></i></div>
+      <span>Diagnóstico</span>
+    </a>
+    <a href="#tecnicos" class="bnav-item" data-section="tecnicos">
+      <i class="fas fa-user-tie"></i><span>Técnicos</span>
+    </a>
+    <a href="#contacto" class="bnav-item" data-section="contacto">
+      <i class="fab fa-whatsapp"></i><span>Contacto</span>
+    </a>
+  </nav>
+
+  <!-- M89: Aria-live para wizard (lectores de pantalla) -->
+  <div aria-live="polite" class="sr-only" id="wizardLiveRegion"></div>
+
+  <!-- M12: Notificación de actualización SW -->
+  <div id="swUpdateBanner" class="sw-update-banner hidden" role="alert">
+    <i class="fas fa-rotate"></i>
+    <span>¡Nueva versión disponible!</span>
+    <button id="swUpdateBtn" class="sw-update-btn">Actualizar ahora</button>
+  </div>
 
   <script src="script.js" defer></script>
 </body>

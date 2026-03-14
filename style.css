@@ -4441,3 +4441,523 @@ body {
 #tecnicos .tech-why .why-coverage span {
   color: #0a192f !important;
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   🚀 KEMPEL — 110 MEJORAS MOBILE + PWA
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── UTILIDADES BASE ── */
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+/* ─────────────────────────────────────────────────────
+   M13+M14 — Safe area insets (iPhone notch/home bar)
+   ───────────────────────────────────────────────────── */
+.header{
+  padding-top: max(14px, env(safe-area-inset-top, 0px));
+  padding-left: max(0px, env(safe-area-inset-left, 0px));
+  padding-right: max(0px, env(safe-area-inset-right, 0px));
+}
+.footer-bottom{
+  padding-bottom: max(14px, env(safe-area-inset-bottom, 0px));
+}
+
+/* ─────────────────────────────────────────────────────
+   M15 — Hero con 100svh (sin barra de dirección)
+   ───────────────────────────────────────────────────── */
+.hero{
+  min-height: 100svh;
+  min-height: 100vh; /* fallback */
+}
+
+/* ─────────────────────────────────────────────────────
+   M16 — Pantallas 320px
+   ───────────────────────────────────────────────────── */
+@media(max-width:340px){
+  .container{padding:0 12px!important}
+  .hero-title{font-size:clamp(1.65rem,10vw,2rem)!important}
+  .hero-desc{font-size:.87rem!important}
+  .btn{padding:10px 14px;font-size:.8rem}
+  .features-grid{grid-template-columns:1fr!important}
+  .wizard-opts{flex-direction:column!important}
+  .wizard-opt{width:100%!important}
+  .stat-glass{min-width:100%}
+  .diag-steps{overflow-x:auto;justify-content:flex-start;padding:10px 12px}
+  .diag-step-dot{min-width:42px;flex-shrink:0}
+}
+
+/* ─────────────────────────────────────────────────────
+   M17 — Sidebar de contacto debajo del formulario
+   ───────────────────────────────────────────────────── */
+@media(max-width:768px){
+  .contact-layout{display:flex!important;flex-direction:column!important}
+  .contact-form-card{order:1!important}
+  .contact-sidebar{order:2!important}
+}
+
+/* ─────────────────────────────────────────────────────
+   M18 — Features strip 1 columna en < 380px
+   ───────────────────────────────────────────────────── */
+@media(max-width:380px){
+  .features-grid{grid-template-columns:1fr!important}
+  .feat-item{border-right:none;border-bottom:1px solid rgba(100,200,232,.1);padding:14px 12px}
+}
+
+/* ─────────────────────────────────────────────────────
+   M19 — Altura fija carrusel de marcas
+   ───────────────────────────────────────────────────── */
+.marcas-section{min-height:130px}
+.marcas-track{min-height:90px;overflow:hidden}
+
+/* ─────────────────────────────────────────────────────
+   M20 — Wizard opts 1 columna en mobile
+   ───────────────────────────────────────────────────── */
+@media(max-width:768px){
+  .wizard-opts{flex-direction:column!important}
+  .wizard-opt{width:100%!important;min-height:44px}
+}
+
+/* ─────────────────────────────────────────────────────
+   M21 — FAQ altura máxima con scroll
+   ───────────────────────────────────────────────────── */
+.faq-item.open .faq-a{
+  max-height:280px;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+}
+
+/* ─────────────────────────────────────────────────────
+   M22 — Footer medios de pago más visibles
+   ───────────────────────────────────────────────────── */
+@media(max-width:768px){
+  .payment-method{padding:10px 16px!important;font-size:.9rem!important}
+  .payment-method i{font-size:1.1rem!important}
+}
+
+/* ─────────────────────────────────────────────────────
+   M23 — Header altura consistente
+   ───────────────────────────────────────────────────── */
+.header{min-height:70px}
+.header-inner{height:70px;align-items:center}
+
+/* ─────────────────────────────────────────────────────
+   M24 — Aspect-ratio en fotos de técnicos
+   ───────────────────────────────────────────────────── */
+.tech-big-avatar{aspect-ratio:1/1}
+.tech-avatar-img{aspect-ratio:1/1}
+
+/* ─────────────────────────────────────────────────────
+   M25 — Botones WA full-width en técnicos mobile
+   ───────────────────────────────────────────────────── */
+@media(max-width:768px){
+  .btn-tech-wa{width:100%!important;justify-content:center!important}
+}
+
+/* ─────────────────────────────────────────────────────
+   M26 — scroll-padding-top para header fijo
+   ───────────────────────────────────────────────────── */
+html{scroll-padding-top:80px}
+
+/* ─────────────────────────────────────────────────────
+   M27 — Container padding adaptativo
+   ───────────────────────────────────────────────────── */
+@media(max-width:380px){
+  .container{padding:0 16px!important}
+}
+
+/* ─────────────────────────────────────────────────────
+   M28 — touch-action global
+   ───────────────────────────────────────────────────── */
+button,a,[role="button"],.wizard-opt,.chip,.opt-card,.stab,.service-card,.faq-q{
+  touch-action:manipulation;
+}
+
+/* ─────────────────────────────────────────────────────
+   M29 — Área táctil mínima logo
+   ───────────────────────────────────────────────────── */
+.logo{min-height:44px;min-width:44px;display:flex;align-items:center}
+
+/* ─────────────────────────────────────────────────────
+   M32 — Desactivar pull-to-refresh accidental
+   ───────────────────────────────────────────────────── */
+body{overscroll-behavior-y:contain}
+.diag-card{overscroll-behavior:contain}
+
+/* ─────────────────────────────────────────────────────
+   M33 — Scroll snap marcas en mobile
+   ───────────────────────────────────────────────────── */
+@media(max-width:768px){
+  .marcas-track.snap-active{
+    overflow-x:auto;
+    scroll-snap-type:x mandatory;
+    animation:none!important;
+    -webkit-overflow-scrolling:touch;
+  }
+  .marcas-track.snap-active .marcas-content{
+    animation:none!important;
+    scroll-snap-align:start;
+    flex-shrink:0;
+  }
+}
+
+/* ─────────────────────────────────────────────────────
+   M37 — Active states táctiles
+   ───────────────────────────────────────────────────── */
+@media(pointer:coarse){
+  .btn:active{transform:scale(.97);opacity:.92;transition:transform .1s,opacity .1s}
+  .wizard-opt:active{background:rgba(100,200,232,.25)!important}
+  .service-card:active{transform:scale(.99)!important}
+  .opt-card:active{transform:scale(.98)!important}
+  .chip:active{transform:scale(.96)!important}
+  .faq-q:active{background:rgba(100,200,232,.07)!important}
+  .footer-tech-btn:active{background:rgba(100,200,232,.12)!important}
+  .social-btn:active{transform:scale(.9)!important}
+}
+
+/* ─────────────────────────────────────────────────────
+   M41 — Botones "Volver" wizard con área táctil
+   ───────────────────────────────────────────────────── */
+.wizard-back{min-height:44px;padding:10px 16px!important;display:flex;align-items:center;gap:6px}
+
+/* ─────────────────────────────────────────────────────
+   M44 — Validación inline en tiempo real
+   ───────────────────────────────────────────────────── */
+.wizard-input.field-valid{
+  border-color:#2ecc71!important;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232ecc71'%3E%3Cpath d='M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 10px center;background-size:18px;
+}
+.wizard-input.field-invalid{
+  border-color:#ef4444!important;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ef4444'%3E%3Cpath d='M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 10px center;background-size:18px;
+}
+
+/* ─────────────────────────────────────────────────────
+   M45 — Botón envío con estado de carga
+   ───────────────────────────────────────────────────── */
+.btn-sending{pointer-events:none!important;opacity:.75!important;position:relative!important}
+.btn-sending::after{
+  content:'';position:absolute;width:18px;height:18px;
+  border:2px solid rgba(255,255,255,.3);border-top-color:white;
+  border-radius:50%;right:16px;top:50%;margin-top:-9px;
+  animation:kSpin .7s linear infinite;
+}
+@keyframes kSpin{to{transform:rotate(360deg)}}
+
+/* ─────────────────────────────────────────────────────
+   M48 — Wizard scroll interno visible en paso 6
+   ───────────────────────────────────────────────────── */
+@media(max-width:768px){
+  .diag-card{max-height:85vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  .confirm-row{flex-direction:row;align-items:flex-start;gap:10px;padding:8px 0}
+}
+
+/* ─────────────────────────────────────────────────────
+   M50 — Headline de paso del wizard
+   ───────────────────────────────────────────────────── */
+.wizard-step-headline{
+  font-size:.9rem;font-weight:700;color:rgba(255,255,255,.75);
+  padding:8px 20px 6px;text-align:center;
+  background:rgba(100,200,232,.04);
+  border-bottom:1px solid rgba(100,200,232,.08);
+  letter-spacing:.03em;min-height:32px;
+}
+@media(max-width:480px){.wizard-step-headline{font-size:.8rem;padding:6px 16px 4px}}
+
+/* ─────────────────────────────────────────────────────
+   M51 — Textarea sin resize
+   ───────────────────────────────────────────────────── */
+textarea{resize:none!important}
+
+/* ─────────────────────────────────────────────────────
+   M54-M55 — Tipografía mínima y line-height
+   ───────────────────────────────────────────────────── */
+@media(max-width:768px){
+  p,.section-desc,.hero-desc,.faq-a,.service-card p,.wizard-subtitle{line-height:1.7!important}
+  .step-label{font-size:max(.65rem,11px)!important}
+  .mq-item{font-size:.82rem!important}
+}
+
+/* ─────────────────────────────────────────────────────
+   M56 — Íconos feat-items más grandes en mobile
+   ───────────────────────────────────────────────────── */
+@media(max-width:768px){
+  .feat-icon i{font-size:1.5rem!important}
+}
+
+/* ─────────────────────────────────────────────────────
+   M57-M58 — Títulos con clamp()
+   ───────────────────────────────────────────────────── */
+.hero-title{font-size:clamp(2rem,7.5vw,3.9rem)!important}
+.section-title{font-size:clamp(1.65rem,5.5vw,2.85rem)!important}
+
+/* ─────────────────────────────────────────────────────
+   M60 — Chips wizard más grandes
+   ───────────────────────────────────────────────────── */
+@media(max-width:768px){
+  .chip{min-height:44px!important;padding:10px 16px!important;font-size:.92rem!important}
+}
+
+/* ─────────────────────────────────────────────────────
+   M61 — Cards de servicios con borde de color
+   ───────────────────────────────────────────────────── */
+.service-card[data-category="ac"]{border-left:3px solid var(--ice)!important}
+.service-card[data-category="frio"]{border-left:3px solid var(--orange)!important}
+
+/* ─────────────────────────────────────────────────────
+   M63 — Stat glass layout vertical en mobile
+   ───────────────────────────────────────────────────── */
+@media(max-width:480px){
+  .stat-glass{flex-direction:column!important;text-align:center!important;padding:12px 10px!important}
+  .stat-num{font-size:1.5rem!important}
+  .stat-glass>i{font-size:1.1rem!important;margin-bottom:4px!important}
+}
+
+/* ─────────────────────────────────────────────────────
+   M64 — Hero badge compacto en mobile
+   ───────────────────────────────────────────────────── */
+.badge-mobile-txt{display:none}
+@media(max-width:430px){
+  .badge-desktop-txt{display:none}
+  .badge-mobile-txt{display:inline}
+}
+
+/* ─────────────────────────────────────────────────────
+   M68 — content-visibility en secciones bajas
+   ───────────────────────────────────────────────────── */
+.faq-section,.footer{
+  content-visibility:auto;
+  contain-intrinsic-size:0 500px;
+}
+
+/* ─────────────────────────────────────────────────────
+   M75 — Banner offline
+   ───────────────────────────────────────────────────── */
+.offline-banner{
+  position:fixed;top:70px;left:0;right:0;z-index:2000;
+  background:#ef4444;color:white;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  padding:10px 20px;font-size:.88rem;font-weight:600;
+  animation:kSlideDown .3s ease;
+  padding-top:max(10px,env(safe-area-inset-top,0px));
+}
+.offline-banner.hidden{display:none}
+.offline-close{background:none;border:none;color:rgba(255,255,255,.7);font-size:1rem;cursor:pointer;padding:4px 8px;margin-left:auto}
+@keyframes kSlideDown{from{transform:translateY(-100%)}to{transform:translateY(0)}}
+
+/* ─────────────────────────────────────────────────────
+   M5 — Banner de instalación PWA
+   ───────────────────────────────────────────────────── */
+.install-banner{
+  position:fixed;bottom:0;left:0;right:0;z-index:1500;
+  background:linear-gradient(135deg,var(--navy-mid),rgba(14,42,71,.99));
+  border-top:1px solid rgba(100,200,232,.3);
+  padding:14px 20px;
+  padding-bottom:max(14px,env(safe-area-inset-bottom,0px));
+  box-shadow:0 -4px 30px rgba(0,0,0,.4);
+  animation:kSlideUp .4s cubic-bezier(.4,0,.2,1);
+}
+.install-banner.hidden{display:none}
+@keyframes kSlideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.install-banner-inner{display:flex;align-items:center;gap:12px;max-width:600px;margin:0 auto}
+.install-banner-icon svg{flex-shrink:0;border-radius:10px;box-shadow:0 2px 12px rgba(100,200,232,.3)}
+.install-banner-text{flex:1;display:flex;flex-direction:column;gap:2px}
+.install-banner-text strong{font-size:.92rem;color:white}
+.install-banner-text span{font-size:.75rem;color:rgba(255,255,255,.6)}
+.install-btn-accept{
+  background:linear-gradient(135deg,var(--ice),#3ab4d8);color:var(--navy);
+  border:none;border-radius:8px;padding:10px 18px;font-weight:700;font-size:.85rem;
+  cursor:pointer;white-space:nowrap;font-family:inherit;
+  transition:transform .2s,box-shadow .2s;
+}
+.install-btn-accept:hover{transform:scale(1.05);box-shadow:0 4px 14px rgba(100,200,232,.5)}
+.install-btn-close{
+  background:none;border:none;color:rgba(255,255,255,.5);font-size:1.1rem;
+  cursor:pointer;padding:8px;line-height:1;flex-shrink:0;
+}
+@media(max-width:480px){
+  .install-banner-inner{flex-wrap:wrap}
+  .install-btn-accept{width:100%;text-align:center;order:3}
+}
+
+/* ─────────────────────────────────────────────────────
+   M83+M84 — Bottom Navigation Bar
+   ───────────────────────────────────────────────────── */
+.bottom-nav{
+  display:none;
+  position:fixed;bottom:0;left:0;right:0;
+  background:rgba(6,21,43,.97);
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  border-top:1px solid rgba(100,200,232,.15);
+  justify-content:space-around;align-items:stretch;
+  padding:6px 8px;
+  padding-bottom:max(6px,env(safe-area-inset-bottom,0px));
+  z-index:600;
+  box-shadow:0 -4px 20px rgba(0,0,0,.3);
+}
+@media(max-width:768px){
+  .bottom-nav{display:flex}
+  body{padding-bottom:68px}
+  .back-top{bottom:max(80px,calc(68px + env(safe-area-inset-bottom,0px) + 12px))!important}
+}
+.bnav-item{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:3px;color:rgba(255,255,255,.5);font-size:.62rem;font-weight:600;
+  text-decoration:none;flex:1;padding:4px 4px;min-height:48px;
+  transition:color .25s ease,transform .2s ease;
+  letter-spacing:.03em;text-transform:uppercase;
+  touch-action:manipulation;
+}
+.bnav-item i{font-size:1.15rem;transition:transform .25s var(--spring),color .25s ease}
+.bnav-item.active{color:var(--ice)}
+.bnav-item.active i{color:var(--ice);transform:scale(1.15) translateY(-2px)}
+.bnav-item.active span{color:var(--ice)}
+.bnav-item:active{transform:scale(.93)}
+/* Botón central destacado */
+.bnav-center{position:relative}
+.bnav-center-dot{
+  width:46px;height:46px;border-radius:50%;
+  background:linear-gradient(135deg,var(--purple),#2563eb);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 16px rgba(124,58,237,.55);
+  margin-top:-18px;
+  transition:transform .3s var(--spring),box-shadow .3s;
+}
+.bnav-center-dot i{font-size:1.2rem;color:white}
+.bnav-center.active .bnav-center-dot{
+  box-shadow:0 6px 24px rgba(124,58,237,.8);
+  transform:scale(1.1) translateY(-2px);
+}
+
+/* ─────────────────────────────────────────────────────
+   M12 — Banner de actualización SW
+   ───────────────────────────────────────────────────── */
+.sw-update-banner{
+  position:fixed;top:70px;left:50%;transform:translateX(-50%);
+  background:var(--navy-mid);border:1px solid rgba(100,200,232,.35);
+  border-radius:var(--radius-sm);padding:12px 18px;
+  display:flex;align-items:center;gap:10px;
+  color:white;font-size:.85rem;z-index:1900;
+  box-shadow:0 6px 24px rgba(0,0,0,.4);
+  animation:kSlideDown .3s ease;
+  white-space:nowrap;
+}
+.sw-update-banner.hidden{display:none}
+.sw-update-btn{
+  background:linear-gradient(135deg,var(--ice),#3ab4d8);color:var(--navy);
+  border:none;border-radius:6px;padding:6px 14px;font-weight:700;
+  font-size:.8rem;cursor:pointer;font-family:inherit;
+  transition:transform .2s;
+}
+.sw-update-btn:hover{transform:scale(1.05)}
+
+/* ─────────────────────────────────────────────────────
+   M78 — Botón copiar teléfono
+   ───────────────────────────────────────────────────── */
+.copy-phone-btn{
+  background:none;border:none;color:rgba(100,200,232,.6);
+  cursor:pointer;padding:4px 8px;margin-left:4px;
+  font-size:.8rem;transition:color .2s,transform .2s;
+  touch-action:manipulation;border-radius:4px;
+}
+.copy-phone-btn:hover{color:var(--ice);transform:scale(1.15)}
+.copy-phone-btn:active{transform:scale(.9)}
+.tech-stat{display:flex;align-items:center;gap:6px}
+
+/* ─────────────────────────────────────────────────────
+   M79 — Dirección como link a Maps
+   ───────────────────────────────────────────────────── */
+.sidebar-maps-link{
+  display:flex;flex-direction:column;gap:2px;
+  color:var(--text-mid);text-decoration:none;
+  transition:color .2s;
+}
+.sidebar-maps-link:hover{color:var(--ice)}
+.sidebar-maps-link span{font-size:.85rem}
+
+/* ─────────────────────────────────────────────────────
+   M77 — Botón compartir
+   ───────────────────────────────────────────────────── */
+.share-btn{
+  background:rgba(100,200,232,.08);
+  border:1px solid rgba(100,200,232,.2)!important;
+  color:var(--ice)!important;cursor:pointer;
+}
+
+/* ─────────────────────────────────────────────────────
+   M86+M90 — Nav active state mejorado + focus ring
+   ───────────────────────────────────────────────────── */
+@media(max-width:768px){
+  .nav-link.active{
+    background:rgba(100,200,232,.12);
+    border-radius:8px;
+    font-weight:700;
+    border-left:3px solid var(--ice);
+    padding-left:20px!important;
+  }
+}
+:focus-visible{
+  outline:2px solid var(--ice)!important;
+  outline-offset:3px!important;
+  border-radius:4px!important;
+}
+
+/* ─────────────────────────────────────────────────────
+   M47 — Wizard: opción Saltar/No sé
+   ───────────────────────────────────────────────────── */
+.wizard-opt-skip{
+  border-style:dashed!important;
+  color:var(--muted)!important;
+  font-size:.82rem!important;
+  opacity:.85;
+}
+.wizard-opt-skip:hover{opacity:1;border-color:var(--amber)!important;color:var(--amber)!important}
+
+/* ─────────────────────────────────────────────────────
+   M95 — Skip to content mejorado
+   ───────────────────────────────────────────────────── */
+.skip-link:focus{
+  top:10px!important;left:10px!important;
+  background:var(--ice)!important;color:var(--navy)!important;
+  padding:12px 20px!important;border-radius:8px!important;
+  font-weight:700!important;z-index:10001!important;
+  outline:none!important;
+  box-shadow:0 4px 16px rgba(100,200,232,.5)!important;
+}
+
+/* ─────────────────────────────────────────────────────
+   M110 — Z-index sistema consistente
+   ───────────────────────────────────────────────────── */
+:root{
+  --z-base:1;--z-card:10;--z-nav:100;
+  --z-header:200;--z-bnav:600;--z-fab:700;
+  --z-install:1500;--z-modal:1700;
+  --z-offline:2000;--z-toast:5000;--z-loader:10000;
+}
+.header{z-index:var(--z-header)!important}
+.bottom-nav{z-index:var(--z-bnav)!important}
+.back-top,.fab-wa,.fab-call{z-index:var(--z-fab)!important}
+.install-banner{z-index:var(--z-install)!important}
+.sw-update-banner{z-index:var(--z-offline)!important}
+.offline-banner{z-index:var(--z-offline)!important}
+.toast-container{z-index:var(--z-toast)!important}
+.page-loader{z-index:var(--z-loader)!important}
+
+/* ─────────────────────────────────────────────────────
+   M76 — Animación tap en botones WhatsApp
+   ───────────────────────────────────────────────────── */
+.btn-wa-tap i{animation:kWaBounce .4s ease}
+@keyframes kWaBounce{
+  0%,100%{transform:scale(1)}
+  40%{transform:scale(1.35) rotate(-8deg)}
+  70%{transform:scale(.92)}
+}
+
+/* ─────────────────────────────────────────────────────
+   M92 — Contraste mejorado textos
+   ───────────────────────────────────────────────────── */
+:root{
+  --text-mid:rgba(255,255,255,.72)!important;
+  --muted:rgba(255,255,255,.62)!important;
+  --text-muted:rgba(255,255,255,.58)!important;
+}
